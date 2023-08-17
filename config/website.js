@@ -10,7 +10,7 @@ module.exports = {
   siteKeywords: ['gatsby, react, babel, webpack, software engineering, programming, development, hacking, node, javascript'],
   author: 'Bartek Kus', // Author for schemaORGJSONLD
   authorMinibio: `
-  A pragmatic full-stack software engineer with over six years experience at both small start-ups & medium organizations,
+  A pragmatic full-stack software engineer with over eleven years experience at both small start-ups & medium organizations,
     and extensive proficiency in building scalable backend services,
     dev-ops continuous integration & continuous delivery pipelines,
     and user centric frontend interfaces.

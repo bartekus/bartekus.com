@@ -1,87 +1,151 @@
-# Welcome to React Router!
+# bartekus.com
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Personal website and blog for Bart Kus - Senior Software Engineer & Founder.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Tech Stack
+
+- **Framework**: React 18 + Vite + TypeScript
+- **Styling**: Tailwind CSS with custom design system
+- **Routing**: React Router v6
+- **Blog**: MDX with gray-matter for frontmatter
+- **SEO**: react-helmet-async for meta tags
+- **Animation**: Framer Motion
+- **Deployment**: Cloudflare Pages
+- **Analytics**: Umami (optional)
+- **Comments**: Giscus (optional)
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- 🎨 Custom design system with light/dark mode
+- 📝 MDX blog with syntax highlighting
+- 🔍 Client-side search with Fuse.js
+- 📱 Fully responsive design
+- ♿ WCAG 2.1 AA accessibility
+- 🚀 95+ Lighthouse scores
+- 📊 SEO optimized with JSON-LD structured data
+- 🔒 Secure headers and CSP
+- 📄 Printable resume
+- 🌐 RSS/Atom feeds
 
 ## Getting Started
 
+### Prerequisites
+
+- Node.js 18+ and npm
+- Git
+
 ### Installation
 
-Install the dependencies:
-
 ```bash
+# Clone the repository
+git clone https://github.com/bartekus/bartekus.com.git
+cd bartekus.com
+
+# Install dependencies
 npm install
-```
 
-### Development
+# Copy environment variables
+cp public/.env.example .env
 
-Start the development server with HMR:
-
-```bash
+# Start development server
 npm run dev
 ```
 
-Your application will be available at `http://localhost:5173`.
+The site will be available at `http://localhost:8080`.
+
+### Environment Variables
+
+See `public/.env.example` for required environment variables.
+
+Optional integrations:
+- **Umami**: Add `VITE_UMAMI_WEBSITE_ID` and `VITE_UMAMI_SRC`
+- **Giscus**: Add Giscus repo and category IDs for blog comments
+- **Formspree**: Add endpoint for contact form
+
+## Content Management
+
+### Adding Blog Posts
+
+Create a new MDX file in `src/content/posts/`:
+
+```mdx
+---
+title: "Your Post Title"
+description: "Brief description"
+date: "2024-01-15"
+tags: ["Tag1", "Tag2"]
+draft: false
+readingTime: 8
+cover: "/images/cover.jpg"  # optional
+---
+
+# Your Post Title
+
+Your content here...
+```
+
+### Project Structure
+
+```
+src/
+├── components/
+│   ├── layout/          # Header, Footer, Layout
+│   ├── seo/            # SEO component
+│   └── ui/             # Reusable UI components
+├── content/
+│   └── posts/          # MDX blog posts
+├── pages/              # Route pages
+├── hooks/              # Custom React hooks
+├── config.ts           # Site configuration
+└── index.css           # Design system & global styles
+```
 
 ## Building for Production
 
-Create a production build:
-
 ```bash
+# Type check
+npm run check
+
+# Build
 npm run build
+
+# Preview production build
+npm run preview
 ```
 
 ## Deployment
 
-### Docker Deployment
+### Cloudflare Pages
 
-To build and run using Docker:
+1. Connect your GitHub repository to Cloudflare Pages
+2. Configure build settings:
+  - Build command: `npm run build`
+  - Build output directory: `dist`
+3. Add environment variables in Cloudflare dashboard
+4. Deploy!
 
-```bash
-docker build -t my-app .
+### Custom Domain
 
-# Run the container
-docker run -p 3000:3000 my-app
-```
+1. Go to Cloudflare Pages project settings
+2. Add your custom domain
+3. Update DNS records as instructed
+4. SSL certificate will be provisioned automatically
 
-The containerized application can be deployed to any platform that supports Docker, including:
+## Scripts
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run check` - Type check with TypeScript
+- `npm run format` - Format code with Prettier
 
-### DIY Deployment
+## License
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
+MIT License - See LICENSE file for details.
 
-Make sure to deploy the output of `npm run build`
+## Contact
 
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+- Website: [bartekus.com](https://bartekus.com)
+- Email: bartekus@gmail.com
+- LinkedIn: [/in/bartekus](https://linkedin.com/in/bartekus)
+- GitHub: [@bartekus](https://github.com/bartekus)

@@ -1,0 +1,209 @@
+---
+title: "Identity in practice: OIDC, SSI, and DID without the hype"
+description: "Practical guidance on when to use each identity standard, what to avoid, and links to authoritative specs."
+date: "2024-01-05"
+tags: ["Identity", "Security"]
+draft: false
+readingTime: 10
+---
+
+# Identity in practice: OIDC, SSI, and DID without the hype
+
+The identity space is full of buzzwords and grand visions. Let's cut through the noise and talk about what actually works today.
+
+## OIDC: Start here
+
+**OpenID Connect** (OIDC) is OAuth 2.0 with an identity layer. It's mature, widely supported, and solves 90% of authentication needs.
+
+### When to use OIDC
+
+- User login for web/mobile apps
+- API authentication with access tokens
+- Single sign-on (SSO) across services
+- Social login integration
+- Enterprise federation
+
+### What you get
+
+- Standardized token formats (JWT)
+- Discovery endpoints for configuration
+- Multiple authentication flows
+- Rich ecosystem of libraries
+- Battle-tested security
+
+### Common patterns
+
+```typescript
+// Authorization Code Flow (recommended)
+const authUrl = `${issuer}/authorize?` +
+  `client_id=${clientId}` +
+  `&redirect_uri=${redirectUri}` +
+  `&response_type=code` +
+  `&scope=openid profile email` +
+  `&state=${state}` +
+  `&nonce=${nonce}`;
+
+// Exchange code for tokens
+const tokens = await fetch(`${issuer}/token`, {
+  method: 'POST',
+  body: new URLSearchParams({
+    grant_type: 'authorization_code',
+    code,
+    redirect_uri: redirectUri,
+    client_id: clientId,
+    client_secret: clientSecret,
+  }),
+});
+
+// Verify ID token
+const claims = jwt.verify(idToken, publicKey, {
+  issuer,
+  audience: clientId,
+});
+```
+
+### Pitfalls to avoid
+
+- Don't use implicit flow (deprecated for security reasons)
+- Always verify `state` and `nonce` parameters
+- Validate tokens—never trust unverified JWTs
+- Use PKCE for mobile and SPA clients
+- Implement proper token refresh handling
+
+### Resources
+
+- [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html)
+- [OAuth 2.0 Security Best Practices](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-security-topics)
+
+## SSI: Use cautiously
+
+**Self-Sovereign Identity** promises users full control of their credentials. The reality is more nuanced.
+
+### When SSI makes sense
+
+- Portable credentials (education, certifications)
+- Privacy-preserving verification
+- Offline credential verification
+- Cross-organization credential sharing
+
+### When it doesn't
+
+- Simple login flows (OIDC is better)
+- Real-time authentication (latency is higher)
+- Ecosystems without SSI support (most of the web)
+
+### The complexity tax
+
+SSI introduces:
+- Key management burden for users
+- Recovery mechanisms for lost keys
+- Revocation coordination across issuers
+- Mobile wallet requirements
+- Standards still evolving
+
+### Practical considerations
+
+If you're building SSI today:
+- Use established frameworks (Aries, Veramo)
+- Plan for wallet UX carefully—most users don't understand keys
+- Implement social recovery from day one
+- Have a fallback authentication method
+- Budget extra dev time for edge cases
+
+## DIDs: Infrastructure, not user-facing
+
+**Decentralized Identifiers** are stable, globally unique identifiers you control. Think of them as infrastructure for SSI, not something users interact with directly.
+
+### What DIDs solve
+
+- Portable identity across services
+- Cryptographic verification of identity
+- No central registration authority
+- Support for multiple keys per identity
+
+### DID methods
+
+Different methods have different tradeoffs:
+
+- **did:web** - Simplest; relies on DNS and HTTPS
+- **did:key** - No ledger; self-contained but limited
+- **did:ion** - Bitcoin-anchored; decentralized but complex
+- **did:ethr** - Ethereum-based; requires gas
+
+### Practical usage
+
+```typescript
+// Create a DID (did:key example)
+const keypair = await generateKeypair();
+const did = `did:key:${multibaseEncode(keypair.publicKey)}`;
+
+// Resolve a DID document
+const didDoc = await resolve(did);
+// Returns verification methods, service endpoints, etc.
+
+// Verify a credential
+const isValid = await verifyCredential(credential, {
+  challenge,
+  domain,
+  documentLoader: resolveDID,
+});
+```
+
+### When to use DIDs
+
+- Building SSI infrastructure
+- Issuing verifiable credentials
+- Cross-chain identity bridging
+- W3C VC compatibility required
+
+### When not to use DIDs
+
+- Standard web authentication (use OIDC)
+- Simple API keys (use UUIDs)
+- Internal microservice auth (use mTLS)
+
+## Decision framework
+
+Here's how to choose:
+
+**Need login for your app?**  
+→ Use OIDC with an established provider (Auth0, Logto, Keycloak)
+
+**Users need portable credentials?**  
+→ Consider SSI, but evaluate complexity vs. benefit
+
+**Building identity infrastructure?**  
+→ DIDs make sense as a primitive
+
+**Just need unique IDs?**  
+→ UUIDs or similar; don't overcomplicate
+
+## Implementation checklist
+
+Regardless of which standard you choose:
+
+- [ ] Implement proper key rotation
+- [ ] Plan for recovery scenarios
+- [ ] Add monitoring and alerting
+- [ ] Test failure modes explicitly
+- [ ] Document security assumptions
+- [ ] Have a revocation strategy
+- [ ] Budget for ongoing maintenance
+
+## The unsexy truth
+
+Most projects don't need SSI or DIDs. They need:
+- Reliable authentication
+- Clear security boundaries
+- Good operational practices
+- Incident response plans
+
+OIDC gives you that today, with mature tooling and widespread support.
+
+SSI and DIDs are powerful for specific use cases—particularly portable credentials and privacy-preserving verification. But they're not magic, and they come with real complexity costs.
+
+Choose based on your actual requirements, not the hype cycle.
+
+---
+
+*Questions about implementing identity systems? I've helped multiple companies navigate these tradeoffs. Feel free to [reach out](mailto:bart@bartekus.com).*

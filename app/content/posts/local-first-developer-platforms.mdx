@@ -1,0 +1,245 @@
+---
+title: "Local-first developer platforms on a single droplet"
+description: "Building complete dev environments with Encore.ts, Traefik, Docker Compose, GitHub Actions, Stripe, and Logto."
+date: "2024-01-10"
+tags: ["DevOps", "Infrastructure"]
+draft: false
+readingTime: 12
+---
+
+# Local-first developer platforms on a single droplet
+
+Cloud platforms are great—until you need to debug why your auth flow broke between three managed services. What if you could run your entire stack on a single server, with the same tools you'd use in production?
+
+## The stack
+
+Here's what I've been running:
+
+- **Encore.ts** for backend services
+- **Traefik** for reverse proxy and SSL
+- **Docker Compose** for orchestration
+- **PostgreSQL** for data
+- **Redis** for caching
+- **Stripe** for payments
+- **Logto** for authentication
+- **GitHub Actions** for CI/CD
+
+All deployable to a single DigitalOcean droplet ($12/month). Scales to production when you need it.
+
+## Why local-first?
+
+**Faster feedback loops**  
+Change code, see result. No waiting for deployments or navigating cloud consoles.
+
+**Easier debugging**  
+All logs in one place. No jumping between CloudWatch, Datadog, and Sentry to understand what happened.
+
+**Lower cost**  
+A $12 droplet runs more than you think. Add horizontal scaling only when you need it.
+
+**Real production parity**  
+Same Docker containers. Same environment variables. Same nginx configs. If it works locally, it works in production.
+
+## The architecture
+
+```
+┌─────────────────────────────────────────┐
+│  Traefik (Port 80/443)                  │
+│  ├─ SSL termination                     │
+│  ├─ Automatic HTTPS                     │
+│  └─ Routing by hostname                 │
+└────────┬────────────────────────────────┘
+         │
+    ┌────┴────┬────────┬───────────┐
+    │         │        │           │
+  Encore   Logto   Frontend    Admin
+   API     Auth     (React)     Panel
+    │         │
+    ├─────────┼──────────┐
+    │         │          │
+PostgreSQL  Redis    Stripe Webhooks
+```
+
+Services communicate over Docker's internal network. Traefik routes external requests based on hostname.
+
+## Setting it up
+
+### 1. Encore.ts backend
+
+Encore gives you:
+- Type-safe API definitions
+- Automatic API documentation
+- Built-in distributed tracing
+- Database migrations
+
+```typescript
+// services/api/user.ts
+import { api } from "encore.dev/api";
+import { SQLDatabase } from "encore.dev/storage/sqldb";
+
+const db = new SQLDatabase("users", {
+  migrations: "./migrations",
+});
+
+export const getUser = api(
+  { expose: true, method: "GET", path: "/users/:id" },
+  async ({ id }: { id: string }): Promise<User> => {
+    const user = await db.queryRow`
+      SELECT * FROM users WHERE id = ${id}
+    `;
+    return user;
+  }
+);
+```
+
+### 2. Traefik for routing
+
+```yaml
+# docker-compose.yml
+traefik:
+  image: traefik:v2.10
+  command:
+    - "--providers.docker=true"
+    - "--entrypoints.web.address=:80"
+    - "--entrypoints.websecure.address=:443"
+    - "--certificatesresolvers.le.acme.email=bart@bartekus.com"
+    - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+  ports:
+    - "80:80"
+    - "443:443"
+  volumes:
+    - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    - "./letsencrypt:/letsencrypt"
+```
+
+### 3. Logto for auth
+
+Self-hosted auth with social login, MFA, and OIDC support:
+
+```yaml
+logto:
+  image: svhd/logto:latest
+  environment:
+    - DB_URL=postgres://user:pass@postgres:5432/logto
+    - ENDPOINT=https://auth.yourdomain.com
+  labels:
+    - "traefik.http.routers.logto.rule=Host(`auth.yourdomain.com`)"
+    - "traefik.http.routers.logto.tls.certresolver=le"
+```
+
+### 4. Stripe integration
+
+```typescript
+// services/payments/checkout.ts
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+
+export const createCheckout = api(
+  { expose: true, method: "POST", path: "/checkout" },
+  async (req: CheckoutRequest) => {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: req.items,
+      mode: "payment",
+      success_url: `${process.env.APP_URL}/success`,
+      cancel_url: `${process.env.APP_URL}/cancel`,
+    });
+    return { url: session.url };
+  }
+);
+```
+
+## Deployment
+
+GitHub Actions makes it automatic:
+
+```yaml
+name: Deploy
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            cd /app
+            git pull
+            docker compose pull
+            docker compose up -d
+```
+
+Zero-downtime deployments with health checks:
+
+```yaml
+services:
+  api:
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+```
+
+## Monitoring
+
+Prometheus + Grafana for metrics:
+
+```yaml
+prometheus:
+  image: prom/prometheus
+  volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  labels:
+    - "traefik.http.routers.metrics.rule=Host(`metrics.yourdomain.com`)"
+```
+
+All service metrics in one dashboard. Set up alerts for:
+- API latency > 500ms
+- Error rate > 1%
+- Database connections > 80%
+- Disk usage > 85%
+
+## The tradeoffs
+
+**Pros:**
+- Faster development cycles
+- Lower operational cost
+- Easier debugging
+- True local testing
+- Single source of truth
+
+**Cons:**
+- Manual scaling (though docker-compose scale works)
+- Single point of failure (mitigate with backups + failover)
+- More initial setup than hitting "deploy" in Vercel
+
+## When to graduate
+
+You'll know it's time to move to managed services when:
+- You're handling > 100 req/sec consistently
+- You need multi-region deployments
+- Compliance requires managed databases
+- Your team can't maintain infrastructure
+
+But for most projects? A single droplet is enough for years.
+
+## Conclusion
+
+Local-first development isn't about avoiding the cloud. It's about owning your stack, understanding every piece, and deploying to production with confidence.
+
+Start simple. Scale when you need to. Not before.
+
+---
+
+*Want the full setup? I've documented everything in a [GitHub repo](https://github.com/bartekus/local-first-platform). Feel free to fork and adapt.*

@@ -1,0 +1,374 @@
+---
+title: "RAG beyond the demo: failure modes and patterns"
+description: "Exploring indexing strategies, chunking approaches, evaluation frameworks, observability, and guardrails for production RAG systems."
+date: "2023-12-28"
+tags: ["AI", "RAG"]
+draft: false
+readingTime: 14
+---
+
+# RAG beyond the demo: failure modes and patterns
+
+Retrieval-Augmented Generation (RAG) is powerful. It's also surprisingly fragile in production. Here's what breaks and how to fix it.
+
+## What RAG promises vs. what it delivers
+
+**The promise:**  
+Add a vector database, throw in some embeddings, pipe it to an LLM. Instant question-answering over your docs.
+
+**The reality:**  
+Indexing is hard. Chunking strategies matter. Retrieval fails silently. LLMs hallucinate anyway. Users get frustrated.
+
+Let's make it work.
+
+## Indexing: The foundation that breaks
+
+### Failure mode #1: Stale content
+
+Your docs change. Your index doesn't. Users get outdated answers.
+
+**Fix:**  
+- Incremental updates, not full reindexes
+- Track document versions with checksums
+- Timestamp embeddings for freshness filtering
+- Monitor index-to-source drift
+
+### Failure mode #2: Noisy context
+
+You index everything—changelogs, marketing fluff, legal boilerplate. Retrieval surfaces irrelevant matches.
+
+**Fix:**  
+- Curate what gets indexed
+- Add metadata filters (doc type, audience, recency)
+- Use multiple indexes for different content types
+- Weight technical docs higher than marketing
+
+### Failure mode #3: Lost structure
+
+Your docs have hierarchies, code examples, diagrams. Vector search flattens everything.
+
+**Fix:**  
+- Preserve document structure in metadata
+- Index at multiple granularities (section, page, document)
+- Store parent-child relationships
+- Return full sections, not just fragments
+
+## Chunking: The art of slicing text
+
+Chunk too small → Context loss  
+Chunk too big → Irrelevant retrieval  
+Chunk on arbitrary boundaries → Broken code examples
+
+### Strategies that work
+
+**Semantic chunking:**  
+Split on section breaks, not character counts.
+
+```python
+# Bad: Fixed 500 character chunks
+chunks = [text[i:i+500] for i in range(0, len(text), 500)]
+
+# Better: Split on headings and paragraphs
+chunks = split_on_markdown_headers(text, max_tokens=300)
+```
+
+**Overlapping windows:**  
+Avoid losing context at boundaries.
+
+```python
+chunks = create_chunks(
+    text,
+    size=512,
+    overlap=128,  # 25% overlap preserves context
+)
+```
+
+**Code-aware chunking:**  
+Don't split functions mid-definition.
+
+```python
+# For code, chunk by AST nodes
+chunks = split_by_syntax(code, max_tokens=400)
+```
+
+### What to store with each chunk
+
+```python
+{
+    "content": "...",
+    "embedding": [...],
+    "metadata": {
+        "doc_id": "...",
+        "section": "...",
+        "parent_heading": "...",
+        "doc_type": "technical|conceptual|reference",
+        "updated_at": "2024-01-15T...",
+        "language": "en",
+        "code_blocks": ["..."],
+    }
+}
+```
+
+Rich metadata enables better filtering and ranking.
+
+## Retrieval: Where most systems fail silently
+
+### Failure mode #4: Bad relevance ranking
+
+Cosine similarity alone doesn't capture relevance. Common words dominate. Specific technical terms get lost.
+
+**Fix: Hybrid search**
+
+```python
+# Combine dense and sparse retrieval
+dense_results = vector_search(query_embedding, top_k=20)
+sparse_results = bm25_search(query_text, top_k=20)
+
+# Rerank with cross-encoder
+final_results = rerank(
+    query,
+    dense_results + sparse_results,
+    model="cross-encoder/ms-marco-MiniLM-L-6-v2"
+)
+```
+
+### Failure mode #5: Query-document mismatch
+
+User asks "How do I deploy?" Your docs say "Deployment instructions." Embedding model misses it.
+
+**Fix: Query expansion**
+
+```python
+# Expand query with synonyms and related terms
+expanded_query = expand_with_llm(
+    query,
+    prompt="Generate 3 alternative phrasings of this question"
+)
+
+# Search with all variants
+results = search_multiple(expanded_query)
+```
+
+### Failure mode #6: Missing context
+
+You return the matching chunk. It references "the above configuration." User is confused.
+
+**Fix: Context windows**
+
+```python
+# Return surrounding chunks too
+def retrieve_with_context(chunk_id, window=1):
+    chunk = get_chunk(chunk_id)
+    prev_chunks = get_chunks(chunk.doc_id, chunk.index - window, chunk.index)
+    next_chunks = get_chunks(chunk.doc_id, chunk.index + 1, chunk.index + window + 1)
+    
+    return {
+        "primary": chunk,
+        "context": prev_chunks + next_chunks,
+    }
+```
+
+## Generation: Taming the LLM
+
+### Failure mode #7: Ignoring retrieved context
+
+LLM gets relevant docs but hallucinates anyway. Or uses its training data instead.
+
+**Fix: Explicit instructions**
+
+```python
+prompt = f"""
+Answer the question using ONLY the provided context.
+If the context doesn't contain the answer, say "I don't have enough information."
+
+Context:
+{retrieved_docs}
+
+Question: {user_question}
+
+Guidelines:
+- Quote directly from the context when possible
+- If uncertain, acknowledge it
+- Do not use external knowledge
+"""
+```
+
+### Failure mode #8: Verbose, unhelpful responses
+
+LLM produces walls of text. Users want quick answers.
+
+**Fix: Response templates**
+
+```python
+prompt = f"""
+Provide a concise answer following this structure:
+
+1. Direct answer (1-2 sentences)
+2. Supporting details (if needed)
+3. Code example (if applicable)
+4. Link to full documentation
+
+Context: {docs}
+Question: {question}
+"""
+```
+
+### Failure mode #9: No attribution
+
+LLM synthesizes info from multiple sources. User can't verify.
+
+**Fix: Citation tracking**
+
+```python
+# Track which chunks contributed
+response = llm.generate(prompt, metadata={"chunk_ids": [...]})
+
+# Include citations
+formatted_response = f"""
+{response.text}
+
+Sources:
+{format_citations(response.metadata.chunk_ids)}
+"""
+```
+
+## Evaluation: How to know if it works
+
+### Build an eval set
+
+```python
+test_cases = [
+    {
+        "question": "How do I enable authentication?",
+        "expected_docs": ["docs/auth/setup.md"],
+        "expected_answer_contains": ["auth.enable()", "credentials"],
+    },
+    # ...
+]
+```
+
+### Metrics that matter
+
+**Retrieval quality:**
+- Precision@K - How many returned docs are relevant?
+- Recall@K - Did we find all relevant docs?
+- MRR (Mean Reciprocal Rank) - Where's the first relevant result?
+
+**Generation quality:**
+- Faithfulness - Does the answer match the context?
+- Relevance - Does it answer the question?
+- Conciseness - Is it unnecessarily verbose?
+
+### Automated evaluation
+
+```python
+from ragas import evaluate
+
+results = evaluate(
+    dataset=test_cases,
+    metrics=[
+        context_precision,
+        context_recall,
+        answer_relevance,
+        faithfulness,
+    ]
+)
+```
+
+## Observability: Know when things break
+
+### What to log
+
+```python
+{
+    "query": "...",
+    "retrieved_chunks": [...],
+    "retrieval_scores": [...],
+    "llm_input_tokens": 1234,
+    "llm_output_tokens": 567,
+    "latency_ms": 850,
+    "user_feedback": "helpful|not_helpful",
+}
+```
+
+### Alerts to set
+
+- Retrieval returning < 3 results consistently
+- Latency p95 > 2 seconds
+- "I don't have enough information" > 20% of responses
+- User downvotes > 30%
+
+### User feedback loop
+
+```python
+# Track what users find helpful
+@app.post("/feedback")
+def log_feedback(query_id: str, helpful: bool):
+    log_to_analytics({
+        "query_id": query_id,
+        "helpful": helpful,
+    })
+    
+    # Use for retraining and eval
+    if not helpful:
+        add_to_failure_cases(query_id)
+```
+
+## Guardrails: Prevent disasters
+
+### Input validation
+
+```python
+# Reject malicious queries
+if contains_prompt_injection(query):
+    return "Invalid query"
+
+# Limit query length
+if len(query) > 500:
+    return "Query too long"
+```
+
+### Output filtering
+
+```python
+# Don't leak sensitive info
+if contains_pii(response):
+    response = redact_pii(response)
+
+# Block toxic outputs
+if is_toxic(response):
+    return "I cannot provide that information"
+```
+
+### Rate limiting
+
+```python
+# Per-user limits
+@rate_limit(requests=20, period=60)
+def query_endpoint(user_id: str, query: str):
+    ...
+```
+
+## Putting it together
+
+A production RAG system needs:
+
+1. **Thoughtful indexing** - Curate content, preserve structure, stay fresh
+2. **Smart chunking** - Semantic boundaries, overlap, rich metadata
+3. **Hybrid retrieval** - Dense + sparse search, reranking, query expansion
+4. **Controlled generation** - Explicit instructions, templates, citations
+5. **Continuous evaluation** - Automated metrics, user feedback
+6. **Observability** - Logging, alerting, failure analysis
+7. **Guardrails** - Input validation, output filtering, rate limits
+
+None of this is sexy. All of it is necessary.
+
+## Resources
+
+- [LlamaIndex evaluation guide](https://docs.llamaindex.ai/en/stable/module_guides/evaluating/)
+- [RAGAS framework](https://github.com/explodinggradients/ragas)
+- [Anthropic's RAG guidance](https://docs.anthropic.com/claude/docs/retrieval-augmented-generation)
+
+---
+
+*Building production RAG systems? I've encountered most of these failure modes firsthand. Happy to discuss patterns that worked (and many that didn't). [Email me](mailto:bart@bartekus.com).*

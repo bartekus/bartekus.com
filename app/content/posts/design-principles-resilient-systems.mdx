@@ -1,0 +1,88 @@
+---
+title: "Design principles for resilient systems"
+description: "Exploring simplicity, observability, blast radius, idempotency, and graceful degradation in distributed systems."
+date: "2024-01-15"
+tags: ["Systems Design", "Architecture"]
+draft: false
+readingTime: 8
+---
+
+# Design principles for resilient systems
+
+Building systems that stay reliable under stress isn't about adding more complexity—it's about choosing the right constraints and making failure modes explicit.
+
+## Simplicity above all
+
+The most resilient systems are simple systems. Complexity is the enemy of reliability. Every abstraction, every layer, every dependency is another place where things can go wrong.
+
+Simple doesn't mean naive. It means:
+- Clear boundaries between components
+- Explicit contracts at every interface
+- Limited shared state
+- Obvious failure modes
+
+When debugging production issues at 2 AM, you'll thank yourself for keeping things simple.
+
+## Observability from day one
+
+You can't fix what you can't see. Observability isn't something you bolt on later—it's a fundamental requirement from the first line of code.
+
+Build in:
+- Structured logging with correlation IDs
+- Metrics for every critical path
+- Distributed tracing across services
+- Clear dashboards for system health
+
+Make it easy to answer: "What's happening right now?" and "What happened at 3:47 PM yesterday?"
+
+## Limit blast radius
+
+When things fail (and they will), contain the damage. Design for failure isolation.
+
+Strategies:
+- Circuit breakers to prevent cascading failures
+- Bulkheads to isolate resources
+- Rate limiting to protect downstream services
+- Timeouts everywhere—never wait forever
+
+A failure in the recommendation engine shouldn't take down checkout.
+
+## Make operations idempotent
+
+Network requests fail. Messages get delivered twice. Servers restart mid-operation.
+
+Design every operation to be safely retried:
+- Use unique request IDs
+- Check if work was already done
+- Make state transitions atomic
+- Never trust "exactly once" delivery
+
+Idempotency turns chaos into predictability.
+
+## Graceful degradation
+
+Not all features are equally important. When systems are stressed, decide what matters most and shed the rest.
+
+Examples:
+- Serve cached data if the database is slow
+- Return basic recommendations if ML models timeout  
+- Process orders even if analytics are down
+- Queue non-critical operations for later
+
+Users notice when checkout breaks. They don't notice if their profile photo takes an extra second to load.
+
+## Takeaways
+
+Resilient systems aren't built by adding more machinery—they're built by choosing the right constraints:
+
+1. Keep it simple
+2. Make it observable
+3. Limit blast radius
+4. Design for retries
+5. Degrade gracefully
+
+These principles don't guarantee zero downtime. They do guarantee you'll understand what's happening when things go wrong, and you'll be able to fix it quickly.
+
+---
+
+*Have thoughts on resilient system design? I'd love to hear them. Reach out via [email](mailto:bart@bartekus.com) or [LinkedIn](https://linkedin.com/in/bartekus).*

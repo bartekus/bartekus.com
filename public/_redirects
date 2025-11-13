@@ -1,0 +1,5 @@
+# SPA fallback
+/*    /index.html   200
+
+# WWW to apex redirect (if needed)
+https://www.bartekus.com/*  https://bartekus.com/:splat  301!

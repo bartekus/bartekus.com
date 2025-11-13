@@ -1,5 +1,2 @@
-# SPA fallback
-/*    /index.html   200
-
-# WWW to apex redirect (if needed)
-https://www.bartekus.com/*  https://bartekus.com/:splat  301!
+# SPA fallback handled by Cloudflare / framework preset
+# WWW → apex handled via DNS / Redirect Rules, not _redirects

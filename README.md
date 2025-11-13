@@ -1,6 +1,6 @@
 # bartekus.com
 
-Personal website and blog for Bart Kus - Senior Software Engineer & Founder.
+Personal website and blog for Bartek Kus - Senior Software Engineer & Founder.
 
 ## Tech Stack
 

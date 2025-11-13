@@ -28,16 +28,16 @@ All deployable to a single DigitalOcean droplet ($12/month). Scales to productio
 
 ## Why local-first?
 
-**Faster feedback loops**  
+**Faster feedback loops**
 Change code, see result. No waiting for deployments or navigating cloud consoles.
 
-**Easier debugging**  
+**Easier debugging**
 All logs in one place. No jumping between CloudWatch, Datadog, and Sentry to understand what happened.
 
-**Lower cost**  
+**Lower cost**
 A $12 droplet runs more than you think. Add horizontal scaling only when you need it.
 
-**Real production parity**  
+**Real production parity**
 Same Docker containers. Same environment variables. Same nginx configs. If it works locally, it works in production.
 
 ## The architecture
@@ -102,7 +102,7 @@ traefik:
     - "--providers.docker=true"
     - "--entrypoints.web.address=:80"
     - "--entrypoints.websecure.address=:443"
-    - "--certificatesresolvers.le.acme.email=bart@bartekus.com"
+    - "--certificatesresolvers.le.acme.email=bartekus@gmail.com"
     - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
   ports:
     - "80:80"
@@ -165,7 +165,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:

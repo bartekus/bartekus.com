@@ -4,7 +4,7 @@ export const siteConfig = {
   url: import.meta.env.VITE_SITE_URL || "https://bartekus.com",
   author: {
     name: "Bartek Kus",
-    email: "bart@bartekus.com",
+    email: "bartekus@gmail.com",
     jobTitle: "Senior Software Engineer & Founder",
     location: "Edmonton, Canada",
   },
@@ -12,7 +12,7 @@ export const siteConfig = {
     github: "https://github.com/bartekus",
     linkedin: "https://linkedin.com/in/bartekus",
     x: "https://x.com/bartekus",
-    email: "bart@bartekus.com",
+    email: "bartekus@gmail.com",
   },
   giscus: {
     repo: import.meta.env.VITE_GISCUS_REPO || "",

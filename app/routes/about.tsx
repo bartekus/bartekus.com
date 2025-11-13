@@ -66,7 +66,7 @@ export default function About() {
           <p>
             I'm always interested in conversations about resilient systems, identity infrastructure, or local-first architectures.
             Reach out via{" "}
-            <a href="mailto:bart@bartekus.com" className="text-primary hover:underline">
+            <a href="mailto:bartekus@gmail.com" className="text-primary hover:underline">
               email
             </a>{" "}
             or connect on{" "}

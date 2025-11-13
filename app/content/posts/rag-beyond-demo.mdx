@@ -13,10 +13,10 @@ Retrieval-Augmented Generation (RAG) is powerful. It's also surprisingly fragile
 
 ## What RAG promises vs. what it delivers
 
-**The promise:**  
+**The promise:**
 Add a vector database, throw in some embeddings, pipe it to an LLM. Instant question-answering over your docs.
 
-**The reality:**  
+**The reality:**
 Indexing is hard. Chunking strategies matter. Retrieval fails silently. LLMs hallucinate anyway. Users get frustrated.
 
 Let's make it work.
@@ -27,7 +27,7 @@ Let's make it work.
 
 Your docs change. Your index doesn't. Users get outdated answers.
 
-**Fix:**  
+**Fix:**
 - Incremental updates, not full reindexes
 - Track document versions with checksums
 - Timestamp embeddings for freshness filtering
@@ -37,7 +37,7 @@ Your docs change. Your index doesn't. Users get outdated answers.
 
 You index everything—changelogs, marketing fluff, legal boilerplate. Retrieval surfaces irrelevant matches.
 
-**Fix:**  
+**Fix:**
 - Curate what gets indexed
 - Add metadata filters (doc type, audience, recency)
 - Use multiple indexes for different content types
@@ -47,7 +47,7 @@ You index everything—changelogs, marketing fluff, legal boilerplate. Retrieval
 
 Your docs have hierarchies, code examples, diagrams. Vector search flattens everything.
 
-**Fix:**  
+**Fix:**
 - Preserve document structure in metadata
 - Index at multiple granularities (section, page, document)
 - Store parent-child relationships
@@ -55,13 +55,13 @@ Your docs have hierarchies, code examples, diagrams. Vector search flattens ever
 
 ## Chunking: The art of slicing text
 
-Chunk too small → Context loss  
-Chunk too big → Irrelevant retrieval  
+Chunk too small → Context loss
+Chunk too big → Irrelevant retrieval
 Chunk on arbitrary boundaries → Broken code examples
 
 ### Strategies that work
 
-**Semantic chunking:**  
+**Semantic chunking:**
 Split on section breaks, not character counts.
 
 ```python
@@ -72,7 +72,7 @@ chunks = [text[i:i+500] for i in range(0, len(text), 500)]
 chunks = split_on_markdown_headers(text, max_tokens=300)
 ```
 
-**Overlapping windows:**  
+**Overlapping windows:**
 Avoid losing context at boundaries.
 
 ```python
@@ -83,7 +83,7 @@ chunks = create_chunks(
 )
 ```
 
-**Code-aware chunking:**  
+**Code-aware chunking:**
 Don't split functions mid-definition.
 
 ```python
@@ -161,7 +161,7 @@ def retrieve_with_context(chunk_id, window=1):
     chunk = get_chunk(chunk_id)
     prev_chunks = get_chunks(chunk.doc_id, chunk.index - window, chunk.index)
     next_chunks = get_chunks(chunk.doc_id, chunk.index + 1, chunk.index + window + 1)
-    
+
     return {
         "primary": chunk,
         "context": prev_chunks + next_chunks,
@@ -308,7 +308,7 @@ def log_feedback(query_id: str, helpful: bool):
         "query_id": query_id,
         "helpful": helpful,
     })
-    
+
     # Use for retraining and eval
     if not helpful:
         add_to_failure_cases(query_id)
@@ -371,4 +371,4 @@ None of this is sexy. All of it is necessary.
 
 ---
 
-*Building production RAG systems? I've encountered most of these failure modes firsthand. Happy to discuss patterns that worked (and many that didn't). [Email me](mailto:bart@bartekus.com).*
+*Building production RAG systems? I've encountered most of these failure modes firsthand. Happy to discuss patterns that worked (and many that didn't). [Email me](mailto:bartekus@gmail.com).*

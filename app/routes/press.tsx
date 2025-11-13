@@ -119,7 +119,7 @@ export default function Press() {
             For interviews, speaking engagements, or press questions, please reach out via email.
           </p>
           <Button asChild>
-            <a href="mailto:bart@bartekus.com">Contact for Press</a>
+            <a href="mailto:bartekus@gmail.com">Contact for Press</a>
           </Button>
         </div>
       </div>

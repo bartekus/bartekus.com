@@ -7,7 +7,6 @@ import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
 import rehypePrism from "rehype-prism-plus";
 import tsconfigPaths from "vite-tsconfig-paths";
-import htmlMinimize from "@sergeymakinen/vite-plugin-html-minimize";
 
 export default defineConfig({
   build: {
@@ -36,15 +35,5 @@ export default defineConfig({
     reactRouter(),
     tailwindcss(),
     tsconfigPaths(),
-    htmlMinimize({
-      minifierOptions: {
-        // options below are safe defaults for React Router v7:
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        removeOptionalTags: false, // keep this false to avoid breaking JSX hydration
-        keepClosingSlash: true,
-      },
-    }),
   ],
 });

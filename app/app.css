@@ -210,14 +210,23 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("/fonts/inter-var.woff2") format("woff2-variations");
+  src: url("/public/fonts/inter-var.woff2") format("woff2-variations");
   font-weight: 100 900;
   font-display: swap;
+  size-adjust: 107%;
+  ascent-override: 90%;
+  descent-override: 10%;
+  line-gap-override: 0%;
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+
+  html:not(.hydrated) .glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
 
   html,
@@ -229,6 +238,10 @@
     font-family: var(--font-sans), system-ui;
     font-feature-settings: "cv11", "ss01";
     font-variation-settings: normal;
+  }
+
+  footer .container {
+    opacity: 1;
   }
 
   .container {
@@ -305,10 +318,10 @@
   }
 
   .glass {
-    /* No nested oklch(...) – we use color-mix with the token */
     background: color-mix(in oklch, var(--surface) 70%, transparent);
-    backdrop-filter: blur(12px);
     border: 1px solid color-mix(in oklch, var(--border) 50%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .gradient-text {

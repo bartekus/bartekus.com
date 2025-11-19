@@ -11,8 +11,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 glass">
-      <nav className="container flex h-16 items-center justify-between px-4">
+    <header className="sticky top-0 z-50 w-full h-16 border-b border-border/40 glass">
+      <nav className="ccontainer flex items-center justify-between px-4 h-full">
         <Link to="/" className="flex items-center space-x-2 font-bold text-lg">
           {/*<span className="gradient-text">{siteConfig.title}</span>*/}
           <span className="gradient-text">BK</span>
@@ -30,12 +30,16 @@ export function Header() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
-          <ThemeToggle />
+          <div className="w-9 h-9 flex items-center justify-center">
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-2 md:hidden">
-          <ThemeToggle />
+          <div className="w-9 h-9 flex items-center justify-center">
+            <ThemeToggle />
+          </div>
           <Button
             variant="ghost"
             size="icon"
@@ -49,8 +53,8 @@ export function Header() {
       </nav>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
+      {mobileMenuOpen && (
+        <AnimatePresence initial={false}>
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -70,8 +74,8 @@ export function Header() {
               ))}
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        </AnimatePresence>
+      )}
     </header>
   );
 }

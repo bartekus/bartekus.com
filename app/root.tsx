@@ -1,5 +1,5 @@
 import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
-
+import { useEffect } from "react";
 import type { Route } from "./+types/root";
 
 import { Header } from "~/components/layout/Header";
@@ -103,6 +103,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  useEffect(() => {
+    document.documentElement.classList.add("hydrated");
+  }, []);
+
   return <Outlet />;
 }
 

@@ -7,14 +7,14 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border bg-surface-2">
-      <div className="container px-4 py-12">
+    <footer className="border-t border-border bg-surface-2 min-h-[260px]">
+      <div className="container px-4 py-12 opacity-100">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <span className="font-bold text-lg text-primary">Bartek Kus</span>
             </div>
-            <p className="text-sm text-text-muted">
+            <p className="text-sm leading-[1.6] text-text-muted">
               Pragmatic full-stack engineer building resilient systems and exploring identity, local-first infrastructure, and
               AI-assisted development.
             </p>
@@ -43,7 +43,7 @@ export function Footer() {
                 className="text-text-muted hover:text-foreground transition-colors"
                 aria-label="GitHub"
               >
-                <Github className="h-5 w-5" />
+                <Github className="h-5 w-5 flex-none" />
               </a>
               <a
                 href={siteConfig.social.linkedin}
@@ -52,14 +52,14 @@ export function Footer() {
                 className="text-text-muted hover:text-foreground transition-colors"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="h-5 w-5" />
+                <Linkedin className="h-5 w-5 flex-none" />
               </a>
               <a
                 href={`mailto:${siteConfig.social.email}`}
                 className="text-text-muted hover:text-foreground transition-colors"
                 aria-label="Email"
               >
-                <Mail className="h-5 w-5" />
+                <Mail className="h-5 w-5 flex-none" />
               </a>
             </div>
             <div className="mt-4">

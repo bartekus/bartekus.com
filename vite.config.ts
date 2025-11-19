@@ -1,35 +1,49 @@
+import { defineConfig } from "vite";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-import tsconfigPaths from "vite-tsconfig-paths";
+import LightningCSS from "vite-plugin-lightningcss";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
 import rehypePrism from "rehype-prism-plus";
+import tsconfigPaths from "vite-tsconfig-paths";
+import htmlMinimize from "@sergeymakinen/vite-plugin-html-minimize";
 
 export default defineConfig({
   build: {
     target: "esnext",
     modulePreload: true,
-    cssMinify: "lightningcss", // best for Tailwind v4
+    cssMinify: "lightningcss",
     minify: "esbuild",
     sourcemap: false,
+    assetsInlineLimit: 0,
   },
   server: {
     host: "::",
     port: 5173,
   },
   plugins: [
+    reactRouter(),
+    tailwindcss(),
     ViteImageOptimizer({
       webp: { quality: 80 },
       avif: { quality: 50 },
     }),
+    LightningCSS({ browserslist: ">= 0.25%" }),
     mdx({
       remarkPlugins: [remarkGfm],
       rehypePlugins: [rehypePrism],
     }),
-    tailwindcss(),
-    reactRouter(),
     tsconfigPaths(),
+    htmlMinimize({
+      minifierOptions: {
+        // options below are safe defaults for React Router v7:
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        removeOptionalTags: false, // keep this false to avoid breaking JSX hydration
+        keepClosingSlash: true,
+      },
+    }),
   ],
 });

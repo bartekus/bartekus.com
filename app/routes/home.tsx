@@ -1,22 +1,24 @@
 import type { Route } from "./+types/home";
 import { Link } from "react-router";
 import { ArrowRight, Shield, Code, Sparkles } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Button } from "~/components/ui/button";
 import { CardProject } from "~/components/ui/card-project";
 import { PostCard } from "~/components/ui/post-card";
 import { SectionHeader } from "~/components/ui/section-header";
 import { SEO } from "~/components/seo/SEO";
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 },
-};
 // export function meta({}: Route.MetaArgs) {
 //   return [{ title: "New React Router App" }, { name: "description", content: "Welcome to React Router!" }];
 // }
 
 export default function Home() {
+  const shouldReduceMotion = useReducedMotion();
+  
+  const fadeIn = shouldReduceMotion
+    ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
+    : { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+
   return (
     <>
       <SEO />
@@ -28,7 +30,7 @@ export default function Home() {
             initial="hidden"
             animate="visible"
             variants={fadeIn}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
             className="max-w-4xl mx-auto text-center"
           >
             <h1 className="mb-6 text-balance">Pragmatic full-stack engineer bridging architecture and execution.</h1>
@@ -40,7 +42,7 @@ export default function Home() {
               <Button asChild variant="hero" size="lg">
                 <Link to="/work">
                   View Work
-                  <ArrowRight className="h-5 w-5" />
+                  <ArrowRight className="h-5 w-5" aria-hidden="true" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
@@ -62,11 +64,11 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.5, delay: shouldReduceMotion ? 0 : 0.1 }}
             className="group p-8 rounded-lg border border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all spotlight-hover"
           >
             <div className="mb-4 p-3 rounded-lg bg-primary/10 w-fit">
-              <Shield className="h-6 w-6 text-primary" />
+              <Shield className="h-6 w-6 text-primary" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Identity at scale</h3>
             <p className="text-text-muted">
@@ -80,11 +82,11 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.5, delay: shouldReduceMotion ? 0 : 0.2 }}
             className="group p-8 rounded-lg border border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all spotlight-hover"
           >
             <div className="mb-4 p-3 rounded-lg bg-accent/10 w-fit">
-              <Code className="h-6 w-6 text-accent" />
+              <Code className="h-6 w-6 text-accent" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Local-first developer platforms</h3>
             <p className="text-text-muted">
@@ -98,11 +100,11 @@ export default function Home() {
             whileInView="visible"
             viewport={{ once: true }}
             variants={fadeIn}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.5, delay: shouldReduceMotion ? 0 : 0.3 }}
             className="group p-8 rounded-lg border border-border bg-card hover:border-primary/50 hover:shadow-lg transition-all spotlight-hover"
           >
             <div className="mb-4 p-3 rounded-lg bg-success/10 w-fit">
-              <Sparkles className="h-6 w-6 text-success" />
+              <Sparkles className="h-6 w-6 text-success" aria-hidden="true" />
             </div>
             <h3 className="text-xl font-semibold mb-3">Designing Pension.you</h3>
             <p className="text-text-muted">
@@ -154,7 +156,7 @@ export default function Home() {
             <Button asChild variant="outline" size="lg">
               <Link to="/writing">
                 View All Posts
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </Link>
             </Button>
           </div>

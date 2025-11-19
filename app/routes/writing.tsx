@@ -91,20 +91,27 @@ export default function Writing() {
         {/* Search and Filter */}
         <div className="mb-12 max-w-2xl mx-auto">
           <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
+            <label htmlFor="search-articles" className="sr-only">
+              Search articles
+            </label>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" aria-hidden="true" />
             <Input
+              id="search-articles"
               type="search"
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
+              aria-label="Search articles"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label="Filter articles by tag">
             <button
               onClick={() => setSelectedTag(null)}
               className={`${selectedTag === null ? "opacity-100" : "opacity-60 hover:opacity-100"} transition-opacity`}
+              aria-pressed={selectedTag === null}
+              aria-label="Show all articles"
             >
               <TagPill variant={selectedTag === null ? "primary" : "default"}>All</TagPill>
             </button>
@@ -113,6 +120,8 @@ export default function Writing() {
                 key={tag}
                 onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
                 className={`${selectedTag === tag ? "opacity-100" : "opacity-60 hover:opacity-100"} transition-opacity`}
+                aria-pressed={selectedTag === tag}
+                aria-label={`Filter by ${tag} tag`}
               >
                 <TagPill variant={selectedTag === tag ? "primary" : "default"}>{tag}</TagPill>
               </button>
@@ -128,7 +137,7 @@ export default function Writing() {
         </div>
 
         {filteredPosts.length === 0 && (
-          <div className="text-center py-12">
+          <div className="text-center py-12" role="status" aria-live="polite">
             <p className="text-text-muted">No articles found matching your criteria.</p>
           </div>
         )}

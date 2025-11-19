@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "~/hooks/use-theme";
 import { siteConfig } from "~/config";
 
@@ -9,8 +9,42 @@ interface GiscusProps {
 export function Giscus({ term }: GiscusProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
+    // Only load if configured
+    if (
+      !siteConfig.giscus.repo ||
+      !siteConfig.giscus.repoId ||
+      !siteConfig.giscus.category ||
+      !siteConfig.giscus.categoryId
+    ) {
+      return;
+    }
+
+    if (!containerRef.current) return;
+
+    // Use Intersection Observer to load only when visible
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" } // Start loading 200px before visible
+    );
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shouldLoad) return;
+
     // Only load if configured
     if (
       !siteConfig.giscus.repo ||
@@ -49,7 +83,7 @@ export function Giscus({ term }: GiscusProps) {
     script.async = true;
 
     containerRef.current.appendChild(script);
-  }, [term, theme]);
+  }, [term, theme, shouldLoad]);
 
   // Don't render if not configured
   if (

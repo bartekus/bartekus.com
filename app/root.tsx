@@ -13,6 +13,8 @@ import { Umami } from "~/components/analytics/Umami";
 import "./app.css";
 
 export const links: Route.LinksFunction = () => [
+  { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
+  { rel: "dns-prefetch", href: "https://fonts.gstatic.com" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
     rel: "preconnect",
@@ -93,9 +95,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <a href="#main-content" className="skip-to-content">
+          Skip to main content
+        </a>
         <div className="flex min-h-screen flex-col">
           <Header />
-          <main id="main-content" className="flex-1">
+          <main id="main-content" className="flex-1" role="main" aria-label="Main content">
             <TooltipProvider>
               <Toaster />
               <Sonner />

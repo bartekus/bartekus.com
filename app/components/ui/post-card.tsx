@@ -32,18 +32,25 @@ export function PostCard({ title, description, date, readingTime, tags, slug, co
     >
       {cover && (
         <div className="aspect-video overflow-hidden bg-surface-2">
-          <img src={cover} alt={title} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          <img 
+            src={cover} 
+            alt={title} 
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+            decoding="async"
+            fetchPriority="low"
+          />
         </div>
       )}
       <div className="p-6">
         <div className="flex items-center gap-4 text-sm text-text-muted mb-3">
           <div className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4" aria-hidden="true" />
             <time dateTime={date}>{formattedDate}</time>
           </div>
           {readingTime && (
             <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
+              <Clock className="h-4 w-4" aria-hidden="true" />
               <span>{readingTime} min read</span>
             </div>
           )}

@@ -14,7 +14,7 @@ import { SEO } from "~/components/seo/SEO";
 
 export default function Home() {
   const shouldReduceMotion = useReducedMotion();
-  
+
   const fadeIn = shouldReduceMotion
     ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
     : { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };

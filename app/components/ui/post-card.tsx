@@ -32,9 +32,9 @@ export function PostCard({ title, description, date, readingTime, tags, slug, co
     >
       {cover && (
         <div className="aspect-video overflow-hidden bg-surface-2">
-          <img 
-            src={cover} 
-            alt={title} 
+          <img
+            src={cover}
+            alt={title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
             decoding="async"

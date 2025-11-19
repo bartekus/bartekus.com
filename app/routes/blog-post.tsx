@@ -95,9 +95,9 @@ export default function BlogPost() {
         {/* Cover image */}
         {post.meta.cover && (
           <div className="aspect-[2/1] overflow-hidden rounded-lg bg-surface-2 mb-8">
-            <img 
-              src={post.meta.cover} 
-              alt={post.meta.title} 
+            <img
+              src={post.meta.cover}
+              alt={post.meta.title}
               className="h-full w-full object-cover"
               loading="eager"
               decoding="async"
@@ -151,7 +151,10 @@ export default function BlogPost() {
               className="group flex items-start gap-4 p-6 rounded-lg border border-border hover:border-primary/50 bg-card transition-all"
               aria-label={`Previous post: ${prevPost.meta.title}`}
             >
-              <ChevronLeft className="h-5 w-5 mt-1 text-text-muted group-hover:text-primary transition-colors flex-shrink-0" aria-hidden="true" />
+              <ChevronLeft
+                className="h-5 w-5 mt-1 text-text-muted group-hover:text-primary transition-colors flex-shrink-0"
+                aria-hidden="true"
+              />
               <div>
                 <div className="text-sm text-text-muted mb-1">Previous</div>
                 <div className="font-semibold group-hover:text-primary transition-colors">{prevPost.meta.title}</div>
@@ -170,7 +173,10 @@ export default function BlogPost() {
                 <div className="text-sm text-text-muted mb-1">Next</div>
                 <div className="font-semibold group-hover:text-primary transition-colors">{nextPost.meta.title}</div>
               </div>
-              <ChevronRight className="h-5 w-5 mt-1 text-text-muted group-hover:text-primary transition-colors flex-shrink-0 md:order-3" aria-hidden="true" />
+              <ChevronRight
+                className="h-5 w-5 mt-1 text-text-muted group-hover:text-primary transition-colors flex-shrink-0 md:order-3"
+                aria-hidden="true"
+              />
             </Link>
           )}
         </nav>

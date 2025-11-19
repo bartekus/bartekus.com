@@ -22,6 +22,8 @@ export function CardProject({ title, description, image, tags, href, className }
             src={image}
             alt={title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            width={800}
+            height={420}
             loading="lazy"
             decoding="async"
           />

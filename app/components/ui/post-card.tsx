@@ -36,6 +36,8 @@ export function PostCard({ title, description, date, readingTime, tags, slug, co
             src={cover}
             alt={title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            width={800}
+            height={420}
             loading="lazy"
             decoding="async"
             fetchPriority="low"

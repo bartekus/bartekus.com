@@ -7,12 +7,12 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-border/40 bg-surface-2/50 mt-20">
+    <footer className="border-t border-border bg-surface-2 mt-10">
       <div className="container px-4 py-12">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <span className="font-bold text-lg gradient-text">Bartek Kus</span>
+              <span className="font-bold text-lg text-primary">Bartek Kus</span>
             </div>
             <p className="text-sm text-text-muted max-w-xs">
               Pragmatic full-stack engineer building resilient systems and exploring identity, local-first infrastructure, and

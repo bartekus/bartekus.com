@@ -27,7 +27,7 @@ export default defineConfig({
       webp: { quality: 70 },
       avif: { quality: 40 },
     }),
-    LightningCSS({ browserslist: ">= 0.25%" }),
+    // LightningCSS({ browserslist: ">= 0.25%" }),
     mdx({
       remarkPlugins: [remarkGfm],
       rehypePlugins: [rehypePrism],

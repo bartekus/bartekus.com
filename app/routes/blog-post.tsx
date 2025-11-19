@@ -99,6 +99,8 @@ export default function BlogPost() {
               src={post.meta.cover}
               alt={post.meta.title}
               className="h-full w-full object-cover"
+              width={800}
+              height={420}
               loading="eager"
               decoding="async"
               fetchPriority="high"

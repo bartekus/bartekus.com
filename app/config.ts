@@ -28,10 +28,10 @@ export const siteConfig = {
     formspreeEndpoint: import.meta.env.VITE_FORMSPREE_ENDPOINT || "",
   },
   navigation: [
-    { name: "Work", href: "/work" },
-    { name: "Projects", href: "/projects" },
-    { name: "Writing", href: "/writing" },
     { name: "About", href: "/about" },
+    { name: "Projects", href: "/projects" },
+    { name: "Work", href: "/work" },
+    { name: "Writing", href: "/writing" },
   ],
   footerLinks: [
     { name: "Now", href: "/now" },

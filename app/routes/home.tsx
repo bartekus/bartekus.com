@@ -109,10 +109,9 @@ export default function Home() {
             <h3 className="text-xl font-semibold mb-3">Designing Pension.you</h3>
             <p className="text-text-muted">
               Building a private pension platform with life insurance integration. Focused on fraud resilience and regulatory
-              compliance.{" "}
-              <Link to="/pension-you" className="text-primary hover:underline">
-                Learn more →
-              </Link>
+              compliance. {/*<Link to="/pension-you" className="text-primary hover:underline">*/}
+              {/*  Learn more →*/}
+              {/*</Link>*/}
             </p>
           </motion.div>
         </div>

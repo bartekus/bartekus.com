@@ -70,7 +70,7 @@ export default function Home() {
             <div className="mb-4 p-3 rounded-lg bg-primary/10 w-fit">
               <Shield className="h-6 w-6 text-primary" aria-hidden="true" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Identity at scale</h3>
+            <h2 className="text-xl font-semibold mb-2">Identity at scale</h2>
             <p className="text-text-muted">
               Deep experience with OIDC, SSI, and DID. Built identity verification platforms processing thousands of verifications
               daily.
@@ -88,7 +88,7 @@ export default function Home() {
             <div className="mb-4 p-3 rounded-lg bg-accent/10 w-fit">
               <Code className="h-6 w-6 text-accent" aria-hidden="true" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Local-first developer platforms</h3>
+            <h2 className="text-xl font-semibold mb-2">Local-first developer platforms</h2>
             <p className="text-text-muted">
               Architected complete dev platforms using Encore.ts, Docker, Traefik, Stripe, and Logto—all deployable on a single
               droplet.
@@ -106,7 +106,7 @@ export default function Home() {
             <div className="mb-4 p-3 rounded-lg bg-success/10 w-fit">
               <Sparkles className="h-6 w-6 text-success" aria-hidden="true" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Designing Pension.you</h3>
+            <h2 className="text-xl font-semibold mb-2">Designing Pension.you</h2>
             <p className="text-text-muted">
               Building a private pension platform with life insurance integration. Focused on fraud resilience and regulatory
               compliance. {/*<Link to="/pension-you" className="text-primary hover:underline">*/}

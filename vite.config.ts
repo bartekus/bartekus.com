@@ -23,17 +23,18 @@ export default defineConfig({
     port: 5173,
   },
   plugins: [
-    reactRouter(),
-    tailwindcss(),
     ViteImageOptimizer({
-      webp: { quality: 80 },
-      avif: { quality: 50 },
+      jpg: { quality: 70 },
+      webp: { quality: 70 },
+      avif: { quality: 40 },
     }),
     LightningCSS({ browserslist: ">= 0.25%" }),
     mdx({
       remarkPlugins: [remarkGfm],
       rehypePlugins: [rehypePrism],
     }),
+    reactRouter(),
+    tailwindcss(),
     tsconfigPaths(),
     htmlMinimize({
       minifierOptions: {

@@ -52,7 +52,7 @@ const posts = [
     readingTime: 5,
     tags: ["FinTech", "Product"],
     slug: "pension-you-briefly",
-    cover: "/images/pension-you-hero.jpg",
+    cover: "/images/edge-of-future.jpg",
   },
 ];
 

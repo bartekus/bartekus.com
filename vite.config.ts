@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import { reactRouter } from "@react-router/dev/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
-import LightningCSS from "vite-plugin-lightningcss";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
 import rehypePrism from "rehype-prism-plus";
@@ -27,7 +26,6 @@ export default defineConfig({
       webp: { quality: 70 },
       avif: { quality: 40 },
     }),
-    // LightningCSS({ browserslist: ">= 0.25%" }),
     mdx({
       remarkPlugins: [remarkGfm],
       rehypePlugins: [rehypePrism],

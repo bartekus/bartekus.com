@@ -46,7 +46,6 @@
     "typescript": "^5.9.2",
     "vite": "^7.1.7",
     "vite-plugin-image-optimizer": "^2.0.3",
-    "vite-plugin-lightningcss": "^0.0.5",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

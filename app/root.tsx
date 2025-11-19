@@ -83,7 +83,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <a href="#main-content" className="skip-to-content">
           Skip to main content
         </a>
-        <div className="flex min-h-screen flex-col">
+        <div className="min-h-screen flex flex-col font-sans bg-background text-foreground">
           <Header />
           <main id="main-content" className="flex-1" role="main" aria-label="Main content">
             <TooltipProvider>

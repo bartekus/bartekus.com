@@ -210,7 +210,7 @@
 
 @font-face {
   font-family: "Inter";
-  src: url("/public/fonts/inter-var.woff2") format("woff2-variations");
+  src: url("/fonts/inter-var.woff2") format("woff2-variations");
   font-weight: 100 900;
   font-display: swap;
 }

@@ -40,6 +40,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         />
         <meta name="author" content="Bartek Kus" />
 
+        {/* CSS & Fonts */}
+        <link rel="preload" href="/assets/style-Bqw8sQme.css" as="style" />
+        <link rel="preload" href="/fonts/InterVariable.woff2" as="font" type="font/woff2" crossOrigin />
+
         {/* Open Graph */}
         <meta property="og:title" content="Bartek Kus - Pragmatic Full-Stack Engineer" />
         <meta
@@ -65,7 +69,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="preload" href="/site.webmanifest" as="manifest" />
 
         {/* Theme Color */}
         <meta name="theme-color" content="#2D6AE3" media="(prefers-color-scheme: light)" />
@@ -78,6 +82,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {/* React Router-managed meta/link tags (route-level `meta` / `links` exports) */}
         <Meta />
         <Links />
+
+        <style>{`
+        html:not(.hydrated) body {
+          visibility: hidden;
+        }
+      `}</style>
       </head>
       <body>
         <a href="#main-content" className="skip-to-content">

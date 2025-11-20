@@ -15,6 +15,7 @@ export default defineConfig({
     minify: "esbuild",
     sourcemap: false,
     assetsInlineLimit: 0,
+    cssCodeSplit: false,
   },
   server: {
     host: "::",

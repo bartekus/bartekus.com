@@ -11,33 +11,33 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full h-16 border-b border-border/40 glass">
-      <nav className="ccontainer flex items-center justify-between px-4 h-full">
+    <header className="sticky top-0 z-50 w-full h-16 border-b border-border/40 glass will-change-transform">
+      <nav className="container flex items-center justify-between px-4 h-full overflow-hidden">
         <Link to="/" className="flex items-center space-x-2 font-bold text-lg">
           {/*<span className="gradient-text">{siteConfig.title}</span>*/}
           <span className="gradient-text">BK</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex md:items-center md:gap-6">
+        <div className="hidden md:flex md:items-center md:gap-6 h-full">
           {siteConfig.navigation.map((item) => (
             <Link
               key={item.href}
               to={item.href}
-              className="text-sm font-medium text-text-muted hover:text-foreground transition-colors relative group"
+              className="h-16 flex items-center text-sm font-medium text-text-muted hover:text-foreground transition-colors relative group"
             >
               {item.name}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
+              <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-primary transition-[width] duration-300 group-hover:w-full" />
             </Link>
           ))}
-          <div className="w-9 h-9 flex items-center justify-center">
+          <div className="w-9 h-9 flex-none flex items-center justify-center">
             <ThemeToggle />
           </div>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center gap-2 md:hidden">
-          <div className="w-9 h-9 flex items-center justify-center">
+          <div className="w-9 h-9 flex-none flex items-center justify-center">
             <ThemeToggle />
           </div>
           <Button
@@ -68,6 +68,7 @@ export function Header() {
                   to={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block px-3 py-2 text-base font-medium text-text-muted hover:text-foreground hover:bg-surface-2 rounded-md transition-colors"
+                  style={{ width: `${item.name.length * 8}px` }}
                 >
                   {item.name}
                 </Link>

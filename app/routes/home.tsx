@@ -1,4 +1,3 @@
-import type { Route } from "./+types/home";
 import { Link } from "react-router";
 import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRight, Shield, Code, Sparkles } from "lucide-react";
@@ -8,10 +7,6 @@ import { PostCard } from "~/components/ui/post-card";
 import { SectionHeader } from "~/components/ui/section-header";
 import { SEO } from "~/components/seo/SEO";
 import { siteConfig } from "~/config";
-
-// export function meta({}: Route.MetaArgs) {
-//   return [{ title: "New React Router App" }, { name: "description", content: "Welcome to React Router!" }];
-// }
 
 export default function Home() {
   const shouldReduceMotion = useReducedMotion();
@@ -34,8 +29,8 @@ export default function Home() {
             transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             className="max-w-4xl mx-auto text-center"
           >
-            <h1 className="mb-6 text-balance">{siteConfig.hero.heading}</h1>
-            <p className="text-xl text-text-muted mb-8 max-w-2xl mx-auto text-balance">{siteConfig.hero.description}</p>
+            <h1 className="mb-6 text-balance">{siteConfig.heading}</h1>
+            <p className="text-xl text-text-muted mb-8 max-w-2xl mx-auto text-balance">{siteConfig.description}</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Button asChild variant="hero" size="lg">
                 <Link to="/work">

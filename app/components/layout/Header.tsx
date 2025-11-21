@@ -14,8 +14,7 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full h-16 border-b border-border/40 glass will-change-transform">
       <nav className="container flex items-center justify-between px-4 h-full overflow-hidden">
         <Link to="/" className="flex items-center space-x-2 font-bold text-lg">
-          {/*<span className="gradient-text">{siteConfig.title}</span>*/}
-          <span className="gradient-text">BK</span>
+          <span className="gradient-text">{siteConfig.brand}</span>
         </Link>
 
         {/* Desktop Navigation */}

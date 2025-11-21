@@ -1,17 +1,14 @@
 export const siteConfig = {
-  title: "Bartek Kus",
-  // hero: {
-  //   heading: "Pragmatic full-stack engineer bridging architecture and execution.",
-  //   description: "10+ years building scalable cloud-native systems; high-performance backends; React and TypeScript frontends; DevOps and CI/CD; API design; digital identity and AI-assisted development.",
-  // },
-  hero: {
-    heading: "Bartek Kus",
-    description: "Pragmatic full-stack engineer bridging architecture and execution.",
-  },
+  brand: "BK",
+  title: "Bartek Kus - Pragmatic Full-Stack Engineer",
+  heading: "Pragmatic full-stack engineer bridging architecture and execution.",
+  description:
+    "10+ years building scalable cloud-native systems; high-performance backends; React and TypeScript frontends; DevOps and CI/CD; API design; digital identity and AI-assisted development.",
   url: import.meta.env.VITE_SITE_URL || "https://bartekus.com",
   author: {
     name: "Bartek Kus",
     email: "bartekus@gmail.com",
+    twitter: "@bartekus",
     jobTitle: "Senior Software Engineer & Founder",
     location: "Edmonton, Canada",
   },

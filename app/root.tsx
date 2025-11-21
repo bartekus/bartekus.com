@@ -11,16 +11,16 @@ import { Sonner } from "~/components/ui/sonner";
 import { Umami } from "~/components/analytics/Umami";
 
 import "./app.css";
+import { siteConfig } from "~/config";
 
 export function meta(_args: Route.MetaArgs) {
   return [
     {
-      title: "Bartek Kus - Pragmatic Full-Stack Engineer",
+      title: siteConfig.title,
     },
     {
       name: "description",
-      content:
-        "Senior software engineer specializing in identity systems, cloud architecture, and AI-assisted development. Building resilient systems that scale.",
+      content: siteConfig.heading,
     },
   ];
 }
@@ -33,38 +33,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
         {/* Static tags */}
-        <title>Bartek Kus - Pragmatic Full-Stack Engineer</title>
-        <meta
-          name="description"
-          content="Senior software engineer specializing in identity systems, cloud architecture, and AI-assisted development. Building resilient systems that scale."
-        />
+        <title>{siteConfig.title}</title>
+        <meta name="description" content={siteConfig.description} />
         <meta name="author" content="Bartek Kus" />
 
-        {/* CSS & Fonts */}
-        <link rel="preload" href="/assets/style-Bqw8sQme.css" as="style" />
-        <link rel="preload" href="/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
-
         {/* Open Graph */}
-        <meta property="og:title" content="Bartek Kus - Pragmatic Full-Stack Engineer" />
-        <meta
-          property="og:description"
-          content="Senior software engineer specializing in identity systems, cloud architecture, and AI-assisted development."
-        />
+        <meta property="og:title" content={siteConfig.title} />
+        <meta property="og:description" content={siteConfig.description} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://bartekus.com" />
-        <meta property="og:image" content="https://bartekus.com/og-default.png" />
+        <meta property="og:url" content={siteConfig.url} />
+        <meta property="og:image" content={`${siteConfig.url}/og-default.png`} />
         <meta property="og:locale" content="en_CA" />
 
         {/* Twitter Card */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@bartekus" />
-        <meta name="twitter:creator" content="@bartekus" />
-        <meta name="twitter:title" content="Bartek Kus - Pragmatic Full-Stack Engineer" />
-        <meta
-          name="twitter:description"
-          content="Senior software engineer specializing in identity systems, cloud architecture, and AI-assisted development."
-        />
-        <meta name="twitter:image" content="https://bartekus.com/og-default.png" />
+        <meta name="twitter:site" content={siteConfig.author.twitter} />
+        <meta name="twitter:creator" content={siteConfig.author.twitter} />
+        <meta name="twitter:title" content={siteConfig.title} />
+        <meta name="twitter:description" content={siteConfig.description} />
+        <meta name="twitter:image" content={`${siteConfig.url}/og-default.png`} />
 
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -76,15 +63,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="theme-color" content="#6FA4FF" media="(prefers-color-scheme: dark)" />
 
         {/* RSS/Atom */}
-        {/*<link rel="alternate" type="application/rss+xml" title="Bartek Kus RSS Feed" href="/rss.xml" />*/}
-        {/*<link rel="alternate" type="application/atom+xml" title="Bartek Kus Atom Feed" href="/atom.xml" />*/}
+        {/*<link rel="alternate" type="application/rss+xml" title={`${siteConfig.author.name} RSS Feed`} href="/rss.xml" />*/}
+        {/*<link rel="alternate" type="application/atom+xml" title={`${siteConfig.author.name} Atom Feed`} href="/atom.xml" />*/}
 
         {/* React Router-managed meta/link tags (route-level `meta` / `links` exports) */}
         <Meta />
         <Links />
 
+        {/* CSS & Fonts */}
+        <link rel="preload" href="/fonts/InterVariable.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+
         <style>{`
-        html:not(.hydrated) body {
+        html:not(.hydrated) main,
+        html:not(.hydrated) footer {
           visibility: hidden;
         }
       `}</style>
@@ -93,7 +84,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="min-h-screen flex flex-col font-sans bg-background text-foreground">
           <Header />
           <main id="main-content" className="flex-1" role="main" aria-label="Main content">
-            {children}
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <Umami />
+              {children}
+              <Outlet />
+            </TooltipProvider>
           </main>
           <Footer />
         </div>
@@ -113,18 +110,7 @@ export default function App() {
     document.documentElement.classList.add("hydrated");
   }, []);
 
-  return (
-    <TooltipProvider>
-      <Toaster />
-
-      <Sonner />
-      <Umami />
-      {/*<Suspense fallback={null}>*/}
-      {/*  */}
-      {/*</Suspense>*/}
-      <Outlet />
-    </TooltipProvider>
-  );
+  return <Outlet />;
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

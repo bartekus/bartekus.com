@@ -89,7 +89,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <Sonner />
               <Umami />
               {children}
-              <Outlet />
             </TooltipProvider>
           </main>
           <Footer />

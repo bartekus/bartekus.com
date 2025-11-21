@@ -1,12 +1,13 @@
 import type { Route } from "./+types/home";
 import { Link } from "react-router";
-import { ArrowRight, Shield, Code, Sparkles } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Shield, Code, Sparkles } from "lucide-react";
+
 import { Button } from "~/components/ui/button";
-import { CardProject } from "~/components/ui/card-project";
 import { PostCard } from "~/components/ui/post-card";
 import { SectionHeader } from "~/components/ui/section-header";
 import { SEO } from "~/components/seo/SEO";
+import { siteConfig } from "~/config";
 
 // export function meta({}: Route.MetaArgs) {
 //   return [{ title: "New React Router App" }, { name: "description", content: "Welcome to React Router!" }];
@@ -17,7 +18,7 @@ export default function Home() {
 
   const fadeIn = shouldReduceMotion
     ? { hidden: { opacity: 1 }, visible: { opacity: 1 } }
-    : { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
+    : { hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0 } };
 
   return (
     <>
@@ -30,14 +31,11 @@ export default function Home() {
             initial="hidden"
             animate="visible"
             variants={fadeIn}
-            transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
             className="max-w-4xl mx-auto text-center"
           >
-            <h1 className="mb-6 text-balance">Pragmatic full-stack engineer bridging architecture and execution.</h1>
-            <p className="text-xl text-text-muted mb-8 max-w-2xl mx-auto text-balance">
-              10+ years building scalable cloud-native systems; high-performance backends; React and TypeScript frontends; DevOps and
-              CI/CD; API design; digital identity and AI-assisted development.
-            </p>
+            <h1 className="mb-6 text-balance">{siteConfig.hero.heading}</h1>
+            <p className="text-xl text-text-muted mb-8 max-w-2xl mx-auto text-balance">{siteConfig.hero.description}</p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Button asChild variant="hero" size="lg">
                 <Link to="/work">

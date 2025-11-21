@@ -7,7 +7,7 @@ import { Footer } from "~/components/layout/Footer";
 
 import { TooltipProvider } from "~/components/ui/tooltip";
 import { Toaster } from "~/components/ui/toaster";
-import { Toaster as Sonner } from "~/components/ui/sonner";
+import { Sonner } from "~/components/ui/sonner";
 import { Umami } from "~/components/analytics/Umami";
 
 import "./app.css";
@@ -42,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* CSS & Fonts */}
         <link rel="preload" href="/assets/style-Bqw8sQme.css" as="style" />
-        <link rel="preload" href="/fonts/InterVariable.woff2" as="font" type="font/woff2" crossOrigin />
+        <link rel="preload" href="/fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
 
         {/* Open Graph */}
         <meta property="og:title" content="Bartek Kus - Pragmatic Full-Stack Engineer" />
@@ -68,16 +68,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="preload" href="/site.webmanifest" as="manifest" />
+        {/*<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />*/}
+        {/*<link rel="preload" href="/site.webmanifest" as="manifest" />*/}
 
         {/* Theme Color */}
         <meta name="theme-color" content="#2D6AE3" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#6FA4FF" media="(prefers-color-scheme: dark)" />
 
         {/* RSS/Atom */}
-        <link rel="alternate" type="application/rss+xml" title="Bartek Kus RSS Feed" href="/rss.xml" />
-        <link rel="alternate" type="application/atom+xml" title="Bartek Kus Atom Feed" href="/atom.xml" />
+        {/*<link rel="alternate" type="application/rss+xml" title="Bartek Kus RSS Feed" href="/rss.xml" />*/}
+        {/*<link rel="alternate" type="application/atom+xml" title="Bartek Kus Atom Feed" href="/atom.xml" />*/}
 
         {/* React Router-managed meta/link tags (route-level `meta` / `links` exports) */}
         <Meta />
@@ -90,18 +90,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       `}</style>
       </head>
       <body>
-        <a href="#main-content" className="skip-to-content">
-          Skip to main content
-        </a>
         <div className="min-h-screen flex flex-col font-sans bg-background text-foreground">
           <Header />
           <main id="main-content" className="flex-1" role="main" aria-label="Main content">
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <Umami />
-              {children}
-            </TooltipProvider>
+            {children}
           </main>
           <Footer />
         </div>
@@ -112,12 +104,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function HydrateFallback() {
+  return <div>'Loading...'</div>;
+}
+
 export default function App() {
   useEffect(() => {
     document.documentElement.classList.add("hydrated");
   }, []);
 
-  return <Outlet />;
+  return (
+    <TooltipProvider>
+      <Toaster />
+
+      <Sonner />
+      <Umami />
+      {/*<Suspense fallback={null}>*/}
+      {/*  */}
+      {/*</Suspense>*/}
+      <Outlet />
+    </TooltipProvider>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

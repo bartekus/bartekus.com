@@ -1,6 +1,13 @@
 export const siteConfig = {
   title: "Bartek Kus",
-  description: "Pragmatic full-stack engineer; identity; local-first infra; AI-assisted dev.",
+  // hero: {
+  //   heading: "Pragmatic full-stack engineer bridging architecture and execution.",
+  //   description: "10+ years building scalable cloud-native systems; high-performance backends; React and TypeScript frontends; DevOps and CI/CD; API design; digital identity and AI-assisted development.",
+  // },
+  hero: {
+    heading: "Bartek Kus",
+    description: "Pragmatic full-stack engineer bridging architecture and execution.",
+  },
   url: import.meta.env.VITE_SITE_URL || "https://bartekus.com",
   author: {
     name: "Bartek Kus",

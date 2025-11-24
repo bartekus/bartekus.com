@@ -5,6 +5,9 @@ import { TagPill } from "~/components/ui/tag-pill";
 import { Giscus } from "~/components/comments/Giscus";
 import { siteConfig } from "~/config";
 import matter from "gray-matter";
+import { Buffer } from "buffer";
+// @ts-ignore
+globalThis.Buffer = Buffer;
 
 // Import all MDX posts as raw strings for frontmatter parsing
 const postModulesRaw = import.meta.glob("/app/content/posts/*.mdx", {
@@ -126,59 +129,59 @@ export default function BlogPost() {
         </Link>
 
         {/* Cover image - enhanced with better aspect ratio and shadow */}
-        {/*{post.meta.cover && (*/}
-        {/*  <div className="aspect-[2/1] overflow-hidden rounded-xl bg-surface-2 mb-10 shadow-lg">*/}
-        {/*    <img*/}
-        {/*      src={post.meta.cover}*/}
-        {/*      alt={post.meta.title}*/}
-        {/*      className="h-full w-full object-cover"*/}
-        {/*      width={800}*/}
-        {/*      height={420}*/}
-        {/*      loading="eager"*/}
-        {/*      decoding="async"*/}
-        {/*      fetchPriority="high"*/}
-        {/*    />*/}
-        {/*  </div>*/}
-        {/*)}*/}
+        {post.meta.cover && (
+          <div className="aspect-[2/1] overflow-hidden rounded-xl bg-surface-2 mb-10 shadow-lg">
+            <img
+              src={post.meta.cover}
+              alt={post.meta.title}
+              className="h-full w-full object-cover"
+              width={800}
+              height={420}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+            />
+          </div>
+        )}
 
         {/* Header - improved spacing and typography */}
-        {/*<header className="mb-12">*/}
-        {/*  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight">{post.meta.title}</h1>*/}
-        {/*  <p className="text-xl md:text-2xl text-text-muted mb-8 leading-relaxed">{post.meta.description}</p>*/}
+        <header className="mb-12">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight">{post.meta.title}</h1>
+          <p className="text-xl md:text-2xl text-text-muted mb-8 leading-relaxed">{post.meta.description}</p>
 
-        {/*  /!* Metadata - more compact and elegant *!/*/}
-        {/*  <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted mb-6 pb-6 border-b border-border">*/}
-        {/*    <div className="flex items-center gap-2">*/}
-        {/*      <Calendar className="h-4 w-4" aria-hidden="true" />*/}
-        {/*      <time dateTime={post.meta.date} className="font-medium">*/}
-        {/*        {formattedDate}*/}
-        {/*      </time>*/}
-        {/*    </div>*/}
-        {/*    {formattedUpdated && (*/}
-        {/*      <div className="flex items-center gap-2">*/}
-        {/*        <span className="text-text-muted/70">Updated:</span>*/}
-        {/*        <time dateTime={post.meta.updated} className="font-medium">*/}
-        {/*          {formattedUpdated}*/}
-        {/*        </time>*/}
-        {/*      </div>*/}
-        {/*    )}*/}
-        {/*    {post.meta.readingTime && (*/}
-        {/*      <div className="flex items-center gap-2">*/}
-        {/*        <Clock className="h-4 w-4" aria-hidden="true" />*/}
-        {/*        <span className="font-medium">{post.meta.readingTime} min read</span>*/}
-        {/*      </div>*/}
-        {/*    )}*/}
-        {/*  </div>*/}
+          {/* Metadata - more compact and elegant */}
+          <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted mb-6 pb-6 border-b border-border">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-4 w-4" aria-hidden="true" />
+              <time dateTime={post.meta.date} className="font-medium">
+                {formattedDate}
+              </time>
+            </div>
+            {formattedUpdated && (
+              <div className="flex items-center gap-2">
+                <span className="text-text-muted/70">Updated:</span>
+                <time dateTime={post.meta.updated} className="font-medium">
+                  {formattedUpdated}
+                </time>
+              </div>
+            )}
+            {post.meta.readingTime && (
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4" aria-hidden="true" />
+                <span className="font-medium">{post.meta.readingTime} min read</span>
+              </div>
+            )}
+          </div>
 
-        {/*  /!* Tags *!/*/}
-        {/*  {post.meta.tags && post.meta.tags.length > 0 && (*/}
-        {/*    <div className="flex flex-wrap gap-2">*/}
-        {/*      {post.meta.tags.map((tag) => (*/}
-        {/*        <TagPill key={tag}>{tag}</TagPill>*/}
-        {/*      ))}*/}
-        {/*    </div>*/}
-        {/*  )}*/}
-        {/*</header>*/}
+          {/* Tags */}
+          {post.meta.tags && post.meta.tags.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {post.meta.tags.map((tag) => (
+                <TagPill key={tag}>{tag}</TagPill>
+              ))}
+            </div>
+          )}
+        </header>
 
         {/* Content - custom prose styling since typography plugin isn't installed */}
         <div className="prose-content mb-16">

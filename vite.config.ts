@@ -19,13 +19,24 @@ export default defineConfig(({ isSsrBuild }) => {
       mdx({
         remarkPlugins: [remarkGfm, remarkFrontmatter],
         rehypePlugins: [rehypePrism],
-        // Exclude ?raw imports from MDX processing
         exclude: /\.mdx\?raw$/,
       }),
       tailwindcss(),
       reactRouter(),
       tsconfigPaths(),
     ],
+    define: {
+      // Polyfill Buffer for browser
+      global: "globalThis",
+    },
+    resolve: {
+      alias: {
+        buffer: "buffer",
+      },
+    },
+    optimizeDeps: {
+      include: ["buffer"],
+    },
     build: {
       target: "esnext",
       modulePreload: true,

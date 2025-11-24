@@ -1,22 +1,32 @@
+import { Buffer } from "buffer";
+import matter from "gray-matter";
 import { useParams, Link, Navigate } from "react-router";
 import { Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react";
-import { SEO } from "~/components/seo/SEO";
-import { TagPill } from "~/components/ui/tag-pill";
+
 import { Giscus } from "~/components/comments/Giscus";
+import { TagPill } from "~/components/ui/tag-pill";
+import { SEO } from "~/components/seo/SEO";
 import { siteConfig } from "~/config";
-import matter from "gray-matter";
-import { Buffer } from "buffer";
 
 globalThis.Buffer = Buffer;
 
+// Type definitions for glob imports
+// React Router wraps import.meta.glob imports differently than plain Vite
+// The structure is { default: () => ({ type: string }) } instead of { default: string }
+// This is expected behavior with React Router’s glob import handling, not a bug.
+type RawModule = {
+  default: () => { type: string };
+};
+type MDXModule = { default: React.ComponentType };
+
 // Import all MDX posts as raw strings for frontmatter parsing
-const postModulesRaw = import.meta.glob("/app/content/posts/*.mdx", {
+const postModulesRaw = import.meta.glob<RawModule>("/app/content/posts/*.mdx", {
   eager: true,
   query: "?raw",
 });
 
 // Import all MDX posts as components
-const postModules = import.meta.glob("/app/content/posts/*.mdx", { eager: true });
+const postModules = import.meta.glob<MDXModule>("/app/content/posts/*.mdx", { eager: true });
 
 interface PostMeta {
   title: string;
@@ -39,15 +49,18 @@ interface Post {
 
 // Parse posts from glob imports
 const posts: Post[] = Object.entries(postModules)
-  .map(([path, module]: [string, any]) => {
+  .map(([path, module]: [string, MDXModule]) => {
     const slug = path.split("/").pop()?.replace(".mdx", "") || "";
 
-    // Get the raw content for this path - with ?raw query, it should be a string
-    const rawContent = postModulesRaw[path].default().type;
+    // Get the raw content for this path - with ?raw query, default is a string
+    const rawModule = postModulesRaw[path];
+    if (!rawModule) {
+      throw new Error(`Raw content not found for ${path}`);
+    }
+    const rawContent = rawModule.default().type;
 
     // Parse frontmatter using gray-matter
-    // rawContent should be a string when using ?raw query
-    const { data } = matter(rawContent as string);
+    const { data } = matter(rawContent);
 
     const meta: PostMeta = {
       title: data.title || "",
@@ -179,7 +192,7 @@ export default function BlogPost() {
         </header>
 
         {/* Content - custom prose styling since typography plugin isn't installed */}
-        <div className="prose-content mb-16">
+        <div className="prose-content mb-16 [&>h1:first-child]:hidden">
           <post.Component />
         </div>
 

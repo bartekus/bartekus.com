@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 import mdx from "@mdx-js/rollup";
 import remarkGfm from "remark-gfm";
+import remarkFrontmatter from "remark-frontmatter";
 import rehypePrism from "rehype-prism-plus";
 import tsconfigPaths from "vite-tsconfig-paths";
 
@@ -16,7 +17,7 @@ export default defineConfig(({ isSsrBuild }) => {
         avif: { quality: 40 },
       }),
       mdx({
-        remarkPlugins: [remarkGfm],
+        remarkPlugins: [remarkFrontmatter, remarkGfm],
         rehypePlugins: [rehypePrism],
       }),
       tailwindcss(),

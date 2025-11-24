@@ -3,11 +3,11 @@ import { Calendar, Clock, ArrowLeft, ChevronLeft, ChevronRight } from "lucide-re
 import { SEO } from "~/components/seo/SEO";
 import { TagPill } from "~/components/ui/tag-pill";
 import { Giscus } from "~/components/comments/Giscus";
-import { Button } from "~/components/ui/button";
 import { siteConfig } from "~/config";
+import matter from "gray-matter";
 
 // Import all MDX posts
-const postModules = import.meta.glob("/app/content/posts/*.mdx", { eager: true });
+const postModules = import.meta.glob("/app/content/posts/*.mdx", { eager: true, exhaustive: true });
 
 interface PostMeta {
   title: string;
@@ -32,9 +32,25 @@ interface Post {
 const posts: Post[] = Object.entries(postModules)
   .map(([path, module]: [string, any]) => {
     const slug = path.split("/").pop()?.replace(".mdx", "") || "";
+
+    console.log("slug", slug);
+    console.log("path", path);
+    console.log("module", module.default);
+
+    console.log("module.frontmatter", module.frontmatter);
+    console.log("matter", matter[module.default]);
+
+    let meta: PostMeta = {
+      title: "",
+      description: "",
+      date: "",
+      tags: [],
+      draft: false,
+    };
+
     return {
       slug,
-      meta: module.frontmatter || {},
+      meta: meta,
       Component: module.default,
     };
   })
@@ -50,30 +66,26 @@ export default function BlogPost() {
     return <Navigate to="/404" replace />;
   }
 
-  console.log("post.meta", post);
-
   const currentIndex = posts.findIndex((p) => p.slug === slug);
   const prevPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
   const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
 
-  const formattedDate = new Date(post.meta.date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  // Safe date formatting with error handling
+  const formatDate = (dateString: string | undefined): string => {
+    if (!dateString) return "Date not available";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "Invalid date";
+    return date.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
-  const formattedUpdated = post.meta.updated
-    ? new Date(post.meta.updated).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
-    : null;
+  const formattedDate = formatDate(post.meta.date);
+  const formattedUpdated = post.meta.updated ? formatDate(post.meta.updated) : null;
 
   const ogImage = post.meta.cover ? `${siteConfig.url}${post.meta.cover}` : `${siteConfig.url}/og/${slug}.png`;
-
-  console.log("post.slug", post.slug);
-  console.log("post", post);
 
   return (
     <>
@@ -87,84 +99,93 @@ export default function BlogPost() {
         modifiedTime={post.meta.updated || post.meta.date}
       />
 
-      <article className="container px-4 py-20 max-w-4xl">
-        {/* Back button */}
+      <article className="container px-4 py-12 md:py-20 max-w-4xl mx-auto">
+        {/* Back button - improved styling */}
         <Link
           to="/writing"
-          className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-sm font-medium text-text-muted hover:text-text transition-colors mb-8 group"
         >
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-          Back to Writing
+          <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
+          <span>Back to Writing</span>
         </Link>
 
-        {/* Cover image */}
-        {post.meta.cover && (
-          <div className="aspect-[2/1] overflow-hidden rounded-lg bg-surface-2 mb-8">
-            <img
-              src={post.meta.cover}
-              alt={post.meta.title}
-              className="h-full w-full object-cover"
-              width={800}
-              height={420}
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-            />
-          </div>
-        )}
+        {/* Cover image - enhanced with better aspect ratio and shadow */}
+        {/*{post.meta.cover && (*/}
+        {/*  <div className="aspect-[2/1] overflow-hidden rounded-xl bg-surface-2 mb-10 shadow-lg">*/}
+        {/*    <img*/}
+        {/*      src={post.meta.cover}*/}
+        {/*      alt={post.meta.title}*/}
+        {/*      className="h-full w-full object-cover"*/}
+        {/*      width={800}*/}
+        {/*      height={420}*/}
+        {/*      loading="eager"*/}
+        {/*      decoding="async"*/}
+        {/*      fetchPriority="high"*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*)}*/}
 
-        {/* Header */}
-        <header className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{post.meta.title}</h1>
-          <p className="text-xl text-text-muted mb-6">{post.meta.description}</p>
+        {/* Header - improved spacing and typography */}
+        {/*<header className="mb-12">*/}
+        {/*  <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight tracking-tight">{post.meta.title}</h1>*/}
+        {/*  <p className="text-xl md:text-2xl text-text-muted mb-8 leading-relaxed">{post.meta.description}</p>*/}
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted mb-6">
-            <div className="flex items-center gap-1">
-              <Calendar className="h-4 w-4" aria-hidden="true" />
-              <time dateTime={post.meta.date}>{formattedDate}</time>
-            </div>
-            {formattedUpdated && (
-              <div className="flex items-center gap-1">
-                <span>Updated: {formattedUpdated}</span>
-              </div>
-            )}
-            {post.meta.readingTime && (
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" aria-hidden="true" />
-                <span>{post.meta.readingTime} min read</span>
-              </div>
-            )}
-          </div>
+        {/*  /!* Metadata - more compact and elegant *!/*/}
+        {/*  <div className="flex flex-wrap items-center gap-4 text-sm text-text-muted mb-6 pb-6 border-b border-border">*/}
+        {/*    <div className="flex items-center gap-2">*/}
+        {/*      <Calendar className="h-4 w-4" aria-hidden="true" />*/}
+        {/*      <time dateTime={post.meta.date} className="font-medium">*/}
+        {/*        {formattedDate}*/}
+        {/*      </time>*/}
+        {/*    </div>*/}
+        {/*    {formattedUpdated && (*/}
+        {/*      <div className="flex items-center gap-2">*/}
+        {/*        <span className="text-text-muted/70">Updated:</span>*/}
+        {/*        <time dateTime={post.meta.updated} className="font-medium">*/}
+        {/*          {formattedUpdated}*/}
+        {/*        </time>*/}
+        {/*      </div>*/}
+        {/*    )}*/}
+        {/*    {post.meta.readingTime && (*/}
+        {/*      <div className="flex items-center gap-2">*/}
+        {/*        <Clock className="h-4 w-4" aria-hidden="true" />*/}
+        {/*        <span className="font-medium">{post.meta.readingTime} min read</span>*/}
+        {/*      </div>*/}
+        {/*    )}*/}
+        {/*  </div>*/}
 
-          {post.meta.tags && post.meta.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {post.meta.tags.map((tag) => (
-                <TagPill key={tag}>{tag}</TagPill>
-              ))}
-            </div>
-          )}
-        </header>
+        {/*  /!* Tags *!/*/}
+        {/*  {post.meta.tags && post.meta.tags.length > 0 && (*/}
+        {/*    <div className="flex flex-wrap gap-2">*/}
+        {/*      {post.meta.tags.map((tag) => (*/}
+        {/*        <TagPill key={tag}>{tag}</TagPill>*/}
+        {/*      ))}*/}
+        {/*    </div>*/}
+        {/*  )}*/}
+        {/*</header>*/}
 
-        {/* Content */}
-        <div className="prose prose-lg dark:prose-invert max-w-none">
+        {/* Content - custom prose styling since typography plugin isn't installed */}
+        <div className="prose-content mb-16">
           <post.Component />
         </div>
 
-        {/* Navigation */}
-        <nav className="mt-12 pt-12 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-6" aria-label="Post navigation">
+        {/* Navigation - improved styling */}
+        <nav className="mt-16 pt-12 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-6" aria-label="Post navigation">
           {prevPost ? (
             <Link
               to={`/writing/${prevPost.slug}`}
-              className="group flex items-start gap-4 p-6 rounded-lg border border-border hover:border-primary/50 bg-card transition-all"
+              className="group flex items-start gap-4 p-6 rounded-xl border border-border hover:border-primary/50 bg-card hover:bg-surface-2 transition-all duration-200"
               aria-label={`Previous post: ${prevPost.meta.title}`}
             >
               <ChevronLeft
                 className="h-5 w-5 mt-1 text-text-muted group-hover:text-primary transition-colors flex-shrink-0"
                 aria-hidden="true"
               />
-              <div>
-                <div className="text-sm text-text-muted mb-1">Previous</div>
-                <div className="font-semibold group-hover:text-primary transition-colors">{prevPost.meta.title}</div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-medium text-text-muted mb-2 uppercase tracking-wide">Previous</div>
+                <div className="font-semibold text-base group-hover:text-primary transition-colors line-clamp-2">
+                  {prevPost.meta.title}
+                </div>
               </div>
             </Link>
           ) : (
@@ -173,23 +194,29 @@ export default function BlogPost() {
           {nextPost && (
             <Link
               to={`/writing/${nextPost.slug}`}
-              className="group flex items-start gap-4 p-6 rounded-lg border border-border hover:border-primary/50 bg-card transition-all md:text-right md:justify-end"
+              className="group flex items-start gap-4 p-6 rounded-xl border border-border hover:border-primary/50 bg-card hover:bg-surface-2 transition-all duration-200 md:text-right md:flex-row-reverse"
               aria-label={`Next post: ${nextPost.meta.title}`}
             >
-              <div className="md:order-2">
-                <div className="text-sm text-text-muted mb-1">Next</div>
-                <div className="font-semibold group-hover:text-primary transition-colors">{nextPost.meta.title}</div>
-              </div>
               <ChevronRight
-                className="h-5 w-5 mt-1 text-text-muted group-hover:text-primary transition-colors flex-shrink-0 md:order-3"
+                className="h-5 w-5 mt-1 text-text-muted group-hover:text-primary transition-colors flex-shrink-0"
                 aria-hidden="true"
               />
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-medium text-text-muted mb-2 uppercase tracking-wide">Next</div>
+                <div className="font-semibold text-base group-hover:text-primary transition-colors line-clamp-2">
+                  {nextPost.meta.title}
+                </div>
+              </div>
             </Link>
           )}
         </nav>
 
         {/* Comments */}
-        {!post.meta.draft && <Giscus term={post.meta.title} />}
+        {!post.meta.draft && (
+          <div className="mt-16 pt-12 border-t border-border">
+            <Giscus term={post.meta.title} />
+          </div>
+        )}
       </article>
     </>
   );

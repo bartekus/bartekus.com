@@ -6,7 +6,7 @@ import { Giscus } from "~/components/comments/Giscus";
 import { siteConfig } from "~/config";
 import matter from "gray-matter";
 import { Buffer } from "buffer";
-// @ts-ignore
+
 globalThis.Buffer = Buffer;
 
 // Import all MDX posts as raw strings for frontmatter parsing
@@ -14,12 +14,9 @@ const postModulesRaw = import.meta.glob("/app/content/posts/*.mdx", {
   eager: true,
   query: "?raw",
 });
-console.log(Object.entries(postModulesRaw));
 
 // Import all MDX posts as components
 const postModules = import.meta.glob("/app/content/posts/*.mdx", { eager: true });
-
-console.log(Object.entries(postModules));
 
 interface PostMeta {
   title: string;
@@ -47,8 +44,6 @@ const posts: Post[] = Object.entries(postModules)
 
     // Get the raw content for this path - with ?raw query, it should be a string
     const rawContent = postModulesRaw[path].default().type;
-
-    console.log(rawContent);
 
     // Parse frontmatter using gray-matter
     // rawContent should be a string when using ?raw query

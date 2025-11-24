@@ -50,6 +50,8 @@ export default function BlogPost() {
     return <Navigate to="/404" replace />;
   }
 
+  console.log("post.meta", post);
+
   const currentIndex = posts.findIndex((p) => p.slug === slug);
   const prevPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
   const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
@@ -69,6 +71,9 @@ export default function BlogPost() {
     : null;
 
   const ogImage = post.meta.cover ? `${siteConfig.url}${post.meta.cover}` : `${siteConfig.url}/og/${slug}.png`;
+
+  console.log("post.slug", post.slug);
+  console.log("post", post);
 
   return (
     <>

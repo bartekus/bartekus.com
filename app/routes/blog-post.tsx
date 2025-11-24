@@ -6,8 +6,15 @@ import { Giscus } from "~/components/comments/Giscus";
 import { siteConfig } from "~/config";
 import matter from "gray-matter";
 
-// Import all MDX posts
-const postModules = import.meta.glob("/app/content/posts/*.mdx", { eager: true, exhaustive: true });
+// Import all MDX posts as raw strings for frontmatter parsing
+const postModulesRaw = import.meta.glob("/app/content/posts/*.mdx", {
+  eager: true,
+  query: "?raw",
+  import: "default",
+});
+
+// Import all MDX posts as components
+const postModules = import.meta.glob("/app/content/posts/*.mdx", { eager: true });
 
 interface PostMeta {
   title: string;
@@ -33,19 +40,32 @@ const posts: Post[] = Object.entries(postModules)
   .map(([path, module]: [string, any]) => {
     const slug = path.split("/").pop()?.replace(".mdx", "") || "";
 
-    console.log("slug", slug);
     console.log("path", path);
-    console.log("module", module.default);
+    console.log("module", module);
+    console.log("slug", slug);
+    console.log("module.default", module.default);
 
-    console.log("module.frontmatter", module.frontmatter);
-    console.log("matter", matter[module.default]);
+    // Get the raw content for this path - with 'as: raw', it's directly the string
+    const rawContent = postModulesRaw[path] as string;
 
-    let meta: PostMeta = {
-      title: "",
-      description: "",
-      date: "",
-      tags: [],
-      draft: false,
+    console.log("rawContent", rawContent);
+
+    // Parse frontmatter using gray-matter
+    const { data } = matter(rawContent);
+
+    console.log("data", data);
+
+    const meta: PostMeta = {
+      title: data.title || "",
+      description: data.description || "",
+      date: data.date || "",
+      updated: data.updated,
+      tags: data.tags || [],
+      draft: data.draft || false,
+      cover: data.cover,
+      ogTitle: data.ogTitle,
+      ogDescription: data.ogDescription,
+      readingTime: data.readingTime,
     };
 
     return {

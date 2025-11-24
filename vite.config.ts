@@ -17,7 +17,7 @@ export default defineConfig(({ isSsrBuild }) => {
         avif: { quality: 40 },
       }),
       mdx({
-        remarkPlugins: [remarkFrontmatter, remarkGfm],
+        remarkPlugins: [remarkFrontmatter],
         rehypePlugins: [rehypePrism],
       }),
       tailwindcss(),

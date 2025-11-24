@@ -11,9 +11,12 @@ const postModulesRaw = import.meta.glob("/app/content/posts/*.mdx", {
   eager: true,
   query: "?raw",
 });
+console.log(Object.entries(postModulesRaw));
 
 // Import all MDX posts as components
 const postModules = import.meta.glob("/app/content/posts/*.mdx", { eager: true });
+
+console.log(Object.entries(postModules));
 
 interface PostMeta {
   title: string;
@@ -39,43 +42,32 @@ const posts: Post[] = Object.entries(postModules)
   .map(([path, module]: [string, any]) => {
     const slug = path.split("/").pop()?.replace(".mdx", "") || "";
 
-    // Check if frontmatter is exposed directly by remark-frontmatter
-    // Some MDX setups expose it as module.frontmatter or module.meta
-    let meta: PostMeta;
+    // Get the raw content for this path - with ?raw query, it should be a string
+    const rawContent = postModulesRaw[path].default().type;
 
-    console.log(Object.entries(postModulesRaw));
+    console.log(rawContent);
 
-    if (module.frontmatter) {
-      // If remark-frontmatter exposes it directly
-      meta = {
-        title: module.frontmatter.title || "",
-        description: module.frontmatter.description || "",
-        date: module.frontmatter.date || "",
-        updated: module.frontmatter.updated,
-        tags: module.frontmatter.tags || [],
-        draft: module.frontmatter.draft || false,
-        cover: module.frontmatter.cover,
-        ogTitle: module.frontmatter.ogTitle,
-        ogDescription: module.frontmatter.ogDescription,
-        readingTime: module.frontmatter.readingTime,
-      };
-    } else {
-      // Fallback: Since MDX plugin intercepts ?raw, we need to read files differently
-      // For now, use empty meta as placeholder
-      console.warn(`No frontmatter found for ${slug}. Check module properties:`, Object.keys(module));
-      meta = {
-        title: "",
-        description: "",
-        date: "",
-        tags: [],
-        draft: false,
-      };
-    }
+    // Parse frontmatter using gray-matter
+    // rawContent should be a string when using ?raw query
+    const { data } = matter(rawContent as string);
+
+    const meta: PostMeta = {
+      title: data.title || "",
+      description: data.description || "",
+      date: data.date || "",
+      updated: data.updated,
+      tags: data.tags || [],
+      draft: data.draft || false,
+      cover: data.cover,
+      ogTitle: data.ogTitle,
+      ogDescription: data.ogDescription,
+      readingTime: data.readingTime,
+    };
 
     return {
       slug,
       meta: meta,
-      Component: module.default,
+      Component: module.default, // This is the processed MDX component
     };
   })
   .filter((post) => !post.meta.draft)

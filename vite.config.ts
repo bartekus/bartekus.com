@@ -17,8 +17,10 @@ export default defineConfig(({ isSsrBuild }) => {
         avif: { quality: 40 },
       }),
       mdx({
-        remarkPlugins: [remarkFrontmatter],
+        remarkPlugins: [remarkGfm, remarkFrontmatter],
         rehypePlugins: [rehypePrism],
+        // Exclude ?raw imports from MDX processing
+        exclude: /\.mdx\?raw$/,
       }),
       tailwindcss(),
       reactRouter(),

@@ -204,7 +204,7 @@ export default function Resume() {
           </section>
 
           {/* Skills */}
-          <section className="mb-8">
+          <section className="mb-8 print:page-break-before">
             <h2 className="text-2xl font-semibold mb-4 text-primary">Technical Skills</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {skills.map((skill, index) => (
@@ -220,7 +220,7 @@ export default function Resume() {
           </section>
 
           {/* Education */}
-          <section className="mb-8">
+          <section className="mb-8 print:keep-together">
             <h2 className="text-2xl font-semibold mb-3 text-primary">Education</h2>
             <div className="space-y-4">
               {education.map((edu, index) => (
@@ -240,7 +240,7 @@ export default function Resume() {
 
           {/* Languages */}
           {languages && languages.length > 0 && (
-            <section className="mb-8">
+            <section className="mb-8 print:keep-together">
               <h2 className="text-2xl font-semibold mb-3 text-primary">Languages</h2>
               <div className="space-y-2">
                 {languages.map((lang, index) => (
@@ -255,7 +255,7 @@ export default function Resume() {
 
           {/* Interests */}
           {interests && interests.length > 0 && (
-            <section className="mb-8">
+            <section className="mb-8 print:keep-together">
               <h2 className="text-2xl font-semibold mb-3 text-primary">Interests</h2>
               <div className="flex flex-wrap gap-2">
                 {interests.map((interest, index) => (
@@ -269,7 +269,7 @@ export default function Resume() {
 
           {/* References */}
           {references && references.length > 0 && (
-            <section>
+            <section className="print:keep-together">
               <h2 className="text-2xl font-semibold mb-3 text-primary">References</h2>
               <div className="space-y-4">
                 {references.map((ref, index) => (
@@ -312,6 +312,21 @@ export default function Resume() {
           }
           .print\\:text-foreground {
             color: #0B1220 !important;
+          }
+          /* Force Technical Skills to start on new page */
+          .print\\:page-break-before {
+            page-break-before: always !important;
+            break-before: page !important;
+          }
+          /* Keep sections together after Skills */
+          .print\\:keep-together {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+          /* Prevent page breaks within work experience items */
+          .space-y-6 > div {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
           }
           /* Ensure main content takes full width */
           main {

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Bartek Kus</title>
+    <description>Pragmatic full-stack engineer; identity; local-first infra; AI-assisted dev.</description>
+    <link>https://bartekus.com</link>
+    <atom:link href="https://bartekus.com/rss.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Tue, 25 Nov 2025 21:26:44 GMT</lastBuildDate>
+    <managingEditor>bartekus@gmail.com (Bartek Kus)</managingEditor>
+    <webMaster>bartekus@gmail.com (Bartek Kus)</webMaster>
+    <item>
+      <title>Identity in practice: OIDC, SSI, and DID without the hype</title>
+      <description>Practical guidance on when to use each identity standard, what to avoid, and links to authoritative specs.</description>
+      <link>https://bartekus.com/writing/identity-in-practice</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/identity-in-practice</guid>
+      <pubDate>Wed, 01 May 2024 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Identity</category>
+      <category>Security</category>
+    </item>
+    <item>
+      <title>Design principles for resilient systems</title>
+      <description>Exploring simplicity, observability, blast radius, idempotency, and graceful degradation in distributed systems.</description>
+      <link>https://bartekus.com/writing/design-principles-resilient-systems</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/design-principles-resilient-systems</guid>
+      <pubDate>Mon, 15 Jan 2024 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Systems Design</category>
+      <category>Architecture</category>
+    </item>
+    <item>
+      <title>Local-first developer platforms on a single droplet</title>
+      <description>Building complete dev environments with Encore.ts, Traefik, Docker Compose, GitHub Actions, Stripe, and Logto.</description>
+      <link>https://bartekus.com/writing/local-first-developer-platforms</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/local-first-developer-platforms</guid>
+      <pubDate>Wed, 10 Jan 2024 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>DevOps</category>
+      <category>Infrastructure</category>
+    </item>
+    <item>
+      <title>RAG beyond the demo: failure modes and patterns</title>
+      <description>Exploring indexing strategies, chunking approaches, evaluation frameworks, observability, and guardrails for production RAG systems.</description>
+      <link>https://bartekus.com/writing/rag-beyond-demo</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/rag-beyond-demo</guid>
+      <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>AI</category>
+      <category>RAG</category>
+    </item>
+    <item>
+      <title>Pension.you, briefly</title>
+      <description>A simple, human explanation of private pensions with life insurance integration and why transparency matters.</description>
+      <link>https://bartekus.com/writing/pension-you-briefly</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/pension-you-briefly</guid>
+      <pubDate>Wed, 20 Dec 2023 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>FinTech</category>
+      <category>Product</category>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Bartek Kus</title>
+  <subtitle>Pragmatic full-stack engineer; identity; local-first infra; AI-assisted dev.</subtitle>
+  <link href="https://bartekus.com/atom.xml" rel="self" />
+  <link href="https://bartekus.com" />
+  <id>https://bartekus.com/</id>
+  <updated>2025-11-25T21:26:44.442Z</updated>
+  <author>
+    <name>Bartek Kus</name>
+    <email>bartekus@gmail.com</email>
+  </author>
+  <entry>
+    <title>Identity in practice: OIDC, SSI, and DID without the hype</title>
+    <link href="https://bartekus.com/writing/identity-in-practice" />
+    <id>https://bartekus.com/writing/identity-in-practice</id>
+    <updated>2024-05-01T00:00:00.000Z</updated>
+    <published>2024-05-01T00:00:00.000Z</published>
+    <summary>Practical guidance on when to use each identity standard, what to avoid, and links to authoritative specs.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Identity" />
+    <category term="Security" />
+  </entry>
+  <entry>
+    <title>Design principles for resilient systems</title>
+    <link href="https://bartekus.com/writing/design-principles-resilient-systems" />
+    <id>https://bartekus.com/writing/design-principles-resilient-systems</id>
+    <updated>2024-01-15T00:00:00.000Z</updated>
+    <published>2024-01-15T00:00:00.000Z</published>
+    <summary>Exploring simplicity, observability, blast radius, idempotency, and graceful degradation in distributed systems.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Systems Design" />
+    <category term="Architecture" />
+  </entry>
+  <entry>
+    <title>Local-first developer platforms on a single droplet</title>
+    <link href="https://bartekus.com/writing/local-first-developer-platforms" />
+    <id>https://bartekus.com/writing/local-first-developer-platforms</id>
+    <updated>2024-01-10T00:00:00.000Z</updated>
+    <published>2024-01-10T00:00:00.000Z</published>
+    <summary>Building complete dev environments with Encore.ts, Traefik, Docker Compose, GitHub Actions, Stripe, and Logto.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="DevOps" />
+    <category term="Infrastructure" />
+  </entry>
+  <entry>
+    <title>RAG beyond the demo: failure modes and patterns</title>
+    <link href="https://bartekus.com/writing/rag-beyond-demo" />
+    <id>https://bartekus.com/writing/rag-beyond-demo</id>
+    <updated>2023-12-28T00:00:00.000Z</updated>
+    <published>2023-12-28T00:00:00.000Z</published>
+    <summary>Exploring indexing strategies, chunking approaches, evaluation frameworks, observability, and guardrails for production RAG systems.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="AI" />
+    <category term="RAG" />
+  </entry>
+  <entry>
+    <title>Pension.you, briefly</title>
+    <link href="https://bartekus.com/writing/pension-you-briefly" />
+    <id>https://bartekus.com/writing/pension-you-briefly</id>
+    <updated>2023-12-20T00:00:00.000Z</updated>
+    <published>2023-12-20T00:00:00.000Z</published>
+    <summary>A simple, human explanation of private pensions with life insurance integration and why transparency matters.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="FinTech" />
+    <category term="Product" />
+  </entry>
+</feed>

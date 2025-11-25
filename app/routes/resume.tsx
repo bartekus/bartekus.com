@@ -373,14 +373,23 @@ export default function Resume() {
           .container {
             max-width: 100% !important;
             padding: 0 !important;
+            margin: 0 !important;
           }
-          /* Add top spacing for better readability */
+          /* Remove padding from content wrapper - let @page margin handle spacing */
           .container > div {
-            padding-top: 1rem !important;
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+          }
+          /* Ensure sections that start on new pages have consistent spacing */
+          section {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
           }
           /* Ensure card background is white */
           .bg-card {
             background: white !important;
+            padding-top: 0 !important;
+            margin-top: 0 !important;
           }
           /* Ensure borders are visible but subtle */
           .border-border {

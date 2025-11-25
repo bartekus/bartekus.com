@@ -288,11 +288,47 @@ export default function Resume() {
       <style>{`
         @media print {
           @page {
-            margin: 0.5in;
+            margin: 0.75in 0.5in 0.5in 0.5in;
           }
-          body {
+          /* Force light mode for printing - override all color variables */
+          * {
+            --background: oklch(100% 0 89.9) !important;
+            --foreground: oklch(17.31% 0.006 264) !important;
+            --primary: oklch(55.13% 0.085 262.1) !important;
+            --primary-foreground: oklch(100% 0 89.9) !important;
+            --accent: oklch(65.11% 0.069 299.3) !important;
+            --accent-foreground: oklch(100% 0 89.9) !important;
+            --surface: oklch(100% 0 89.9) !important;
+            --surface-2: oklch(97.46% 0.002 264.5) !important;
+            --text: oklch(17.31% 0.006 264) !important;
+            --text-muted: oklch(53.37% 0.016 264.2) !important;
+            --card: oklch(100% 0 89.9) !important;
+            --card-foreground: oklch(17.31% 0.006 264) !important;
+            --border: oklch(92.47% 0.004 264.5) !important;
+            --muted: oklch(96.61% 0.002 264.5) !important;
+            --muted-foreground: oklch(53.37% 0.016 264.2) !important;
+          }
+          /* Force white background and dark text */
+          body,
+          html {
+            background: white !important;
+            color: #0B1220 !important;
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
+          }
+          /* Ensure all text elements use dark colors */
+          h1, h2, h3, h4, h5, h6, p, li, span, div, a {
+            color: #0B1220 !important;
+          }
+          /* Ensure muted text is still readable but lighter */
+          .text-text-muted,
+          [class*="text-muted"] {
+            color: #6B7280 !important;
+          }
+          /* Ensure primary color is visible but not too dark */
+          .text-primary,
+          [class*="text-primary"] {
+            color: #2563EB !important;
           }
           /* Hide header and footer */
           header,
@@ -337,6 +373,18 @@ export default function Resume() {
           .container {
             max-width: 100% !important;
             padding: 0 !important;
+          }
+          /* Add top spacing for better readability */
+          .container > div {
+            padding-top: 1rem !important;
+          }
+          /* Ensure card background is white */
+          .bg-card {
+            background: white !important;
+          }
+          /* Ensure borders are visible but subtle */
+          .border-border {
+            border-color: #E5E7EB !important;
           }
         }
       `}</style>

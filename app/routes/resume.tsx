@@ -288,8 +288,22 @@ export default function Resume() {
       <style>{`
         @media print {
           @page {
-            margin: 0.75in 0.5in 0.5in 0.5in;
+            /* Paper size - options: A4, Letter, Legal, etc. */
+            size: Legal;
+            /* Or specify custom size: size: 8.5in 11in; */
+
+            /* Margins - top right bottom left */
+            margin: 0.75in 0.1in 0.1in 0.5in;
+
+            /* Orientation (optional - usually inferred from size) */
+            /* size: Letter portrait; or size: Letter landscape; */
           }
+
+          /* Alternative: Different margins for first page */
+          @page :first {
+            margin-top: 0.75in;
+          }
+
           /* Force light mode for printing - override all color variables */
           * {
             --background: oklch(100% 0 89.9) !important;
@@ -308,6 +322,7 @@ export default function Resume() {
             --muted: oklch(96.61% 0.002 264.5) !important;
             --muted-foreground: oklch(53.37% 0.016 264.2) !important;
           }
+
           /* Force white background and dark text */
           body,
           html {

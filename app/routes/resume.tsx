@@ -1,18 +1,130 @@
-import { Download, Mail, Linkedin, Github } from "lucide-react";
+import { Download, Mail, Linkedin, Github, Twitter, Phone } from "lucide-react";
 import { SEO } from "~/components/seo/SEO";
 import { Button } from "~/components/ui/button";
-import { siteConfig } from "~/config";
+import resumeData from "~/data/resume.json";
+
+// Type definitions for JSON Resume schema
+interface Location {
+  city: string;
+  region: string;
+  countryCode: string;
+}
+
+interface Profile {
+  network: string;
+  username?: string;
+  url: string;
+}
+
+interface Basics {
+  name: string;
+  label: string;
+  email: string;
+  phone?: string;
+  location: Location;
+  profiles: Profile[];
+  summary: string;
+}
+
+interface Skill {
+  name: string;
+  level: string;
+  keywords: string[];
+}
+
+interface Education {
+  institution: string;
+  studyType: string;
+  area: string;
+  startDate: string;
+  endDate?: string;
+  summary?: string;
+  location?: string;
+}
+
+interface Work {
+  name: string;
+  position: string;
+  location: string;
+  startDate: string;
+  endDate?: string;
+  summary: string;
+  highlights?: string[];
+}
+
+interface Reference {
+  name: string;
+  reference: string;
+}
+
+interface Language {
+  language: string;
+  fluency: string;
+}
+
+interface Interest {
+  name: string;
+}
+
+interface ResumeData {
+  basics: Basics;
+  skills: Skill[];
+  education: Education[];
+  work: Work[];
+  references?: Reference[];
+  languages?: Language[];
+  interests?: Interest[];
+}
+
+const resume = resumeData as ResumeData;
+
+// Format date from YYYY-MM format to readable format
+const formatDate = (dateString: string | undefined): string => {
+  if (!dateString) return "Present";
+  const [year, month] = dateString.split("-");
+  const date = new Date(parseInt(year), parseInt(month) - 1);
+  if (isNaN(date.getTime())) return dateString;
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+  });
+};
+
+// Format date range
+const formatDateRange = (startDate: string, endDate?: string): string => {
+  const start = formatDate(startDate);
+  const end = formatDate(endDate);
+  return `${start} - ${end}`;
+};
+
+// Get profile icon component
+const getProfileIcon = (network: string) => {
+  const networkLower = network.toLowerCase();
+  switch (networkLower) {
+    case "github":
+      return Github;
+    case "linkedin":
+      return Linkedin;
+    case "twitter":
+    case "x":
+      return Twitter;
+    default:
+      return null;
+  }
+};
 
 export default function Resume() {
   const handlePrint = () => {
     window.print();
   };
 
+  const { basics, skills, education, work, references, languages, interests } = resume;
+
   return (
     <>
       <SEO
         title="Resume"
-        description="Resume of Bartek Kus - Senior Software Engineer specializing in identity systems, cloud architecture, and full-stack development."
+        description={`Resume of ${basics.name} - ${basics.label}`}
         path="/resume"
       />
 
@@ -29,85 +141,77 @@ export default function Resume() {
         <div className="bg-card border border-border rounded-lg p-8 print:border-0 print:shadow-none">
           {/* Header */}
           <header className="mb-8 pb-6 border-b border-border">
-            <h1 className="text-4xl font-bold mb-2">Bartek Kus</h1>
-            <p className="text-xl text-text-muted mb-4">Senior Software Engineer & Founder</p>
+            <h1 className="text-4xl font-bold mb-2">{basics.name}</h1>
+            <p className="text-xl text-text-muted mb-4">{basics.label}</p>
             <div className="flex flex-wrap gap-4 text-sm text-text-muted">
               <a
-                href={`mailto:${siteConfig.social.email}`}
+                href={`mailto:${basics.email}`}
                 className="flex items-center gap-1 hover:text-primary print:text-foreground"
               >
                 <Mail className="h-4 w-4" />
-                {siteConfig.social.email}
+                {basics.email}
               </a>
-              <a
-                href={siteConfig.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-primary print:text-foreground"
-              >
-                <Linkedin className="h-4 w-4" />
-                LinkedIn
-              </a>
-              <a
-                href={siteConfig.social.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 hover:text-primary print:text-foreground"
-              >
-                <Github className="h-4 w-4" />
-                GitHub
-              </a>
+              {basics.phone && (
+                <a
+                  href={`tel:${basics.phone}`}
+                  className="flex items-center gap-1 hover:text-primary print:text-foreground"
+                >
+                  <Phone className="h-4 w-4" />
+                  {basics.phone}
+                </a>
+              )}
+              {basics.profiles.map((profile) => {
+                const IconComponent = getProfileIcon(profile.network);
+                if (!IconComponent) return null;
+                return (
+                  <a
+                    key={profile.network}
+                    href={profile.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 hover:text-primary print:text-foreground"
+                  >
+                    <IconComponent className="h-4 w-4" />
+                    {profile.network.charAt(0).toUpperCase() + profile.network.slice(1)}
+                  </a>
+                );
+              })}
             </div>
+            {basics.location && (
+              <p className="text-sm text-text-muted mt-2">
+                {basics.location.city}, {basics.location.region}, {basics.location.countryCode}
+              </p>
+            )}
           </header>
 
           {/* Summary */}
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-3 text-primary">Summary</h2>
-            <p className="text-text-muted leading-relaxed">
-              Senior full-stack engineer with 10+ years building scalable cloud-native systems, identity verification platforms, and
-              developer infrastructure. Expert in TypeScript, React, Node.js, PostgreSQL, and Docker. Specialized in digital identity
-              (OIDC, SSI, DIDs), DevOps automation, and resilient system architecture. Proven track record architecting systems
-              processing thousands of daily transactions with 99.9%+ uptime.
-            </p>
+            <p className="text-text-muted leading-relaxed">{basics.summary}</p>
           </section>
 
           {/* Experience */}
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-primary">Experience</h2>
-
             <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-semibold">Founder & Technical Lead</h3>
-                <p className="text-text-muted">Pension.you • 2023 - Present • Edmonton, Canada</p>
-                <ul className="mt-2 space-y-1 text-text-muted list-disc list-inside ml-4">
-                  <li>Building private pension platform with life insurance integration</li>
-                  <li>Architecting fraud-resistant workflows and compliance automation</li>
-                  <li>Full-stack development with React, TypeScript, Node.js, PostgreSQL</li>
-                  <li>Implementing identity verification via OIDC and SSI standards</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold">Senior Software Engineer</h3>
-                <p className="text-text-muted">Oliu.id • 2021 - 2023 • Remote</p>
-                <ul className="mt-2 space-y-1 text-text-muted list-disc list-inside ml-4">
-                  <li>Architected identity verification platform processing 5K+ daily verifications</li>
-                  <li>Implemented OIDC flows, SSI integration, and fraud detection pipelines</li>
-                  <li>Built RESTful APIs with Node.js, TypeScript, and PostgreSQL</li>
-                  <li>Maintained 99.9% uptime with comprehensive monitoring and alerting</li>
-                </ul>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-semibold">Full-Stack Developer</h3>
-                <p className="text-text-muted">Various Clients • 2015 - 2021 • Remote</p>
-                <ul className="mt-2 space-y-1 text-text-muted list-disc list-inside ml-4">
-                  <li>Delivered 20+ web applications for startups and enterprises</li>
-                  <li>Specialized in React, TypeScript, Node.js, and cloud infrastructure</li>
-                  <li>Designed and implemented RESTful and GraphQL APIs</li>
-                  <li>Set up CI/CD pipelines with GitHub Actions and Docker</li>
-                </ul>
-              </div>
+              {work.map((job, index) => (
+                <div key={index}>
+                  <h3 className="text-lg font-semibold">{job.position}</h3>
+                  <p className="text-text-muted">
+                    {job.name} • {formatDateRange(job.startDate, job.endDate)} • {job.location}
+                  </p>
+                  {job.summary && (
+                    <p className="mt-2 text-text-muted italic">{job.summary}</p>
+                  )}
+                  {job.highlights && job.highlights.length > 0 && (
+                    <ul className="mt-2 space-y-1 text-text-muted list-disc list-inside ml-4">
+                      {job.highlights.map((highlight, idx) => (
+                        <li key={idx}>{highlight}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
 
@@ -115,62 +219,82 @@ export default function Resume() {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-4 text-primary">Technical Skills</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h3 className="font-semibold mb-2">Languages & Frameworks</h3>
-                <p className="text-text-muted text-sm">TypeScript, JavaScript, React, Node.js, Next.js, Encore.ts</p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">Databases & Caching</h3>
-                <p className="text-text-muted text-sm">PostgreSQL, Redis, Supabase</p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">DevOps & Infrastructure</h3>
-                <p className="text-text-muted text-sm">Docker, Traefik, GitHub Actions, DigitalOcean, Cloudflare</p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">Identity & Auth</h3>
-                <p className="text-text-muted text-sm">OIDC, OAuth 2.0, SSI, DIDs, Logto, Supabase Auth</p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">APIs & Integration</h3>
-                <p className="text-text-muted text-sm">REST, GraphQL, Stripe, Webhooks</p>
-              </div>
-              <div>
-                <h3 className="font-semibold mb-2">Monitoring & Observability</h3>
-                <p className="text-text-muted text-sm">Grafana, Prometheus, Sentry, Umami</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Projects */}
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-primary">Key Projects</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-semibold">Local-First Developer Platform</h3>
-                <p className="text-text-muted text-sm">
-                  Complete dev environment with Encore.ts, Docker, Traefik, Stripe, and Logto. Deployable on single VPS with
-                  automated CI/CD.
-                </p>
-              </div>
-              <div>
-                <h3 className="font-semibold">RAG Subsystem Research</h3>
-                <p className="text-text-muted text-sm">
-                  Experimented with retrieval-augmented generation for technical docs. Built indexing pipelines, chunking strategies,
-                  and evaluation frameworks.
-                </p>
-              </div>
+              {skills.map((skill, index) => (
+                <div key={index}>
+                  <h3 className="font-semibold mb-2">
+                    {skill.name}
+                    {skill.level && <span className="text-text-muted text-sm font-normal ml-2">({skill.level})</span>}
+                  </h3>
+                  <p className="text-text-muted text-sm">{skill.keywords.join(", ")}</p>
+                </div>
+              ))}
             </div>
           </section>
 
           {/* Education */}
-          <section>
+          <section className="mb-8">
             <h2 className="text-2xl font-semibold mb-3 text-primary">Education</h2>
-            <div>
-              <h3 className="font-semibold">Bachelor of Science in Computer Science</h3>
-              <p className="text-text-muted">University of Alberta • 2010 - 2014</p>
+            <div className="space-y-4">
+              {education.map((edu, index) => (
+                <div key={index}>
+                  <h3 className="font-semibold">
+                    {edu.studyType} in {edu.area}
+                  </h3>
+                  <p className="text-text-muted">
+                    {edu.institution} • {formatDateRange(edu.startDate, edu.endDate)}
+                    {edu.location && ` • ${edu.location}`}
+                  </p>
+                  {edu.summary && (
+                    <p className="mt-1 text-text-muted text-sm italic">{edu.summary}</p>
+                  )}
+                </div>
+              ))}
             </div>
           </section>
+
+          {/* Languages */}
+          {languages && languages.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-3 text-primary">Languages</h2>
+              <div className="space-y-2">
+                {languages.map((lang, index) => (
+                  <div key={index} className="flex justify-between">
+                    <span className="font-semibold">{lang.language}</span>
+                    <span className="text-text-muted">{lang.fluency}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Interests */}
+          {interests && interests.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-3 text-primary">Interests</h2>
+              <div className="flex flex-wrap gap-2">
+                {interests.map((interest, index) => (
+                  <span key={index} className="text-text-muted text-sm">
+                    {interest.name}
+                  </span>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* References */}
+          {references && references.length > 0 && (
+            <section>
+              <h2 className="text-2xl font-semibold mb-3 text-primary">References</h2>
+              <div className="space-y-4">
+                {references.map((ref, index) => (
+                  <div key={index}>
+                    <p className="text-text-muted italic mb-1">"{ref.reference}"</p>
+                    <p className="text-text-muted text-sm">— {ref.name}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
 

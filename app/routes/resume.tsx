@@ -122,11 +122,7 @@ export default function Resume() {
 
   return (
     <>
-      <SEO
-        title="Resume"
-        description={`Resume of ${basics.name} - ${basics.label}`}
-        path="/resume"
-      />
+      <SEO title="Resume" description={`Resume of ${basics.name} - ${basics.label}`} path="/resume" />
 
       <div className="container px-4 py-12 max-w-4xl mx-auto">
         {/* Print Button - Hidden on print */}
@@ -140,22 +136,16 @@ export default function Resume() {
         {/* Resume Content */}
         <div className="bg-card border border-border rounded-lg p-8 print:border-0 print:shadow-none">
           {/* Header */}
-          <header className="mb-8 pb-6 border-b border-border">
+          <section className="mb-8 pb-6 border-b border-border">
             <h1 className="text-4xl font-bold mb-2">{basics.name}</h1>
             <p className="text-xl text-text-muted mb-4">{basics.label}</p>
             <div className="flex flex-wrap gap-4 text-sm text-text-muted">
-              <a
-                href={`mailto:${basics.email}`}
-                className="flex items-center gap-1 hover:text-primary print:text-foreground"
-              >
+              <a href={`mailto:${basics.email}`} className="flex items-center gap-1 hover:text-primary print:text-foreground">
                 <Mail className="h-4 w-4" />
                 {basics.email}
               </a>
               {basics.phone && (
-                <a
-                  href={`tel:${basics.phone}`}
-                  className="flex items-center gap-1 hover:text-primary print:text-foreground"
-                >
+                <a href={`tel:${basics.phone}`} className="flex items-center gap-1 hover:text-primary print:text-foreground">
                   <Phone className="h-4 w-4" />
                   {basics.phone}
                 </a>
@@ -182,7 +172,7 @@ export default function Resume() {
                 {basics.location.city}, {basics.location.region}, {basics.location.countryCode}
               </p>
             )}
-          </header>
+          </section>
 
           {/* Summary */}
           <section className="mb-8">
@@ -200,9 +190,7 @@ export default function Resume() {
                   <p className="text-text-muted">
                     {job.name} • {formatDateRange(job.startDate, job.endDate)} • {job.location}
                   </p>
-                  {job.summary && (
-                    <p className="mt-2 text-text-muted italic">{job.summary}</p>
-                  )}
+                  {job.summary && <p className="mt-2 text-text-muted italic">{job.summary}</p>}
                   {job.highlights && job.highlights.length > 0 && (
                     <ul className="mt-2 space-y-1 text-text-muted list-disc list-inside ml-4">
                       {job.highlights.map((highlight, idx) => (
@@ -244,9 +232,7 @@ export default function Resume() {
                     {edu.institution} • {formatDateRange(edu.startDate, edu.endDate)}
                     {edu.location && ` • ${edu.location}`}
                   </p>
-                  {edu.summary && (
-                    <p className="mt-1 text-text-muted text-sm italic">{edu.summary}</p>
-                  )}
+                  {edu.summary && <p className="mt-1 text-text-muted text-sm italic">{edu.summary}</p>}
                 </div>
               ))}
             </div>
@@ -308,6 +294,13 @@ export default function Resume() {
             print-color-adjust: exact;
             -webkit-print-color-adjust: exact;
           }
+          /* Hide header and footer */
+          header,
+          footer {
+            display: none !important;
+          }
+          /* Hide navigation and other layout elements */
+          nav,
           .print\\:hidden {
             display: none !important;
           }
@@ -319,6 +312,16 @@ export default function Resume() {
           }
           .print\\:text-foreground {
             color: #0B1220 !important;
+          }
+          /* Ensure main content takes full width */
+          main {
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          /* Remove any container padding/margins that might interfere */
+          .container {
+            max-width: 100% !important;
+            padding: 0 !important;
           }
         }
       `}</style>

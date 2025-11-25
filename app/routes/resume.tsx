@@ -209,7 +209,7 @@ export default function Resume() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {skills.map((skill, index) => (
                 <div key={index}>
-                  <h3 className="font-semibold mb-2">
+                  <h3 className="text-xl font-semibold mb-2">
                     {skill.name}
                     {skill.level && <span className="text-text-muted text-sm font-normal ml-2">({skill.level})</span>}
                   </h3>
@@ -225,7 +225,7 @@ export default function Resume() {
             <div className="space-y-4">
               {education.map((edu, index) => (
                 <div key={index}>
-                  <h3 className="font-semibold">
+                  <h3 className="text-xl font-semibold">
                     {edu.studyType} in {edu.area}
                   </h3>
                   <p className="text-text-muted">

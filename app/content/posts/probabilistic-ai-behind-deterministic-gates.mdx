@@ -1,0 +1,68 @@
+---
+title: "Probabilistic AI behind deterministic gates"
+description: "LLMs are probabilistic by design; trustworthy systems are deterministic at the boundary. The architecture rule that makes agentic output admissible."
+date: "2026-02-19"
+tags: ["Agentic AI", "Architecture"]
+draft: false
+readingTime: 9
+cover: "/images/optical-neural-network.jpg"
+---
+
+# Probabilistic AI behind deterministic gates
+
+Every serious conversation about AI in production eventually arrives at the same architectural rule, usually right after an incident: keep the probabilistic parts behind deterministic gates.
+
+Large language models are probabilistic by design. That is not a flaw to be patched; it is the mechanism. Sampling over a distribution is where the generalization comes from, the synthesis, the ability to handle inputs nobody enumerated in advance. It is also why the same prompt can produce different outputs, and why a model's confidence has no reliable relationship to its correctness. You do not fix this by prompting harder. You fix it by deciding, architecturally, what is allowed to depend on it.
+
+## The turtle problem
+
+The industry's first instinct was to judge LLM output with another LLM. As a filter, that is genuinely useful; as a foundation, it is turtles all the way down. A probabilistic judge over a probabilistic generator gives you a system that is probabilistic end to end, just with better marketing. Somewhere in the stack there has to be a floor that does not move: a layer whose behavior is a pure function of its inputs, where the same artifact gets the same verdict every time, on every machine.
+
+The rule I build by: **a probabilistic core may propose; only a deterministic shell may admit.**
+
+## What deterministic actually means here
+
+Determinism gets thrown around loosely, so here is the inventory from my own stack, concretely:
+
+- **Pure functions of inputs.** The spec compiler at the heart of my platform produces a byte-identical registry from the same committed inputs, on every platform; CI proves it across five target triples. Ground truth is compiled, not asserted.
+- **Content hashes.** Specifications are frozen by hash. Pipeline artifacts are hashed per stage. The governance certificate that binds them carries its own SHA-256 over the canonical bytes. Nothing depends on anyone's memory of what was agreed.
+- **Exit codes, not opinions.** The coupling gate that refuses spec/code drift returns pass or fail with a specific diagnostic. It does not feel cautiously optimistic about a diff.
+- **Schemas at every boundary.** Tool calls and structured outputs are validated against declared schemas; malformed output is retried or refused, never interpreted charitably.
+- **Independent verification.** The certificate verifier deliberately does not trust the system that produced the certificate. Tamper with one artifact and verification fails, offline, with a named mismatch.
+
+Notice what is absent from that list: any judgement about whether the model is smart, aligned, or well-intentioned. Gates judge artifacts, not intentions. The gate does not care why the model wrote what it wrote; it checks the artifact against law that existed before the artifact did.
+
+## This trick is older than AI
+
+None of this is novel, which is exactly why I trust it. Digital logic is the same move played on physics: transistors are noisy, analog, statistical devices, and we build reliable computers out of them by imposing thresholds; below this voltage is zero, above that is one, and the noise in between is simply not allowed to propagate. The components are probabilistic; the system is deterministic, because the boundary is.
+
+Compilers played the same trick on humans before AI was a customer. The type checker has never trusted my intentions either. It checks what I wrote against rules that do not bend, and software got dramatically more reliable when we stopped treating that as an insult.
+
+LLMs are just the newest noisy component. The discipline is the same: decide where the thresholds live, and refuse to let the noise cross them.
+
+## Where teams get it wrong
+
+Three failure shapes show up over and over:
+
+1. **Gating with vibes.** A human skims agent diffs and approves the plausible ones. That is a probabilistic shell around a probabilistic core; the human is sampling too, and at fleet scale the sampling rate rounds to zero.
+2. **Gating the wrong layer.** Linters and formatters pass while behavior drifts away from anything anyone intended. Gates must bind output to *intent*, which means intent has to exist as a machine-checkable artifact: a spec, a schema, a contract; not a vibe in a chat scrollback.
+3. **Gates that can be talked out of it.** If the agent can edit the gate's configuration, or amend the spec to retroactively bless the diff it just produced, you have built a suggestion, not a gate. The gate's authority has to live outside the territory agents are allowed to write. In my platform, an instruction that would engineer drift between spec and code is itself a refusable event, and the gate's own config is hashed and governed like everything else.
+
+## A practical checklist
+
+If you are introducing agents into a system that matters, walk the boundary and ask:
+
+- Does every agent-facing boundary have a schema?
+- Is ground truth compiled deterministically from human-authored sources, or merely asserted in a wiki?
+- Are agreements frozen by hash: requirements, specs, artifacts?
+- Is admission exit-code shaped, with diagnostics, rather than judgement shaped?
+- Can the verifier run without trusting the producer?
+- Is the gate's own configuration inside or outside the agents' writable territory?
+
+Each "no" is a place where probability leaks into your trust chain.
+
+## The point is not deterministic AI
+
+You cannot make the model deterministic without destroying the thing you bought it for, and you should not try. The probabilistic core is the engine; the deterministic shell is the transmission, the brakes, and the seatbelt. One gives you leverage; the other gives you the right to use that leverage on things that matter.
+
+The point is not to make AI deterministic. The point is to make *trust* deterministic.

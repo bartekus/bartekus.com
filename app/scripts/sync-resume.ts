@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 
 const RESUME_URL =
-  "https://gist.githubusercontent.com/bartekus/d2f989f89d590ad0e661245ca18cd0df/raw/90858b148b5d88ddddae8867866f009961d384ae/resume.json";
+  "https://gist.githubusercontent.com/bartekus/d2f989f89d590ad0e661245ca18cd0df/raw/6718bfa2bd9a6c65cbfdb381d40e792d6493545d/resume.json";
 
 async function main() {
   console.log("Syncing resume.json from gist...");

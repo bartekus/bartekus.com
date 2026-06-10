@@ -1,0 +1,106 @@
+---
+title: "Architecting intent vs vibe coding"
+description: "AI can write the code; the unsolved problem is trusting what it wrote. Why review doesn't scale, and how specs-as-law makes agentic output governable."
+date: "2026-06-10"
+tags: ["Agentic AI", "Governance"]
+draft: false
+readingTime: 11
+cover: "/images/edge-of-future.jpg"
+---
+
+# Architecting intent vs vibe coding
+
+There are two ways to build software with AI agents. The first is vibe coding: describe what you want, accept what comes back, iterate until it feels right. The second barely has a name yet. I call it architecting intent, and I have spent the past year running it at full scale: one human, a fleet of agents, and a codebase governed by two hundred specifications.
+
+This essay is about why the first approach stops working the moment software matters, and what the second one looks like in practice.
+
+## The trust problem
+
+AI can write the code. That part is settled; the models are good and getting better, and arguing about it is a waste of everyone's time.
+
+The unsolved problem is trusting what it wrote.
+
+Here is the uncomfortable arithmetic: an agent can produce code faster than any human can read it, and a fleet of agents can produce code faster than any team can read it. When generation is effectively free, review becomes the constraint. A human will not review every line an agent produces; pretending otherwise just moves the bottleneck back to the human, and "we review everything carefully" becomes a fiction everyone politely maintains.
+
+So the question is not "can the model write it". The question is "can you stand behind it": in front of your users, your incident review, your auditor, your regulator.
+
+## What vibe coding actually is
+
+Let me be fair to vibe coding, because it is genuinely great at what it is for. For prototypes, demos, internal tools, and finding out what you actually want, there is nothing faster. I vibe code constantly.
+
+But look at its structure:
+
+- **Intent lives in conversation scrollback.** The reasoning that produced the code exists only in a chat session, and the session is ephemeral.
+- **The artifact is the only durable record.** Six weeks later, the code is all that remains; the why is gone.
+- **Correctness is judged by vibes.** It looks right, it runs, it ships. There is no mechanical relationship between what you meant and what exists.
+
+Three failure modes follow directly, and each one compounds:
+
+1. **Intent evaporates.** Nobody can say why the code is the way it is, because the prompt that produced it was never a first-class artifact.
+2. **Drift is invisible.** Each accepted diff is locally plausible; globally, the system slides away from anything anyone intended, and no gate notices, because there is nothing to drift *from*.
+3. **Accountability has no artifact.** When someone asks "who authorized this behavior?", scrollback is not an answer. Not for an auditor, not for a regulator, not for the engineer holding the pager.
+
+None of this matters for a throwaway script. All of it matters the moment software carries liability: money, identity, infrastructure, other people's data.
+
+## Inverting the relationship
+
+Architecting intent inverts the relationship between human and output. The honest move is to stop reviewing output and start constraining intent.
+
+Intent becomes a requirement. The requirement defines a spec. The spec is law.
+
+Concretely, in my own work:
+
+- **Specs are durable, typed artifacts.** Every feature begins as a markdown specification with typed frontmatter, compiled into a deterministic registry: same inputs, byte-identical outputs, on every platform. The spec corpus is not documentation; it is a queryable system of record.
+- **Every spec declares what it owns.** Files, sections within files, individual symbols. Ownership relationships are typed: established, extended, refined, superseded, amended, co-authored, constrained.
+- **Authority is derived, not asserted.** "Who currently governs this function" is a query against a relationship graph, not an archaeology project through git blame and tribal memory.
+- **Drift is a merge failure, not a code smell.** A PR-time gate refuses code that changes governed paths unless the owning spec changes with it. The relationship between intent and implementation is enforced by machinery, not vigilance.
+
+Under this model the human's job changes shape. You are no longer the reviewer of everything; you are the author of the contracts, the adjudicator of conflicts the gates surface, and the approver of the irreversible. The agents' job is to comply.
+
+A design principle I hold without apology: treat all agentic output as hostile by default. Agents earn passage by surviving the gates, not by appealing to trust.
+
+## Human gating, placed at the right altitude
+
+The standard objection: "so humans review nothing? That sounds worse."
+
+No. Humans gate everything that matters; they just stop gating at the wrong altitude. Reviewing every diff is the wrong altitude twice over: it does not scale, and it inspects the output rather than the intent. The right altitude looks like this:
+
+- **Contracts, before work begins.** The spec is where human judgement is concentrated, because it is the highest-leverage artifact in the system.
+- **Checkpoints at phase boundaries.** Multi-step work halts at declared points and waits for explicit approval.
+- **Destructive and irreversible operations.** Always a human decision, never an agent default.
+- **Conflicts the machinery surfaces.** When an instruction would force the spec and the code to diverge, the system halts and a human resolves it.
+
+Everything between those gates is enforced mechanically. This is also what makes parallel agents safe: agents working on disjoint territory cannot collide, because ownership is declared and disjointness is provable. Where territory is genuinely shared, it is shared section-by-section with named anchors. Parallel agents do not need to cooperate; cooperation is a property of the substrate, not a virtue the agents have to share.
+
+## What OWASP ASI 2026 taught me
+
+When the OWASP Agentic Security Initiative's 2026 controls took shape, I mapped my own platform against them, control by control. The mechanical output is a deterministic control-to-spec traceability artifact, generated by one CLI invocation. The lesson was in the shape of the mapping.
+
+The controls kept landing on the same small set of mechanisms: scoped tools, policy gates, audit chains, proof of what ran and why. Agentic security and agentic governance turned out not to be adjacent concerns; they are the same mechanism viewed from two directions. A system that can prove which spec authorized which action has already done most of the security work. A system that cannot has nothing to bolt security onto, because the gap is not a missing scanner; it is ungoverned authority.
+
+That reframing is, I think, the most useful thing I can offer anyone building agentic systems right now: your security posture is downstream of your governance model, not the other way around.
+
+## The receipts
+
+This is not a thought experiment. The platform this method built is real and the numbers are checkable:
+
+- Two hundred specifications, every one compiled into a deterministic registry and read through typed consumer tooling, never ad-hoc parsing.
+- Every crate and package declares its owning spec in its own manifest; the spec-to-code map is a generated artifact, not a wiki page.
+- A coupling gate runs on every pull request; code that drifts from its owning spec does not merge.
+- Every pipeline run emits a self-authenticating governance certificate: requirements hash, frozen build-spec hash, per-stage artifact hashes, and the certificate's own SHA-256. The verifier deliberately does not trust the system that produced the certificate; tamper with one artifact and verification fails with a specific diagnostic.
+
+And the detail that matters most: this was built by one person directing agents. Not because the agents are unusually clever, but because the substrate makes their output governable. That is the entire thesis in one sentence.
+
+## If you want this
+
+I lifted the governance spine out of my platform and released it standalone as [spec-spine](https://github.com/bartekus/spec-spine): a typed, hash-verifiable authority ledger over a markdown spec corpus, written in Rust, Apache-2.0 licensed, installable from crates.io or npm, with deterministic, byte-identical output across five platforms.
+
+It also governs itself: its own coupling gate runs against its own spec corpus in CI, because a spec-spine that is not itself spec-governed would be hypocritical.
+
+## Where this lands
+
+Vibe code your prototypes; sincerely, it is the right tool for discovering what you want. But when the software has to carry weight, the question changes from "can the model write it" to "can you stand behind it", and vibes do not answer that question. Contracts do.
+
+The human authors the law. The agents comply with it. The spine makes non-compliance impossible to merge.
+
+That is architecting intent. It is not slower than vibe coding; it is the version of fast you can defend.

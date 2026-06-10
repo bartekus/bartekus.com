@@ -7,6 +7,7 @@ import { PostCard } from "~/components/ui/post-card";
 import { SectionHeader } from "~/components/ui/section-header";
 import { SEO } from "~/components/seo/SEO";
 import { siteConfig } from "~/config";
+import { postSummaries } from "~/lib/posts";
 
 export default function Home() {
   const shouldReduceMotion = useReducedMotion();
@@ -63,10 +64,10 @@ export default function Home() {
             <div className="mb-4 p-3 rounded-lg bg-primary/10 w-fit">
               <Shield className="h-6 w-6 text-primary" aria-hidden="true" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Identity at scale</h2>
+            <h2 className="text-xl font-semibold mb-2">Governed agentic delivery</h2>
             <p className="text-text-muted">
-              Deep experience with OIDC, SSI, and DID. Built identity verification platforms processing thousands of verifications
-              daily.
+              Creator of spec-spine and open-agentic-platform: specs as law, drift refused at merge, and audit chains an auditor
+              can verify independently.
             </p>
           </motion.div>
 
@@ -81,10 +82,10 @@ export default function Home() {
             <div className="mb-4 p-3 rounded-lg bg-accent/10 w-fit">
               <Code className="h-6 w-6 text-accent" aria-hidden="true" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Local-first developer platforms</h2>
+            <h2 className="text-xl font-semibold mb-2">Trust infrastructure</h2>
             <p className="text-text-muted">
-              Architected complete dev platforms using Encore.ts, Docker, Traefik, Stripe, and Logto—all deployable on a single
-              droplet.
+              A decade of digital identity (OIDC, SSI, DID) and regulated fintech. Identity asked whether people can be trusted;
+              governance asks the same of machine-generated change.
             </p>
           </motion.div>
 
@@ -99,12 +100,10 @@ export default function Home() {
             <div className="mb-4 p-3 rounded-lg bg-success/10 w-fit">
               <Sparkles className="h-6 w-6 text-success" aria-hidden="true" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Designing Pension.you</h2>
+            <h2 className="text-xl font-semibold mb-2">Typed contracts everywhere</h2>
             <p className="text-text-muted">
-              Building a private pension platform with life insurance integration. Focused on fraud resilience and regulatory
-              compliance. {/*<Link to="/pension-you" className="text-primary hover:underline">*/}
-              {/*  Learn more →*/}
-              {/*</Link>*/}
+              Encore.ts backends instead of Express, Rust toolchains, deterministic compilers: systems that prove what they claim
+              instead of asking for trust.
             </p>
           </motion.div>
         </div>
@@ -116,33 +115,20 @@ export default function Home() {
           <SectionHeader
             eyebrow="Blog"
             title="Latest Writing"
-            kicker="Thoughts on systems design, identity, infrastructure, and AI-assisted development."
+            kicker="Thoughts on agentic governance, systems design, identity, and trust infrastructure."
           />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <PostCard
-              title="Design principles for resilient systems"
-              description="Simplicity, observability, blast radius, idempotency, and graceful degradation."
-              date="2024-01-15"
-              readingTime={8}
-              tags={["Systems Design", "Architecture"]}
-              slug="design-principles-resilient-systems"
-            />
-            <PostCard
-              title="Local-first developer platforms on a single droplet"
-              description="Building complete dev environments with Encore.ts, Traefik, Docker Compose, and more."
-              date="2024-01-10"
-              readingTime={12}
-              tags={["DevOps", "Infrastructure"]}
-              slug="local-first-developer-platforms"
-            />
-            <PostCard
-              title="Identity in practice: OIDC, SSI, and DID"
-              description="Practical guidance on when to use each identity standard, without the hype."
-              date="2024-01-05"
-              readingTime={10}
-              tags={["Identity", "Security"]}
-              slug="identity-in-practice"
-            />
+            {postSummaries.slice(0, 3).map((post) => (
+              <PostCard
+                key={post.slug}
+                title={post.title}
+                description={post.description}
+                date={post.date}
+                readingTime={post.readingTime}
+                tags={post.tags}
+                slug={post.slug}
+              />
+            ))}
           </div>
           <div className="text-center mt-12">
             <Button asChild variant="outline" size="lg">

@@ -20,12 +20,13 @@ export default function Press() {
           <h2 className="text-2xl font-semibold mb-6">Short Bio (120 words)</h2>
           <div className="p-6 rounded-lg bg-surface-2 border border-border">
             <p className="text-text-muted leading-relaxed">
-              Bartek Kus is a senior software engineer and founder based in Edmonton, Canada. With over 10 years of experience, he
-              specializes in building scalable cloud-native systems, identity verification platforms, and developer infrastructure.
-              Bart has architected identity verification systems processing thousands of daily verifications at Oliu.id and designed
-              local-first developer platforms using Encore.ts, Docker, and Traefik. He's currently building Pension.you, a private
-              pension platform with integrated life insurance. Bart writes about resilient systems design, digital identity, and
-              AI-assisted development. His work focuses on simplicity, observability, and building systems that fail gracefully.
+              Bartek Kus is a systems architect based in Edmonton, Canada, working on the trust problem in AI-native software
+              delivery: AI can write the code; the unsolved problem is trusting what it wrote. He is the creator of spec-spine, an
+              open-source governance engine that refuses code drifting from its owning spec at merge time, and open-agentic-platform,
+              a governed control plane where every agent action reconciles to the specification that authorised it. His earlier work
+              includes identity verification infrastructure at Oliu.id (OIDC, SSI, DID) and a decade of platform engineering for
+              regulated industries. Bartek writes about architecting intent, deterministic gating of probabilistic systems, and
+              trust infrastructure.
             </p>
           </div>
         </section>
@@ -44,11 +45,11 @@ export default function Press() {
             </div>
             <div className="p-6 rounded-lg border border-border bg-card">
               <h3 className="font-semibold mb-2 text-primary">Specialties</h3>
-              <p className="text-text-muted">Identity Systems, Cloud Architecture, DevOps</p>
+              <p className="text-text-muted">Agentic Governance, Spec-Driven Development, Identity Systems</p>
             </div>
             <div className="p-6 rounded-lg border border-border bg-card">
-              <h3 className="font-semibold mb-2 text-primary">Current Project</h3>
-              <p className="text-text-muted">Pension.you (Private Pension Platform)</p>
+              <h3 className="font-semibold mb-2 text-primary">Current Projects</h3>
+              <p className="text-text-muted">spec-spine and open-agentic-platform</p>
             </div>
           </div>
         </section>
@@ -91,7 +92,15 @@ export default function Press() {
           <ul className="space-y-3 text-text-muted">
             <li className="flex items-start">
               <span className="text-primary mr-2">•</span>
-              <span>Building resilient distributed systems</span>
+              <span>Architecting intent vs vibe coding: governing agentic software delivery</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-primary mr-2">•</span>
+              <span>Keeping probabilistic AI behind deterministic gates</span>
+            </li>
+            <li className="flex items-start">
+              <span className="text-primary mr-2">•</span>
+              <span>OWASP ASI 2026 in practice: mapping agentic security controls to a real platform</span>
             </li>
             <li className="flex items-start">
               <span className="text-primary mr-2">•</span>
@@ -99,15 +108,7 @@ export default function Press() {
             </li>
             <li className="flex items-start">
               <span className="text-primary mr-2">•</span>
-              <span>Local-first developer infrastructure</span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-primary mr-2">•</span>
-              <span>AI-assisted development workflows</span>
-            </li>
-            <li className="flex items-start">
-              <span className="text-primary mr-2">•</span>
-              <span>FinTech compliance and fraud prevention</span>
+              <span>Local-first execution planes for AI-native development</span>
             </li>
           </ul>
         </section>

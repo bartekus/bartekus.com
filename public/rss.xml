@@ -6,15 +6,45 @@
     <link>https://bartekus.com</link>
     <atom:link href="https://bartekus.com/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
-    <lastBuildDate>Wed, 25 Mar 2026 21:22:45 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2026 20:06:56 GMT</lastBuildDate>
     <managingEditor>bartekus@gmail.com (Bartek Kus)</managingEditor>
     <webMaster>bartekus@gmail.com (Bartek Kus)</webMaster>
+    <item>
+      <title>Architecting intent vs vibe coding</title>
+      <description>AI can write the code; the unsolved problem is trusting what it wrote. Why review doesn&apos;t scale, and how specs-as-law makes agentic output governable.</description>
+      <link>https://bartekus.com/writing/architecting-intent-vs-vibe-coding</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/architecting-intent-vs-vibe-coding</guid>
+      <pubDate>Wed, 10 Jun 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Governance</category>
+    </item>
+    <item>
+      <title>Probabilistic AI behind deterministic gates</title>
+      <description>LLMs are probabilistic by design; trustworthy systems are deterministic at the boundary. The architecture rule that makes agentic output admissible.</description>
+      <link>https://bartekus.com/writing/probabilistic-ai-behind-deterministic-gates</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/probabilistic-ai-behind-deterministic-gates</guid>
+      <pubDate>Thu, 19 Feb 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Architecture</category>
+    </item>
+    <item>
+      <title>Local-first, now governed</title>
+      <description>The local-first thesis grew a governance layer: why the agentic execution plane belongs on your machine, with no SaaS in the trust path.</description>
+      <link>https://bartekus.com/writing/local-first-now-governed</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/local-first-now-governed</guid>
+      <pubDate>Thu, 16 Oct 2025 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Local-First</category>
+      <category>Governance</category>
+    </item>
     <item>
       <title>Identity in practice: OIDC, SSI, and DID without the hype</title>
       <description>Practical guidance on when to use each identity standard, what to avoid, and links to authoritative specs.</description>
       <link>https://bartekus.com/writing/identity-in-practice</link>
       <guid isPermaLink="true">https://bartekus.com/writing/identity-in-practice</guid>
-      <pubDate>Wed, 01 May 2024 00:00:00 GMT</pubDate>
+      <pubDate>Thu, 01 May 2025 00:00:00 GMT</pubDate>
       <author>bartekus@gmail.com (Bartek Kus)</author>
       <category>Identity</category>
       <category>Security</category>
@@ -24,40 +54,20 @@
       <description>Exploring simplicity, observability, blast radius, idempotency, and graceful degradation in distributed systems.</description>
       <link>https://bartekus.com/writing/design-principles-resilient-systems</link>
       <guid isPermaLink="true">https://bartekus.com/writing/design-principles-resilient-systems</guid>
-      <pubDate>Mon, 15 Jan 2024 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 15 Jan 2025 00:00:00 GMT</pubDate>
       <author>bartekus@gmail.com (Bartek Kus)</author>
       <category>Systems Design</category>
       <category>Architecture</category>
-    </item>
-    <item>
-      <title>Local-first developer platforms on a single droplet</title>
-      <description>Building complete dev environments with Encore.ts, Traefik, Docker Compose, GitHub Actions, Stripe, and Logto.</description>
-      <link>https://bartekus.com/writing/local-first-developer-platforms</link>
-      <guid isPermaLink="true">https://bartekus.com/writing/local-first-developer-platforms</guid>
-      <pubDate>Wed, 10 Jan 2024 00:00:00 GMT</pubDate>
-      <author>bartekus@gmail.com (Bartek Kus)</author>
-      <category>DevOps</category>
-      <category>Infrastructure</category>
     </item>
     <item>
       <title>RAG beyond the demo: failure modes and patterns</title>
       <description>Exploring indexing strategies, chunking approaches, evaluation frameworks, observability, and guardrails for production RAG systems.</description>
       <link>https://bartekus.com/writing/rag-beyond-demo</link>
       <guid isPermaLink="true">https://bartekus.com/writing/rag-beyond-demo</guid>
-      <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
+      <pubDate>Sat, 28 Dec 2024 00:00:00 GMT</pubDate>
       <author>bartekus@gmail.com (Bartek Kus)</author>
       <category>AI</category>
       <category>RAG</category>
-    </item>
-    <item>
-      <title>Pension.you, briefly</title>
-      <description>A simple, human explanation of private pensions with life insurance integration and why transparency matters.</description>
-      <link>https://bartekus.com/writing/pension-you-briefly</link>
-      <guid isPermaLink="true">https://bartekus.com/writing/pension-you-briefly</guid>
-      <pubDate>Wed, 20 Dec 2023 00:00:00 GMT</pubDate>
-      <author>bartekus@gmail.com (Bartek Kus)</author>
-      <category>FinTech</category>
-      <category>Product</category>
     </item>
   </channel>
 </rss>

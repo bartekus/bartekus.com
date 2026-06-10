@@ -7,23 +7,25 @@ export default function Now() {
       <SEO title="Now" description="What Bartek Kus is currently working on and focused on." path="/now" />
 
       <div className="container px-4 py-20 max-w-3xl mx-auto">
-        <SectionHeader title="What I'm Doing Now" kicker="Last updated: January 2024" />
+        <SectionHeader title="What I'm Doing Now" kicker="Last updated: June 2026" />
 
         <div className="prose prose-lg max-w-none space-y-8 text-text-muted">
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Current Focus</h2>
             <ul className="list-disc list-inside space-y-3 ml-4">
               <li>
-                <strong className="text-foreground">Pension.you</strong> - Building the MVP for a private pension platform with
-                integrated life insurance. Currently focused on regulatory compliance automation and fraud detection systems.
+                <strong className="text-foreground">spec-spine</strong> - Just shipped v0.1.0: a standalone, Apache-2.0 release of
+                the governance spine as a Rust library and CLI, on crates.io and npm with prebuilt binaries for five platforms. Now
+                focused on the adoption guide, early adopter feedback, and language bindings.
               </li>
               <li>
-                <strong className="text-foreground">Identity Systems Research</strong> - Exploring practical applications of SSI and
-                DIDs beyond the hype. Writing detailed guides on OIDC implementations.
+                <strong className="text-foreground">open-agentic-platform</strong> - Deep in the factory governance envelope:
+                signing authority, run-grants, and certificate countersigning. The spec corpus just crossed 200 specifications,
+                every one compiled, gated, and traceable to code.
               </li>
               <li>
-                <strong className="text-foreground">Local-First Infrastructure</strong> - Documenting patterns for deploying complete
-                dev environments on single servers using Encore.ts, Docker, and Traefik.
+                <strong className="text-foreground">OWASP ASI 2026</strong> - Maintaining the control-to-spec traceability mapping
+                and writing about what mapping a real platform against the agentic security controls taught me.
               </li>
             </ul>
           </section>
@@ -31,9 +33,9 @@ export default function Now() {
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Learning</h2>
             <ul className="list-disc list-inside space-y-3 ml-4">
-              <li>RAG system failure modes and mitigation strategies</li>
-              <li>Canadian pension regulations and compliance requirements</li>
-              <li>Advanced TypeScript patterns for large-scale applications</li>
+              <li>Multi-agent orchestration at scale: worktree isolation, checkpoints, adversarial verification</li>
+              <li>Deterministic release engineering: byte-identical artifacts across five target triples</li>
+              <li>Embedded Raft consensus (hiqlite) for single-binary durable services</li>
             </ul>
           </section>
 

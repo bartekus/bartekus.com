@@ -1,7 +1,8 @@
 ---
 title: "Identity in practice: OIDC, SSI, and DID without the hype"
 description: "Practical guidance on when to use each identity standard, what to avoid, and links to authoritative specs."
-date: 2024-05-01
+date: "2025-05-01"
+updated: "2026-06-10"
 tags: ["Identity", "Security"]
 draft: false
 readingTime: 10
@@ -66,7 +67,7 @@ const claims = jwt.verify(idToken, publicKey, {
 
 - Don't use implicit flow (deprecated for security reasons)
 - Always verify `state` and `nonce` parameters
-- Validate tokens—never trust unverified JWTs
+- Validate tokens; never trust unverified JWTs
 - Use PKCE for mobile and SPA clients
 - Implement proper token refresh handling
 
@@ -105,7 +106,7 @@ SSI introduces:
 
 If you're building SSI today:
 - Use established frameworks (Aries, Veramo)
-- Plan for wallet UX carefully—most users don't understand keys
+- Plan for wallet UX carefully; most users don't understand keys
 - Implement social recovery from day one
 - Have a fallback authentication method
 - Budget extra dev time for edge cases
@@ -167,7 +168,7 @@ const isValid = await verifyCredential(credential, {
 Here's how to choose:
 
 **Need login for your app?**
-→ Use OIDC with an established provider (Auth0, Logto, Keycloak)
+→ Use OIDC with an established provider (Keycloak, Logto, Auth0); I run Rauthy in production and recommend it
 
 **Users need portable credentials?**
 → Consider SSI, but evaluate complexity vs. benefit
@@ -200,9 +201,11 @@ Most projects don't need SSI or DIDs. They need:
 
 OIDC gives you that today, with mature tooling and widespread support.
 
-SSI and DIDs are powerful for specific use cases—particularly portable credentials and privacy-preserving verification. But they're not magic, and they come with real complexity costs.
+SSI and DIDs are powerful for specific use cases, particularly portable credentials and privacy-preserving verification. But they're not magic, and they come with real complexity costs.
 
 Choose based on your actual requirements, not the hype cycle.
+
+An update from 2026: identity turned out to be the first layer of a longer arc. The question OIDC answers for people (who is this, and what may they do) is the question my governance work now answers for AI agents and the code they produce. Identity infrastructure that treats authority as something to be proven rather than assumed scales up surprisingly well; see [Architecting intent vs vibe coding](/writing/architecting-intent-vs-vibe-coding).
 
 ---
 

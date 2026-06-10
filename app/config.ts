@@ -1,15 +1,15 @@
 export const siteConfig = {
   brand: "BK",
-  title: "Bartek Kus - Pragmatic Full-Stack Engineer",
-  heading: "Pragmatic full-stack engineer bridging architecture and execution.",
+  title: "Bartek Kus - Architecting Intent for AI-Native Software",
+  heading: "Architecting intent: governance for AI-native software delivery.",
   description:
-    "10+ years building scalable cloud-native systems; high-performance backends; React and TypeScript frontends; DevOps and CI/CD; API design; digital identity and AI-assisted development.",
+    "AI can write the code; the unsolved problem is trusting what it wrote. I build the governance layer: specs as law, drift refused at merge, and audit chains a regulator can verify.",
   url: import.meta.env.VITE_SITE_URL || "https://bartekus.com",
   author: {
     name: "Bartek Kus",
     email: "bartekus@gmail.com",
     twitter: "@bartekus",
-    jobTitle: "Senior Software Engineer & Founder",
+    jobTitle: "Systems Architect",
     location: "Edmonton, Canada",
   },
   social: {

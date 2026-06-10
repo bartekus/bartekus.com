@@ -1,7 +1,8 @@
 ---
 title: "RAG beyond the demo: failure modes and patterns"
 description: "Exploring indexing strategies, chunking approaches, evaluation frameworks, observability, and guardrails for production RAG systems."
-date: "2023-12-28"
+date: "2024-12-28"
+updated: "2026-06-10"
 tags: ["AI", "RAG"]
 draft: false
 readingTime: 14
@@ -35,7 +36,7 @@ Your docs change. Your index doesn't. Users get outdated answers.
 
 ### Failure mode #2: Noisy context
 
-You index everything—changelogs, marketing fluff, legal boilerplate. Retrieval surfaces irrelevant matches.
+You index everything: changelogs, marketing fluff, legal boilerplate. Retrieval surfaces irrelevant matches.
 
 **Fix:**
 - Curate what gets indexed
@@ -362,6 +363,10 @@ A production RAG system needs:
 7. **Guardrails** - Input validation, output filtering, rate limits
 
 None of this is sexy. All of it is necessary.
+
+## The lesson that generalized
+
+Rereading this in 2026: everything above is a special case of a rule I now apply to every AI system I build: keep the probabilistic parts behind deterministic gates. Retrieval and generation are probabilistic; eval sets, guardrails, citations, and observability are the deterministic shell that makes their output admissible. The general form is written up in [Probabilistic AI behind deterministic gates](/writing/probabilistic-ai-behind-deterministic-gates).
 
 ## Resources
 

@@ -275,7 +275,7 @@ export default function Resume() {
                 {references.map((ref, index) => (
                   <div key={index}>
                     <p className="text-text-muted italic mb-1">"{ref.reference}"</p>
-                    <p className="text-text-muted text-sm">— {ref.name}</p>
+                    <p className="text-text-muted text-sm">{ref.name}</p>
                   </div>
                 ))}
               </div>

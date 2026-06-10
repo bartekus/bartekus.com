@@ -5,56 +5,11 @@ import { SectionHeader } from "~/components/ui/section-header";
 import { PostCard } from "~/components/ui/post-card";
 import { Input } from "~/components/ui/input";
 import { TagPill } from "~/components/ui/tag-pill";
+import { postSummaries } from "~/lib/posts";
 
-// Seed posts data
-const posts = [
-  {
-    title: "Design principles for resilient systems",
-    description: "Exploring simplicity, observability, blast radius, idempotency, and graceful degradation in distributed systems.",
-    date: "2024-01-15",
-    readingTime: 8,
-    tags: ["Systems Design", "Architecture"],
-    slug: "design-principles-resilient-systems",
-    cover: "/images/design-principles-hero.jpg",
-  },
-  {
-    title: "Local-first developer platforms on a single droplet",
-    description: "Building complete dev environments with Encore.ts, Traefik, Docker Compose, GitHub Actions, Stripe, and Logto.",
-    date: "2024-01-10",
-    readingTime: 12,
-    tags: ["DevOps", "Infrastructure"],
-    slug: "local-first-developer-platforms",
-    cover: "/images/local-first-platforms-hero.jpg",
-  },
-  {
-    title: "Identity in practice: OIDC, SSI, and DID without the hype",
-    description: "Practical guidance on when to use each identity standard, what to avoid, and links to authoritative specs.",
-    date: "2024-01-05",
-    readingTime: 10,
-    tags: ["Identity", "Security"],
-    slug: "identity-in-practice",
-    cover: "/images/identity-practice-hero.jpg",
-  },
-  {
-    title: "RAG beyond the demo: failure modes and patterns",
-    description:
-      "Exploring indexing strategies, chunking approaches, evaluation frameworks, observability, and guardrails for production RAG systems.",
-    date: "2023-12-28",
-    readingTime: 14,
-    tags: ["AI", "RAG"],
-    slug: "rag-beyond-demo",
-    cover: "/images/rag-beyond-demo-hero.jpg",
-  },
-  {
-    title: "Pension.you, briefly",
-    description: "A simple, human explanation of private pensions with life insurance integration and why transparency matters.",
-    date: "2023-12-20",
-    readingTime: 5,
-    tags: ["FinTech", "Product"],
-    slug: "pension-you-briefly",
-    cover: "/images/edge-of-future.jpg",
-  },
-];
+// Posts are derived from MDX frontmatter at build time; see app/lib/posts.ts.
+// Adding an .mdx file under app/content/posts/ is all it takes to publish.
+const posts = postSummaries;
 
 const allTags = Array.from(new Set(posts.flatMap((post) => post.tags))).sort();
 
@@ -77,7 +32,7 @@ export default function Writing() {
     <>
       <SEO
         title="Writing"
-        description="Articles about systems design, identity, infrastructure, AI-assisted development, and software engineering by Bartek Kus."
+        description="Articles about agentic governance, systems design, identity, and trust infrastructure by Bartek Kus."
         path="/writing"
       />
 
@@ -85,7 +40,7 @@ export default function Writing() {
         <SectionHeader
           eyebrow="Blog"
           title="Writing"
-          kicker="Thoughts on resilient systems, identity infrastructure, and building software that lasts."
+          kicker="Thoughts on agentic governance, resilient systems, and trust infrastructure."
         />
 
         {/* Search and Filter */}

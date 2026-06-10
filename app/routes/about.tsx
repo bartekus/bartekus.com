@@ -6,66 +6,101 @@ export default function About() {
     <>
       <SEO
         title="About"
-        description="Learn about Bartek Kus, a pragmatic full-stack engineer specializing in identity systems, cloud architecture, and AI-assisted development."
+        description="Bartek Kus is a systems architect working on governed agentic software delivery: spec-spine, open-agentic-platform, and a decade of trust infrastructure."
         path="/about"
       />
 
       <div className="container px-4 py-20 max-w-4xl mx-auto">
-        <SectionHeader title="About Me" kicker="A pragmatic engineer focused on resilient systems and sustainable architecture." />
+        <SectionHeader title="About Me" kicker="I work on the trust problem in AI-native software delivery." />
 
         <div className="prose prose-lg max-w-none space-y-6 text-text-muted">
           <p>
-            I'm Bartek Kus, a senior software engineer and founder based in Edmonton, Canada. Over the past decade, I've built
-            systems that need to work reliably at scale—from identity verification platforms processing thousands of verifications
-            daily to local-first developer infrastructures that run on a single server.
+            I'm Bartek Kus, a systems architect based in Edmonton, Canada. For over a decade I've built trust infrastructure:
+            identity verification at Oliu.id processing thousands of verifications daily, regulated fintech, and developer platforms
+            designed to keep working when their dependencies don't. All of that work now converges on a single question: can you
+            trust software you didn't write, produced faster than you can read it?
           </p>
 
-          <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">My Approach</h2>
+          <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">The Problem I Work On</h2>
           <p>
-            I believe in building systems that are simple to understand, easy to maintain, and resilient by design. Complexity is the
-            enemy of reliability. My work focuses on:
+            AI agents can generate code faster than any human can review it. The industry's default answer is vibe coding: prompt,
+            accept, iterate, and hope. Intent lives in chat scrollback, the artifact is the only durable record, and nobody can say
+            afterwards why the code is the way it is. That works for prototypes and fails the moment software carries liability.
           </p>
+          <p>
+            My answer is <strong>architecting intent</strong>: the human authors a contract, the contract compiles into
+            machine-verifiable truth, and code that drifts from its contract is refused at merge; mechanically, not by convention.
+            Humans gate the contracts, the approvals, and the irreversible boundaries. Machinery enforces everything in between.
+          </p>
+
+          <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">What I Build</h2>
+          <p>
+            <strong>
+              <a
+                href="https://github.com/bartekus/spec-spine"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                spec-spine
+              </a>
+            </strong>{" "}
+            is a typed, hash-verifiable authority ledger over a markdown spec corpus. Every spec declares the files, sections, and
+            symbols it owns; a PR-time coupling gate refuses code that drifts from its owning spec. It is deterministic to the byte
+            across five platforms, written in Rust, Apache-2.0 licensed, installable from crates.io and npm, and it governs itself:
+            its own coupling gate runs against its own spec corpus in CI.
+          </p>
+          <p>
+            <strong>
+              <a
+                href="https://github.com/stagecraft-ing/open-agentic-platform"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                open-agentic-platform
+              </a>
+            </strong>{" "}
+            is where those ideas run at full scale: a governed control plane for AI-native software delivery. Two hundred frozen
+            specs compile to a deterministic registry, every agent action reconciles to the spec that authorised it, and every
+            pipeline run emits a self-authenticating governance certificate an auditor can verify without trusting the system that
+            produced it. Mapping the platform against the OWASP ASI 2026 controls is a single CLI invocation.
+          </p>
+
+          <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">How I Work</h2>
           <ul className="list-disc list-inside space-y-2 ml-4">
-            <li>Clear architectural boundaries that limit blast radius</li>
-            <li>Observability built in from day one, not bolted on later</li>
-            <li>Idempotent operations that can be safely retried</li>
-            <li>Graceful degradation when dependencies fail</li>
-            <li>APIs designed for humans and machines alike</li>
+            <li>Specs before code: intent is written down, versioned, and hash-frozen before implementation begins</li>
+            <li>Gates over reviews: drift between contract and code fails CI, not a meeting</li>
+            <li>Humans gate contracts and irreversible boundaries; machines enforce everything in between</li>
+            <li>Determinism everywhere: same inputs, byte-identical artifacts, on every platform</li>
+            <li>Observability and audit are the substrate, not bolt-ons</li>
           </ul>
 
-          <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">What I Work On</h2>
+          <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">Why Encore.ts, Not Express</h2>
           <p>
-            Currently, I'm building <strong>Pension.you</strong>, a private pension platform with integrated life insurance. It's
-            designed to be fraud-resistant and compliant with Canadian financial regulations while remaining simple for users.
-          </p>
-          <p>
-            I've also worked extensively with digital identity systems—OIDC for authentication, SSI and DIDs for verifiable
-            credentials. At Oliu.id, I helped build identity verification infrastructure that balanced security with user experience.
-          </p>
-          <p>
-            I'm passionate about local-first development platforms that don't require massive cloud infrastructure. My{" "}
-            <strong>Encore.ts integration</strong> work demonstrates how to build complete environments with Docker, Traefik, Stripe,
-            and Logto—all deployable on a single VPS.
+            The same worldview decides my backend stack. Express asks every engineer to uphold conventions on every commit:
+            middleware order, validation, error shapes, documentation that may or may not match reality.{" "}
+            <a href="https://encore.dev" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+              Encore.ts
+            </a>{" "}
+            inverts that: declarative, type-safe API contracts that generate the infrastructure, the clients, and the documentation
+            from a single source of truth. Contracts a machine can verify beat conventions a human must remember; that holds for
+            agent governance, and it holds just as well for a request handler.
           </p>
 
           <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">Beyond Code</h2>
           <p>
-            I'm exploring how AI can augment development workflows without replacing human judgment. I experiment with RAG systems,
-            LLM-assisted code generation, and developer tools that reduce cognitive load.
-          </p>
-          <p>
-            When I'm not writing code, I write about systems design, infrastructure patterns, and practical approaches to software
-            architecture. You can find my writing in the{" "}
+            I write about agentic governance, systems design, and trust infrastructure in the{" "}
             <a href="/writing" className="text-primary hover:underline">
               blog section
             </a>
-            .
+            ; the place to start is "Architecting intent vs vibe coding".
           </p>
 
           <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">Let's Connect</h2>
           <p>
-            I'm always interested in conversations about resilient systems, identity infrastructure, or local-first architectures.
-            Reach out via{" "}
+            I'm always interested in conversations about governed agentic delivery, spec-driven development, or identity
+            infrastructure. Reach out via{" "}
             <a href="mailto:bartekus@gmail.com" className="text-primary hover:underline">
               email
             </a>{" "}

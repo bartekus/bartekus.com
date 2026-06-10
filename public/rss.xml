@@ -6,7 +6,7 @@
     <link>https://bartekus.com</link>
     <atom:link href="https://bartekus.com/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
-    <lastBuildDate>Wed, 10 Jun 2026 23:00:38 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2026 23:46:12 GMT</lastBuildDate>
     <managingEditor>bartekus@gmail.com (Bartek Kus)</managingEditor>
     <webMaster>bartekus@gmail.com (Bartek Kus)</webMaster>
     <item>
@@ -31,7 +31,7 @@
     </item>
     <item>
       <title>Inside spec-spine: a typed authority ledger over markdown</title>
-      <description>The governance spine I lifted out of my platform and open-sourced: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</description>
+      <description>The governance spine underneath my platform: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</description>
       <link>https://bartekus.com/writing/inside-spec-spine</link>
       <guid isPermaLink="true">https://bartekus.com/writing/inside-spec-spine</guid>
       <pubDate>Wed, 15 Apr 2026 00:00:00 GMT</pubDate>

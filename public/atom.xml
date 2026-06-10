@@ -5,7 +5,7 @@
   <link href="https://bartekus.com/atom.xml" rel="self" />
   <link href="https://bartekus.com" />
   <id>https://bartekus.com/</id>
-  <updated>2026-06-10T23:00:38.268Z</updated>
+  <updated>2026-06-10T23:46:12.082Z</updated>
   <author>
     <name>Bartek Kus</name>
     <email>bartekus@gmail.com</email>
@@ -42,9 +42,9 @@
     <title>Inside spec-spine: a typed authority ledger over markdown</title>
     <link href="https://bartekus.com/writing/inside-spec-spine" />
     <id>https://bartekus.com/writing/inside-spec-spine</id>
-    <updated>2026-04-15T00:00:00.000Z</updated>
+    <updated>2026-06-10T00:00:00.000Z</updated>
     <published>2026-04-15T00:00:00.000Z</published>
-    <summary>The governance spine I lifted out of my platform and open-sourced: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</summary>
+    <summary>The governance spine underneath my platform: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</summary>
     <author>
       <name>Bartek Kus</name>
       <email>bartekus@gmail.com</email>
@@ -56,7 +56,7 @@
     <title>Reading OWASP&apos;s Agentic Top 10 against a real platform</title>
     <link href="https://bartekus.com/writing/owasp-agentic-top-10-against-a-real-platform" />
     <id>https://bartekus.com/writing/owasp-agentic-top-10-against-a-real-platform</id>
-    <updated>2026-03-15T00:00:00.000Z</updated>
+    <updated>2026-06-10T00:00:00.000Z</updated>
     <published>2026-03-15T00:00:00.000Z</published>
     <summary>I mapped the OWASP ASI 2026 entries onto open-agentic-platform, control by control. The exercise kept landing on the same small set of governance mechanisms, and that is the finding.</summary>
     <author>

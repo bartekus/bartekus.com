@@ -1,0 +1,70 @@
+---
+title: "Production in the dev loop: Hetzner, Flux, and a read-only MCP"
+description: "My Kubernetes cluster behaves like an extension of local development: the agent can see everything and touch nothing, and the only write path is git."
+date: "2026-02-15"
+tags: ["Kubernetes", "Local-First"]
+draft: false
+readingTime: 9
+cover: "/images/global-network.jpg"
+---
+
+# Production in the dev loop: Hetzner, Flux, and a read-only MCP
+
+There is a window on my laptop through which an AI agent watches a production Kubernetes cluster. It reads pod status, deployment manifests, events, logs, resource pressure. It cannot delete a pod, scale a deployment, or apply a manifest; not because it promises to behave, but because every path that could mutate the cluster is closed at a layer the agent does not control.
+
+This post is about that arrangement: a deliberately small Hetzner cluster, a GitOps write path, and a read-only MCP server, composing into something I did not quite expect when I set it out: production stopped being a separate world and became an extension of local development.
+
+## The cluster: small on purpose
+
+The cluster is two Hetzner Cloud machines in Nuremberg: one control-plane node and one worker, provisioned by the excellent [hetzner-k3s](https://github.com/vitobotta/hetzner-k3s) from a single declarative `cluster.yaml` (the K3s version pinned in the same file). On it run the platform services of [open-agentic-platform](https://github.com/bartekus): an Encore.ts governance service, a Rust deployment orchestrator, a self-hosted OIDC provider (Rauthy), ingress, cert-manager, and the usual supporting cast.
+
+The point is not scale; the point is *price of realism*. Two modest instances cost less per month than most teams spend on a single observability seat, and that changes the economics of development. When prod-shaped infrastructure is this cheap, you stop maintaining an elaborate local simulation of production and start treating the real thing as part of the everyday loop: real TLS, real OIDC flows, real resource limits, real failure modes.
+
+## The write path: git, and only git
+
+Nothing administers this cluster imperatively. Flux v2 runs in-cluster and continuously reconciles a directory in the same monorepo as everything else: `platform/gitops/clusters/hetzner-prod/`. HelmReleases for the infrastructure tier, raw manifests for certificates and issuers, SOPS-encrypted secrets with age keys. The reconciliation tree is explicitly ordered (the manifests tier declares `dependsOn: infrastructure` with health checks on cert-manager), which on a bare cluster is the difference between converging in about five minutes and never converging at all; a lesson learned the hard way during a disaster-recovery rehearsal, then encoded into the structure so it cannot be relearned.
+
+The consequence worth pausing on: **changing production means opening a pull request.** The GitOps tree lives under the same spec governance as the rest of the repo; the layout itself is owned by a spec, and a change to cluster state flows through the same gates as a change to code. Review, merge, reconcile. There is no `kubectl apply` step performed by a human or an agent, ever; the reconciler is the only writer, and its input is the merged state of `main`.
+
+## The read path: a window, pinned and read-only
+
+The read side is where the agent comes in. Claude Code speaks MCP, and there is a ready-made [kubernetes-mcp-server](https://github.com/containers/kubernetes-mcp-server) that exposes cluster reads as tools. Wiring it takes one command, and the flags carry the policy:
+
+```sh
+claude mcp add-json kubernetes '{
+  "command": "npx",
+  "args": [
+    "-y", "kubernetes-mcp-server@latest",
+    "--read-only",
+    "--context", "oap-hetzner-master1"
+  ],
+  "env": { "KUBECONFIG": "'${HOME}'/.kube/config" }
+}' -s user
+```
+
+Two flags do the governing. `--read-only` strips every mutating tool from the server's surface: the agent's toolbox simply does not contain a delete. `--context` pins the server to one named cluster, so even with a kubeconfig full of contexts, this window opens onto exactly one of them.
+
+That is the first wall. The second is the permission layer of the harness itself: my Claude Code settings allow `kubectl get`, `describe`, `logs`, and `top`, and explicitly deny `kubectl delete`, `apply`, `patch`, `scale`, `rollout`, `helm upgrade`, `helm uninstall`, and `flux suspend`. The third wall is the architecture above: even a fully trusted human does not mutate this cluster imperatively, so there is no sanctioned imperative path for an agent to borrow.
+
+The kubeconfig on this machine is privileged; that is precisely why the walls matter. **Capability is not authorization.** The agent has the technical ability to reach the cluster the way I do; policy decides what reaching it may mean, and policy says: observation is free, destruction requires a human, and mutation goes through git.
+
+## What this actually buys
+
+The payoff is that live production state becomes ordinary context for development work, the same way the compiler output or the test suite is.
+
+A concrete example. The governance service started getting OOM-killed under bulk document uploads. The investigation ran in one session: the agent read the pod's restart history and last-termination reason from the live cluster, pulled the memory limit from the Helm values *in the same repository*, correlated with the request path in the service code, and surfaced the actual defect (a layout loader refetching a heavyweight bundle on every navigation). Live signal, declared state, and source code, all in one context window, with zero risk that the investigation could modify what it was observing.
+
+The same shape covers everyday questions that used to mean alt-tabbing into dashboards: is the certificate renewed, did the reconciler pick up the merge, which pod is restarting, what did its last container say before dying, has anything drifted from what the GitOps tree declares. Drift questions are particularly satisfying because both sides of the comparison are in reach: the declared state is files in the repo, and the observed state is one read-only call away.
+
+## The symmetry I did not plan
+
+What I eventually noticed is that the cluster arrangement and the [spec governance](/writing/architecting-intent-vs-vibe-coding) that runs the codebase are the same design, instantiated twice:
+
+- Declared truth lives in git: markdown specs on one side, the GitOps tree on the other.
+- Derived truth is observable but not directly editable: compiled registries on one side, live cluster state on the other.
+- All mutation flows through gated reconciliation: the coupling gate and merge on one side, Flux on the other.
+- Agents get typed, scoped, read-shaped views of everything, and write access to none of it.
+
+I did not set out to make those match; the second instance fell out of the same convictions that produced the first. Govern the declaration, derive the runtime, let observation be free, and make every write path pass through a gate that does not care how confident the writer is.
+
+Local-first was the thesis that your tools and your execution belong on your machine. This is the corollary I have come to trust: with the write paths governed, even production can lean into the loop; not as another world you deploy to and pray, but as another window on the same desk.

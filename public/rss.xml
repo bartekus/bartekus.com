@@ -6,15 +6,65 @@
     <link>https://bartekus.com</link>
     <atom:link href="https://bartekus.com/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
-    <lastBuildDate>Wed, 10 Jun 2026 20:06:56 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 10 Jun 2026 23:00:38 GMT</lastBuildDate>
     <managingEditor>bartekus@gmail.com (Bartek Kus)</managingEditor>
     <webMaster>bartekus@gmail.com (Bartek Kus)</webMaster>
+    <item>
+      <title>Yolo mode is earned: three layers of Claude Code settings</title>
+      <description>I run Claude Code with permission prompts off. That is safe only because of what sits underneath: a global deny floor, project hooks as reflexes, and a config that is itself governed.</description>
+      <link>https://bartekus.com/writing/yolo-mode-is-earned</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/yolo-mode-is-earned</guid>
+      <pubDate>Wed, 10 Jun 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Tooling</category>
+    </item>
+    <item>
+      <title>Agentic code collapse, and the substrate that prevents it</title>
+      <description>Agent-built codebases have a characteristic failure mode: each diff is locally plausible while the system slides into incoherence. Receipts from a quarter-million governed lines on why mine hasn&apos;t.</description>
+      <link>https://bartekus.com/writing/agentic-code-collapse</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/agentic-code-collapse</guid>
+      <pubDate>Fri, 15 May 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Architecture</category>
+    </item>
+    <item>
+      <title>Inside spec-spine: a typed authority ledger over markdown</title>
+      <description>The governance spine I lifted out of my platform and open-sourced: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</description>
+      <link>https://bartekus.com/writing/inside-spec-spine</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/inside-spec-spine</guid>
+      <pubDate>Wed, 15 Apr 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Open Source</category>
+      <category>Governance</category>
+    </item>
+    <item>
+      <title>Reading OWASP&apos;s Agentic Top 10 against a real platform</title>
+      <description>I mapped the OWASP ASI 2026 entries onto open-agentic-platform, control by control. The exercise kept landing on the same small set of governance mechanisms, and that is the finding.</description>
+      <link>https://bartekus.com/writing/owasp-agentic-top-10-against-a-real-platform</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/owasp-agentic-top-10-against-a-real-platform</guid>
+      <pubDate>Sun, 15 Mar 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Security</category>
+      <category>Agentic AI</category>
+    </item>
+    <item>
+      <title>Production in the dev loop: Hetzner, Flux, and a read-only MCP</title>
+      <description>My Kubernetes cluster behaves like an extension of local development: the agent can see everything and touch nothing, and the only write path is git.</description>
+      <link>https://bartekus.com/writing/production-in-the-dev-loop</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/production-in-the-dev-loop</guid>
+      <pubDate>Sun, 15 Feb 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Kubernetes</category>
+      <category>Local-First</category>
+    </item>
     <item>
       <title>Architecting intent vs vibe coding</title>
       <description>AI can write the code; the unsolved problem is trusting what it wrote. Why review doesn&apos;t scale, and how specs-as-law makes agentic output governable.</description>
       <link>https://bartekus.com/writing/architecting-intent-vs-vibe-coding</link>
       <guid isPermaLink="true">https://bartekus.com/writing/architecting-intent-vs-vibe-coding</guid>
-      <pubDate>Wed, 10 Jun 2026 00:00:00 GMT</pubDate>
+      <pubDate>Thu, 15 Jan 2026 00:00:00 GMT</pubDate>
       <author>bartekus@gmail.com (Bartek Kus)</author>
       <category>Agentic AI</category>
       <category>Governance</category>
@@ -24,7 +74,7 @@
       <description>LLMs are probabilistic by design; trustworthy systems are deterministic at the boundary. The architecture rule that makes agentic output admissible.</description>
       <link>https://bartekus.com/writing/probabilistic-ai-behind-deterministic-gates</link>
       <guid isPermaLink="true">https://bartekus.com/writing/probabilistic-ai-behind-deterministic-gates</guid>
-      <pubDate>Thu, 19 Feb 2026 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 15 Oct 2025 00:00:00 GMT</pubDate>
       <author>bartekus@gmail.com (Bartek Kus)</author>
       <category>Agentic AI</category>
       <category>Architecture</category>
@@ -34,7 +84,7 @@
       <description>The local-first thesis grew a governance layer: why the agentic execution plane belongs on your machine, with no SaaS in the trust path.</description>
       <link>https://bartekus.com/writing/local-first-now-governed</link>
       <guid isPermaLink="true">https://bartekus.com/writing/local-first-now-governed</guid>
-      <pubDate>Thu, 16 Oct 2025 00:00:00 GMT</pubDate>
+      <pubDate>Wed, 10 Sep 2025 00:00:00 GMT</pubDate>
       <author>bartekus@gmail.com (Bartek Kus)</author>
       <category>Local-First</category>
       <category>Governance</category>

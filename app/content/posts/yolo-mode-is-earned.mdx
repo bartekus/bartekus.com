@@ -1,0 +1,98 @@
+---
+title: "Yolo mode is earned: three layers of Claude Code settings"
+description: "I run Claude Code with permission prompts off. That is safe only because of what sits underneath: a global deny floor, project hooks as reflexes, and a config that is itself governed."
+date: "2026-06-10"
+tags: ["Agentic AI", "Tooling"]
+draft: false
+readingTime: 10
+cover: "/images/into-the-wild.jpg"
+---
+
+# Yolo mode is earned: three layers of Claude Code settings
+
+My local Claude Code override file is five lines:
+
+```json
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "model": "claude-fable-5[1m]"
+}
+```
+
+Permission prompts: off. The agent edits files, runs builds, pushes branches, opens PRs, and I am not clicking "allow" at any point. People call this yolo mode, usually with a smirk, and the smirk is deserved when the file above is the *whole* configuration. It is not the whole configuration. It is the top rung of a ladder, and this post is about the two rungs underneath that make the top one boring.
+
+Claude Code resolves settings in layers: a user-global `~/.claude/settings.json`, a project-level `.claude/settings.json` checked into the repo, and a local `settings.local.json` that never leaves the machine. Most people treat these as one bag of options. I treat them as three different altitudes of policy, and the design rule is simple: **autonomy is granted at the top because constraint lives below.**
+
+## Layer one: the global floor
+
+The global file answers one question: what is this agent allowed to do *anywhere*, on any project, before any project-specific rules load? My answer has a deliberate asymmetry: observation is free, mutation is scoped, destruction is denied.
+
+The allow list is wide but almost entirely read-shaped or reversible: `git status`, `git diff`, `git log`, builds and tests (`make`, `cargo build`, `cargo test`, `npm run`), and the whole read-only half of my infrastructure tooling:
+
+```json
+"Bash(kubectl get *)",
+"Bash(kubectl describe *)",
+"Bash(kubectl logs *)",
+"Bash(kubectl top *)",
+"Bash(helm list *)",
+"Bash(helm get *)",
+"Bash(flux get *)",
+"Bash(flux logs *)"
+```
+
+The deny list is where the philosophy shows. It is not "things the agent will probably never do"; it is an enumeration of irreversibility:
+
+```json
+"Bash(rm -rf *)",
+"Bash(sudo *)",
+"Bash(git push --force *)",
+"Bash(git reset --hard *)",
+"Bash(git checkout -- *)",
+"Bash(git clean -f*)",
+"Bash(kubectl delete *)",
+"Bash(kubectl apply *)",
+"Bash(kubectl patch *)",
+"Bash(helm upgrade *)",
+"Bash(helm uninstall *)",
+"Bash(flux suspend *)"
+```
+
+Two details I would defend in front of any review board. First, `git push --force` is denied while `git push --force-with-lease` is explicitly allowed: the lease variant fails if someone else moved the ref, which is exactly the difference between rewriting my own in-flight branch and destroying somebody's work. Second, `git checkout -- <path>` is denied even though plain `git checkout` is allowed, because restoring a file from index is the quietest way to vaporize uncommitted work, and quiet is the property I am pricing, not power.
+
+Note what `kubectl apply` and `helm upgrade` are doing on that list. The agent has my kubeconfig; it could administer the cluster. Capability is not authorization. The cluster mutates through git and a reconciler, never through an agent's shell, so the imperative write path is simply closed.
+
+The same file fences territory. The auto-permission environment names exactly which ground the agent may treat as its own: my GitHub orgs by name, one named Kubernetes cluster, the public registries, and localhost. Anything outside the fence is foreign soil and gets escalated. An agent's world should be enumerated, not implied.
+
+## Layer two: project reflexes
+
+The project layer in [open-agentic-platform](https://github.com/bartekus) adds two things: permissions for the repo's own governed binaries (the spec compiler, the codebase indexer, the coupling gate), and a deny list for publishing (`cargo publish`, `npm publish`, `gh release create`), because releases belong to CI and to nobody's laptop, mine included.
+
+But the real substance of the project layer is hooks. Hooks are commands the harness itself executes at lifecycle moments, which makes them categorically different from instructions in a CLAUDE.md: the agent cannot forget a hook, deprioritize it, or talk itself out of it. They are the project's reflexes rather than its advice.
+
+Four of them carry the governance load:
+
+- **On session start**, a freshness probe compiles the spec registry and checks the codebase index, then prints a one-line status. Every session opens knowing whether the machine truth is stale.
+- **After every file edit**, a path-matched check fires: editing any spec recompiles the registry on the spot; editing anything the index hashes (manifests, workflows, schemas, the settings file itself) runs the staleness check and surfaces the result immediately, not at PR time.
+- **When the agent stops**, a reconciler regenerates the codebase index if it went stale during the session, with a guard that backs off during rebases and merges where a merge driver owns the conflict instead.
+- **Before `gh pr create` executes**, a gate runs the full local coupling check. If spec and code have drifted and no explicit waiver is present in the PR body, the hook exits with a blocking error and the PR is never created. The agent does not get to *decide* whether to run the gate; the gate runs the agent.
+
+That last one deserves a beat. The single most failure-prone moment in agentic development is the final mile, where the work is done and the agent (or the human) is eager to ship. A pre-PR hook moves the governance check from "step the agent should remember" to "physics of the environment." The eager party can be as eager as it likes; the gate fires anyway, and the only way past a failure is to fix the coupling or get an explicit, recorded waiver.
+
+## Layer three: the five lines, revisited
+
+Now the local file again. `bypassPermissions` removes exactly one thing: the prompt. It does not remove the deny list, which binds in every permission mode. It does not disable hooks, which fire in every permission mode. It does not negotiate with CI, which never knew about my modes in the first place.
+
+So what was the prompt actually buying? On a substrate like this, mostly noise. And prompt fatigue is not a UX nuisance; it is a security problem. A human who approves forty low-stakes tool calls an hour stops reading them, and a human who stops reading approvals has automated themselves while keeping the liability. OWASP's agentic top 10 lists human approval-rubber-stamping under trust exploitation for a reason. I would rather have five prompts a week that all mean something than five hundred that mean nothing, and the way to get there is to make the safe things silent and the dangerous things impossible, leaving prompts only for the genuinely irreversible decisions that deserve a human's full attention.
+
+## The config is itself governed
+
+One more turn of the screw, and it is my favorite one. In open-agentic-platform, `.claude/settings.json` is one of the inputs the codebase indexer content-hashes. An edit to it, by me or by an agent, trips the same staleness gate as an edit to a Cargo manifest or a CI workflow, and shows up as an index diff that a PR reviewer inspects.
+
+Think about why that loop has to close. The PostToolUse hook glob inside the settings file is what guards every other governed input; a quiet edit to that glob would disarm the alarm system from inside. Hashing the settings file means the alarm system watches itself: the change is surfaced mechanically, and a human judges whether the edit narrowed or broadened the protected set. The hashing surfaces; the human classifies. An agent that wanted to relax its own permissions would have to do it in the open, on a reviewed diff, through a gate.
+
+That is the actual lesson, and it is bigger than Claude Code: **settings are policy, and policy is an artifact.** Diff it, review it, gate it, hash it. The five-line yolo file at the top of this post is not bravado; it is the visible tip of a stack where every dangerous verb is denied below, every project invariant fires reflexively, and the configuration that says so cannot be changed in the dark.
+
+If your yolo mode scares you, the mode is not the problem. The substrate is.

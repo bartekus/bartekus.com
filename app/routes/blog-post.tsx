@@ -29,6 +29,7 @@ export default function BlogPost() {
       year: "numeric",
       month: "long",
       day: "numeric",
+      timeZone: "UTC", // frontmatter dates are date-only strings parsed as UTC; render them as written
     });
   };
 

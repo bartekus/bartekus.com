@@ -1,0 +1,96 @@
+---
+title: "Inside spec-spine: a typed authority ledger over markdown"
+description: "The governance spine I lifted out of my platform and open-sourced: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec."
+date: "2026-04-15"
+tags: ["Open Source", "Governance"]
+draft: false
+readingTime: 13
+cover: "/images/data-vortex.jpg"
+---
+
+# Inside spec-spine: a typed authority ledger over markdown
+
+Every codebase eventually faces the question: *who is allowed to change this file?* In most repositories the answer is archaeology. You read git blame, you ask whoever has been around longest, you check a wiki that was last updated two reorgs ago. The answer exists, but it is reconstructed, not queried; and the moment AI agents start producing most of your diffs, reconstruction stops scaling entirely.
+
+[spec-spine](https://github.com/bartekus/spec-spine) is my answer to that question, released standalone under Apache-2.0 after three months of running it inside my own platform. One sentence: a typed, hash-verifiable authority ledger over a markdown spec corpus, with a PR-time gate that refuses code drifting from its owning spec. This post is the technical companion to [the philosophy piece](/writing/architecting-intent-vs-vibe-coding): what the tool actually is, how the model works, and where the discipline came from.
+
+## The model: territory, declared and typed
+
+Every piece of work in a repository (a feature, a refactor, an infrastructure change) is anchored to a small markdown document under `specs/NNN-slug/spec.md`. The document declares its territory in YAML frontmatter: an explicit list of code paths, plus a set of typed relationships to the other documents that have touched those paths before.
+
+The relationships are a closed grammar of eight edge types:
+
+- **establishes**: I am the document that first brought this code into being.
+- **extends**: I add surface to a predecessor's territory without disturbing it.
+- **refines**: I tighten behavior on a specific aspect.
+- **supersedes**: I replace this predecessor, partially or fully.
+- **amends**: I patch a predecessor in place (clarification, correction, restriction).
+- **co_authority**: I share a path with another document, on a named section.
+- **constrains**: I assert an invariant everyone else must respect.
+- **references**: I point at another document without claiming authority over it.
+
+These edges turn the corpus from a flat pile of claims into a directed graph, and that graph is the load-bearing structure. Authority over any given path is *derived by walking the graph*, never declared directly. "Who currently has authority over file X, function Y?" is a query, not a guess; and "who established this file" and "who currently owns it" are different questions with different answers, both queryable.
+
+Ownership is finer-grained than files. A unit can be a **file** (the default), a **section** within a file (a named anchor, like one target in a project-wide Makefile), or a **symbol** (a function, a type, an exported binding, resolved via tree-sitter). Section-scoped co-authority is what makes the canonical hard case tractable: a build file that twenty features each add one target to is not a free-for-all, it is twenty disjoint named claims.
+
+## Two registries, two directions
+
+spec-spine emits two deterministic JSON views and joins them with a gate:
+
+- **`registry.json`**, the *spec-as-source* view: what does each spec say? Status, relationships, claimed paths.
+- **`index.json`**, the *code-as-source* view: for each path, section, and symbol in the repo, which specs currently claim authority over it? This one carries a content-hash staleness mechanism.
+
+They are inverses of each other. Code connects back to specs through manifest keys: a Rust crate declares its owning spec under `[package.metadata.spec-spine]` in `Cargo.toml`, an npm package declares a top-level `"spec-spine"` object in `package.json`, and individual files can carry a `// Spec:` comment header. The indexer walks the tree, hashes the manifests along with the spec files, and builds the inverse map.
+
+The coupling gate runs at PR time and cross-references every modified code path against the graph. Change an owned path without changing the document that owns it (or vice versa), and CI refuses the merge. That is the entire trick: drift between intent and implementation stops being a code smell someone might notice and becomes a merge failure nobody can ignore.
+
+## Four guardrails, none optional
+
+The graph alone is not enough. Four layers sit on top of it, and the design claim is that removing any one makes the others insufficient:
+
+1. **A deterministic compiler.** The same committed inputs produce byte-identical output, on every platform; CI proves it across all five release target triples. Sorted keys, LF endings, content hashes over normalized bytes, tree-sitter grammars pinned exact. Determinism is not a nicety here: it is what makes two agents' independently produced registries mechanically mergeable, and what makes staleness detectable by hash comparison alone, with no re-analysis.
+2. **The coupling gate at PR time.** The hard floor against silent drift, described above.
+3. **Typed reads, or nothing.** Orchestrated workflows read the compiled JSON through the typed query layer (`spec-spine registry list|show|status-report`), never through ad-hoc `jq` or a five-line Python script. Ad-hoc parsing would let an agent silently encode schema assumptions, and schema drift would then fail loudly somewhere else, much later. Typed reads make drift fail at the deserializer, immediately, with a clean error.
+4. **A refusal rule at prompt time.** The subtle one. When an agent hits a coupling-gate failure, the cheapest escape is to quietly edit the spec to match the code it just wrote. The shipped `adversarial-prompt-refusal` rule instructs agents to refuse that move, surface the contradiction, and wait for a human. The gate is the PR-time defense; the refusal rule is the prompt-time defense; together they sandwich the failure mode of an agent erasing the contract to keep going.
+
+There is also an escape valve, because a gate without one is tyranny: a `Spec-Drift-Waiver:` line in the PR body, explicit and scoped, downgrades violations to warnings for legitimately consolidated changes like a dependency refresh that touches forty owned paths. The waiver is itself recorded and citable. You never amend an owner spec to satisfy a mechanical refresh; you waive, and the waiver is in the ledger.
+
+## Adoption is four steps
+
+The standalone release is designed so any conventional repo can adopt it without source edits to the library; every project-specific assumption is a `spec-spine.toml` knob.
+
+```sh
+cargo install spec-spine-cli      # or: npm i -D spec-spine (prebuilt binary)
+
+spec-spine init             # scaffold spec-spine.toml, standards/, specs/000, agent rules
+spec-spine compile          # specs/*/spec.md -> .derived/spec-registry/registry.json
+spec-spine index            # manifests + specs -> .derived/codebase-index/index.json
+spec-spine lint             # corpus conformance
+spec-spine couple --base origin/main --head HEAD   # the drift gate
+```
+
+`init` scaffolds the constitution, the spec template, the bootstrap spec, and the three agent rule files; then you annotate your manifests with the metadata key, commit `.derived/` (determinism is what makes the committed artifact a reliable baseline), and wire four CI steps: `compile`, `index check`, `lint --fail-on-warn`, `couple`. An absent config file yields a working default for a single-Cargo-workspace repo; everything else (metadata namespace, layout paths, extra hashed inputs, bypass prefixes, the waiver keyword) is an explicit knob, and every config sub-table rejects unknown fields so a typo is a loud error rather than a silent no-op.
+
+For specs whose claimed paths predate the graph, frontmatter carries `origin: retroactive: true`, the bootstrap marker for "I am declaring authority I have held since before the graph existed." Without it, every pre-existing claim would look like a fresh establishment and the history would be a lie.
+
+## Where the discipline came from
+
+spec-spine was not designed on a whiteboard. It was extracted from [open-agentic-platform](https://github.com/bartekus), where the corpus is now a hundred specs deep and governs roughly 170,000 lines of Rust and TypeScript, and the most instructive part of that history is how expensive the *first* contract was.
+
+The very first governed tool, a small CLI that queries the compiled registry, took roughly twenty-six specs to stabilize. Specs for its JSON output contract. Specs for its error contract, its help text, its exit codes, its sorting order, its stdout/stderr channel discipline, its default-path behavior. Each one backed by fixture tests that define normative behavior: the fixtures are the contract, and nothing updates a fixture to match implementation drift without explicit contract justification.
+
+A naive reading says that is absurd overhead for one CLI. The honest reading is that the *pattern* was being established, not the tool. Out of that grind came a reusable extension rubric: every change declares itself a contract extension, an internal refactor, or a breaking-change candidate; an extension is acceptable only if it adds exactly one clear guarantee, with minimal surface, no semantic overlap with existing modes, explicit interaction rules, and fixture-first definition. Once that rubric existed, subsequent tools needed one spec each, not twenty-six. The heavy lineage is the exception that built the template, and spec-spine ships the template as defaults.
+
+## Self-governance, or it would be hypocrisy
+
+The detail I am proudest of: spec-spine governs itself. The repo's own coupling gate runs against its own spec corpus in CI, through exactly the same workflow an adopter would wire. Its registry and index are compiled by the binary it builds; its contract changes go through its own grammar. A governance tool that exempted itself from governance would be making my argument against me.
+
+The license is Apache-2.0, chosen deliberately for the explicit patent grant, which starts to matter once FFI bindings and corporate adopters arrive. The library API, not the CLI, is the stable surface bindings wrap: every operation has a JSON-in/JSON-out facade, so the napi and pyo3 paths are designed in rather than bolted on.
+
+## Why this exists
+
+A markdown corpus with typed frontmatter, a deterministic compiler, two inverse registries, a coupling gate, and a refusal rule. None of the pieces is exotic. The claim is in the composition: together they make a spec corpus stop behaving like documentation and start behaving like a typed, append-only ledger of who-owns-what; and that ledger is what makes a fleet of parallel agents safe to run, because disjoint territory is provably disjoint and shared territory is typed rather than undefined.
+
+Agents query the ledger to find their territory. Agents edit code and specs; the compiler re-mints the ledger. Agents open a PR; the gate verifies code and ledger agree. Agents face a contradiction; the refusal rule stops them from rewriting the ledger to escape. A human authorizes a waiver; the waiver is itself in the record.
+
+The human authors the law. The agents comply with it. The spine makes non-compliance impossible to merge.

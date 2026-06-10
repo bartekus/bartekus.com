@@ -1,0 +1,73 @@
+---
+title: "Reading OWASP's Agentic Top 10 against a real platform"
+description: "I mapped the OWASP ASI 2026 entries onto open-agentic-platform, control by control. The exercise kept landing on the same small set of governance mechanisms, and that is the finding."
+date: "2026-03-15"
+tags: ["Security", "Agentic AI"]
+draft: false
+readingTime: 11
+cover: "/images/neural-network-state.jpg"
+---
+
+# Reading OWASP's Agentic Top 10 against a real platform
+
+In December 2025 the OWASP GenAI Security Project's Agentic Security Initiative published the *Top 10 for Agentic Applications 2026*. It is, by a comfortable margin, the most useful security document yet written for people building agentic systems, and I want to make the case for it the way a practitioner should: by mapping it, entry by entry, onto a real platform and reporting what the mapping taught me.
+
+The platform is [open-agentic-platform](https://github.com/bartekus): a local desktop execution plane (OPC) where agents do the work, a web governance plane that owns identity, approvals, and audit, and a [spec spine](/writing/architecting-intent-vs-vibe-coding) underneath both. The mapping itself is not a slide deck; it is a deterministic artifact emitted by one CLI invocation (`oap-registry-enrich compliance-report --framework owasp-asi-2026`), and a condensed, CC BY-SA adaptation of the OWASP document lives in the repo as the reference that design reviews cite.
+
+## Why this document is better than its predecessors
+
+Three properties make ASI 2026 unusually load-bearing.
+
+**The entries are mutually delimited, not overlapping buckets.** Every entry carries explicit boundary rules: goal hijack (ASI01) is direct manipulation of objectives, memory poisoning (ASI06) is persistent corruption of stored context, rogue agents (ASI10) is behavioral divergence *without* active attacker control. When a finding lands on your desk, the boundaries tell you where to file it, exactly once. Taxonomies live or die on this, and most die.
+
+**It is grounded in observed incidents,** not hypotheticals: zero-click exfiltration through a crafted email to a copilot, the first in-the-wild malicious MCP server on npm (an impersonation package BCC'ing all outbound mail to the attacker), production databases deleted by runaway "self-repair," agent-card spoofing in discovery registries. The incidents tracker is updated weekly, and each row is tagged with ASI ids so it doubles as a classification worked-example set.
+
+**It states the pattern that matters most:** nearly every real incident chains two or more entries. Injection pivots to tool misuse, persists in memory, then cascades. A threat model that scores entries one at a time under-counts every real attack path. Design reviews should trace chains, not check boxes.
+
+## The ten, in one pass
+
+| Id | Name | One line |
+|----|------|----------|
+| ASI01 | Agent Goal Hijack | Injected instructions redirect the agent's objectives or planning |
+| ASI02 | Tool Misuse | Legitimate tools, within granted privilege, applied unsafely |
+| ASI03 | Identity & Privilege Abuse | Delegation chains and cached credentials escalate access |
+| ASI04 | Agentic Supply Chain | Third-party agents, tools, MCP servers tampered, including at runtime |
+| ASI05 | Unexpected Code Execution | Generated or injected code executes beyond tool-use control |
+| ASI06 | Memory & Context Poisoning | Persistent corruption of retained context warps future reasoning |
+| ASI07 | Insecure Inter-Agent Comms | Spoofed, replayed, or downgraded messages between agents |
+| ASI08 | Cascading Failures | One fault propagates and amplifies into systemic harm |
+| ASI09 | Human-Agent Trust Exploitation | The human is manipulated into approving harm |
+| ASI10 | Rogue Agents | Behavioral integrity diverges after the initial intrusion |
+
+Above the ten sit cross-cutting principles, and the first is the sharpest: **least agency**. Not least privilege; least *agency*. Do not deploy an agent loop where a deterministic function would do. It questions whether the autonomy should exist at all, and it is the principle most teams skip on the way to shipping a demo.
+
+## What the mapping looks like
+
+Condensed from the full table (the repo version cites spec numbers for every cell; these are pointers for design review, deliberately not compliance claims):
+
+- **ASI01** lands on the adversarial-prompt refusal rule (agents must refuse instructions that would engineer drift between spec and code), the frozen, hash-bound Build Spec, and orchestrator halt rules.
+- **ASI02** lands on the tool registry with permission gates, safety-tier governance, and per-adapter scoped file-write and command allowlists.
+- **ASI03** lands on self-hosted OIDC identity (agents and services are governed non-human identities), scope-gated deployment APIs, and the policy kernel's tiered settings merge.
+- **ASI04** lands on supply-chain policy gates, per-target CycloneDX SBOMs, release artifact attestations, and a lint that refuses any CI workflow referencing an action by tag instead of a full commit SHA.
+- **ASI05** lands on the sandbox execution contract and its container and Kubernetes backends, plus worktree isolation for parallel agents.
+- **ASI06** lands on knowledge-pipeline provenance and claim-provenance enforcement: retained knowledge carries source attribution that downstream stages verify.
+- **ASI07** lands on typed duplex envelopes between the two planes with version parity enforced in CI, and signed inter-stage manifests inside the pipeline.
+- **ASI08** lands on halt-on-failure orchestrator rules, checkpoint gates between pipeline phases, and a stop-hook gate chain.
+- **ASI09** lands on checkpoint approvals as plain mechanical stops, destructive-op confirmation, and a governance certificate whose verifier deliberately does not trust the system that produced it.
+- **ASI10** lands on governed execution, verification profiles, live session introspection, and append-only audit logs with SHA-256 proof chains.
+
+## What the exercise actually taught me
+
+**The same mechanisms kept recurring.** Ten entries, and the right-hand column kept filling with the same short list: scoped tools, typed contracts, content hashes, halt rules, provenance, audit chains, human gates at irreversibility. I went in expecting to find ten domains needing ten defenses and came out with maybe six mechanisms covering ten risk surfaces. That is when the reframing clicked: agentic security and agentic governance are not adjacent concerns; they are the same mechanism viewed from two directions. A system that can prove which spec authorized which action has already done most of the security work. A system that cannot has nothing to bolt a scanner onto, because its gap is not a missing control; it is ungoverned authority.
+
+**Least agency was already an architecture decision.** The platform's delivery pipeline is two-phase: an agentic phase that produces a Build Spec through checkpointed stages, and a scaffolding phase that executes that frozen, hashed spec with verification and bounded retries. The autonomy lives where judgment is needed; execution of settled decisions is deterministic. I did not derive that from ASI 2026, but ASI 2026 gave me the name for why it was right.
+
+**Planner output is untrusted, and that must be structural.** The document insists on an independent enforcement point between planning and execution, because a model that can be talked into a plan can be talked into anything. The deterministic-shell pattern I have [written about before](/writing/probabilistic-ai-behind-deterministic-gates) is exactly this: the probabilistic core proposes, only the deterministic boundary admits.
+
+**The human surface is a real attack surface.** ASI09 is the entry most engineering teams have no answer for, because the exploit runs on the person: fabricated rationales, authority bias, approval fatigue. Two design consequences I now hold firmly. Approval prompts must present mechanical facts (what changes, what is irreversible, what the blast radius is), never model-generated justifications; a persuasive explanation is precisely the attack vector. And verification must not trust the producer: the platform's governance certificates are checked by an independent verifier on the explicit assumption that the system that emitted them may be compromised.
+
+## The honest caveats
+
+The repo's own mapping table carries a warning label I will repeat here: pointers, not compliance claims. Having a surface that *addresses* an entry is not the same as satisfying that entry's required mitigations, and the per-mitigation gap analysis (which requirements have no owning spec at all) is explicitly future work, deliberately not pre-judged by the table. ASI06 is the entry I trust least in my own mapping: provenance enforcement covers the ingestion path, but memory hygiene across long-running sessions is a thinner story. The document also names a residual risk worth engraving somewhere: fault propagation in multi-agent systems can outpace human oversight capacity. No mapping exercise makes that sentence false; you budget for it or you pretend.
+
+If you are building anything agentic, the recommendation is not "read the document," although you should. It is: run the mapping against your own system, write the table, and pay attention to which column entries you cannot fill and which mechanisms keep repeating. The repetition is the curriculum. Security posture is downstream of governance model, not the other way around; the mapping is how you find out which one you actually have.

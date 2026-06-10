@@ -20,6 +20,7 @@ export function PostCard({ title, description, date, readingTime, tags, slug, co
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "UTC", // frontmatter dates are date-only strings parsed as UTC; render them as written
   });
 
   return (

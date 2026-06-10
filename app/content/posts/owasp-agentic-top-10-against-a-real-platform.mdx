@@ -1,7 +1,7 @@
 ---
 title: "Reading OWASP's Agentic Top 10 against a real platform"
 description: "I mapped the OWASP ASI 2026 entries onto open-agentic-platform, control by control. The exercise kept landing on the same small set of governance mechanisms, and that is the finding."
-date: "2026-03-15"
+date: "2026-04-15"
 updated: "2026-06-10"
 tags: ["Security", "Agentic AI"]
 draft: false
@@ -13,7 +13,7 @@ cover: "/images/neural-network-state.jpg"
 
 In December 2025 the OWASP GenAI Security Project's Agentic Security Initiative published the *Top 10 for Agentic Applications 2026*. It is, by a comfortable margin, the most useful security document yet written for people building agentic systems, and I want to make the case for it the way a practitioner should: by mapping it, entry by entry, onto a real platform and reporting what the mapping taught me.
 
-The platform is [open-agentic-platform](https://github.com/bartekus): a local desktop execution plane (OPC) where agents do the work, a web governance plane that owns identity, approvals, and audit, and a [spec spine](/writing/architecting-intent-vs-vibe-coding) underneath both. It is weeks old, which is exactly why the mapping is worth doing now: I would rather discover the empty cells while they are still cheap to fill. And I am building the mapping into the platform's own tooling, so that it ends up a generated artifact rather than a slide deck.
+The platform is [open-agentic-platform](https://github.com/bartekus): a local desktop execution plane (OPC) where agents do the work, a web governance plane that owns identity, approvals, and audit, and a [spec spine](/writing/architecting-intent-vs-vibe-coding) underneath both. It is weeks old, which is exactly why the mapping is worth doing now: I would rather discover the empty cells while they are still cheap to fill. And the mapping itself is not a slide deck: it is emitted by one CLI invocation against the compiled spec registry, a generated artifact that regenerates when the specs move.
 
 ## Why this document is better than its predecessors
 
@@ -69,8 +69,8 @@ Condensed from my working table, and read it the honest way: some of these surfa
 
 ## The honest caveats
 
-My mapping table carries a warning label I will repeat here: pointers, not compliance claims. Having a surface that *addresses* an entry is not the same as satisfying that entry's required mitigations, and the per-mitigation gap analysis (which requirements have no owning spec at all) is explicitly future work, deliberately not pre-judged by the table. ASI06 is the entry I trust least in my own mapping: provenance enforcement covers the ingestion path, but memory hygiene across long-running sessions is a thinner story. The document also names a residual risk worth engraving somewhere: fault propagation in multi-agent systems can outpace human oversight capacity. No mapping exercise makes that sentence false; you budget for it or you pretend.
+My mapping table carries a warning label I will repeat here: pointers, not compliance claims. Having a surface that *addresses* an entry is not the same as satisfying that entry's required mitigations, and the per-mitigation gap analysis (which requirements have no owning spec at all) is explicitly future work, deliberately not pre-judged by the table. ASI06 is the entry I trust least in my own mapping: provenance enforcement is designed into the ingestion path, but memory hygiene across long-running sessions is a thinner story. The document also names a residual risk worth engraving somewhere: fault propagation in multi-agent systems can outpace human oversight capacity. No mapping exercise makes that sentence false; you budget for it or you pretend.
 
 If you are building anything agentic, the recommendation is not "read the document," although you should. It is: run the mapping against your own system, write the table, and pay attention to which column entries you cannot fill and which mechanisms keep repeating. The repetition is the curriculum. Security posture is downstream of governance model, not the other way around; the mapping is how you find out which one you actually have.
 
-An update from June 2026: the working table became machinery, exactly one month after this was written. The mapping is now a deterministic artifact emitted by one CLI invocation (`oap-registry-enrich compliance-report --framework owasp-asi-2026`), and a condensed, CC BY-SA adaptation of the OWASP document now lives in the repo as the reference design reviews cite. More telling: the design commitments above stopped being commitments. The months since have produced owning specs for the sandbox execution contract and its container and Kubernetes backends, signed inter-stage manifests, duplex envelope version parity enforced in CI, a lint that refuses workflow actions pinned by tag instead of commit SHA, and per-adapter command allowlists. The empty cells became the roadmap, which was the point of running the mapping early.
+An update from June 2026: the design commitments above stopped being commitments. The weeks since have produced owning specs for the sandbox execution contract and its container and Kubernetes backends, signed inter-stage manifests, duplex envelope version parity enforced in CI, a lint that refuses workflow actions pinned by tag instead of commit SHA, and per-adapter command allowlists. The mapping now ships as `oap-registry-enrich compliance-report --framework owasp-asi-2026`, and a condensed, CC BY-SA adaptation of the OWASP document lives in the repo as the reference design reviews cite. The empty cells became the roadmap, which was the point of running the mapping early.

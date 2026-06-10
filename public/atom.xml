@@ -5,7 +5,7 @@
   <link href="https://bartekus.com/atom.xml" rel="self" />
   <link href="https://bartekus.com" />
   <id>https://bartekus.com/</id>
-  <updated>2026-06-10T23:46:12.082Z</updated>
+  <updated>2026-06-10T23:55:47.152Z</updated>
   <author>
     <name>Bartek Kus</name>
     <email>bartekus@gmail.com</email>
@@ -25,10 +25,38 @@
     <category term="Tooling" />
   </entry>
   <entry>
+    <title>Inside spec-spine: a typed authority ledger over markdown</title>
+    <link href="https://bartekus.com/writing/inside-spec-spine" />
+    <id>https://bartekus.com/writing/inside-spec-spine</id>
+    <updated>2026-06-09T00:00:00.000Z</updated>
+    <published>2026-06-09T00:00:00.000Z</published>
+    <summary>The governance spine I lifted out of my platform and open-sourced: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Open Source" />
+    <category term="Governance" />
+  </entry>
+  <entry>
+    <title>Production in the dev loop: Hetzner, Flux, and a read-only MCP</title>
+    <link href="https://bartekus.com/writing/production-in-the-dev-loop" />
+    <id>https://bartekus.com/writing/production-in-the-dev-loop</id>
+    <updated>2026-06-06T00:00:00.000Z</updated>
+    <published>2026-06-06T00:00:00.000Z</published>
+    <summary>My Kubernetes cluster behaves like an extension of local development: the agent can see everything and touch nothing, and the only write path is git.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Kubernetes" />
+    <category term="Local-First" />
+  </entry>
+  <entry>
     <title>Agentic code collapse, and the substrate that prevents it</title>
     <link href="https://bartekus.com/writing/agentic-code-collapse" />
     <id>https://bartekus.com/writing/agentic-code-collapse</id>
-    <updated>2026-05-15T00:00:00.000Z</updated>
+    <updated>2026-06-10T00:00:00.000Z</updated>
     <published>2026-05-15T00:00:00.000Z</published>
     <summary>Agent-built codebases have a characteristic failure mode: each diff is locally plausible while the system slides into incoherence. Receipts from a quarter-million governed lines on why mine hasn&apos;t.</summary>
     <author>
@@ -39,25 +67,11 @@
     <category term="Architecture" />
   </entry>
   <entry>
-    <title>Inside spec-spine: a typed authority ledger over markdown</title>
-    <link href="https://bartekus.com/writing/inside-spec-spine" />
-    <id>https://bartekus.com/writing/inside-spec-spine</id>
-    <updated>2026-06-10T00:00:00.000Z</updated>
-    <published>2026-04-15T00:00:00.000Z</published>
-    <summary>The governance spine underneath my platform: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</summary>
-    <author>
-      <name>Bartek Kus</name>
-      <email>bartekus@gmail.com</email>
-    </author>
-    <category term="Open Source" />
-    <category term="Governance" />
-  </entry>
-  <entry>
     <title>Reading OWASP&apos;s Agentic Top 10 against a real platform</title>
     <link href="https://bartekus.com/writing/owasp-agentic-top-10-against-a-real-platform" />
     <id>https://bartekus.com/writing/owasp-agentic-top-10-against-a-real-platform</id>
     <updated>2026-06-10T00:00:00.000Z</updated>
-    <published>2026-03-15T00:00:00.000Z</published>
+    <published>2026-04-15T00:00:00.000Z</published>
     <summary>I mapped the OWASP ASI 2026 entries onto open-agentic-platform, control by control. The exercise kept landing on the same small set of governance mechanisms, and that is the finding.</summary>
     <author>
       <name>Bartek Kus</name>
@@ -65,20 +79,6 @@
     </author>
     <category term="Security" />
     <category term="Agentic AI" />
-  </entry>
-  <entry>
-    <title>Production in the dev loop: Hetzner, Flux, and a read-only MCP</title>
-    <link href="https://bartekus.com/writing/production-in-the-dev-loop" />
-    <id>https://bartekus.com/writing/production-in-the-dev-loop</id>
-    <updated>2026-02-15T00:00:00.000Z</updated>
-    <published>2026-02-15T00:00:00.000Z</published>
-    <summary>My Kubernetes cluster behaves like an extension of local development: the agent can see everything and touch nothing, and the only write path is git.</summary>
-    <author>
-      <name>Bartek Kus</name>
-      <email>bartekus@gmail.com</email>
-    </author>
-    <category term="Kubernetes" />
-    <category term="Local-First" />
   </entry>
   <entry>
     <title>Architecting intent vs vibe coding</title>

@@ -2,6 +2,7 @@
 title: "Agentic code collapse, and the substrate that prevents it"
 description: "Agent-built codebases have a characteristic failure mode: each diff is locally plausible while the system slides into incoherence. Receipts from a quarter-million governed lines on why mine hasn't."
 date: "2026-05-15"
+updated: "2026-06-10"
 tags: ["Agentic AI", "Architecture"]
 draft: false
 readingTime: 11
@@ -55,7 +56,7 @@ Map the failure progression onto mechanisms and the pattern is exact; every stag
 
 Sessions are amnesiac, so **intent must be durable somewhere outside the session**. That is the spec corpus: every feature's reasoning survives as a typed markdown artifact, and a fresh agent re-derives nothing; it queries the registry for what the system is and what it owns.
 
-Each diff is locally plausible, so **coherence must be checked globally and mechanically**. That is the [coupling gate](/writing/inside-spec-spine): every PR is cross-referenced against the authority graph, and drift between intent and implementation is a failed merge, not a smell.
+Each diff is locally plausible, so **coherence must be checked globally and mechanically**. That is the [coupling gate](/writing/architecting-intent-vs-vibe-coding): every PR is cross-referenced against the authority graph, and drift between intent and implementation is a failed merge, not a smell.
 
 Generated artifacts go stale silently, so **staleness must be detectable without re-analysis**. The compiled registry and index are deterministic, content-hashed, and committed; a one-command check compares hashes and fails CI when any governed input changed without the index following: manifests, specs, schemas, workflow definitions, and the agent rules themselves.
 
@@ -65,7 +66,7 @@ None of these mechanisms is clever in isolation. The property that matters is th
 
 ## What it costs
 
-Honesty requires the bill. The gates have friction: regenerating the index belongs in the same commit as the change that staled it; golden test files must be regenerated when the spec corpus moves; two branches touching the index need a merge driver to avoid conflict churn; and a coupling gate will occasionally block a PR you believe is innocent until you either fix the ownership declaration or write an explicit, recorded waiver. I pay minutes of friction per change, routinely.
+Honesty requires the bill. The gates have friction: regenerating the index belongs in the same commit as the change that staled it; golden test files must be regenerated when the spec corpus moves; two branches that both regenerate the index will conflict on it, and one of them pays a regeneration cycle; and a coupling gate will occasionally block a PR you believe is innocent until you either fix the ownership declaration or write an explicit, recorded waiver. I pay minutes of friction per change, routinely.
 
 But that is the trade stated plainly: minutes of mechanical friction, continuously, against the compounding loss of the system's intelligibility. Collapse does not send an invoice until the balance is unpayable. The spine bills you per commit, in amounts you can always afford.
 
@@ -73,6 +74,8 @@ But that is the trade stated plainly: minutes of mechanical friction, continuous
 
 The tempting belief is that collapse is a model-quality problem that the next generation will solve: smarter agents, longer context, better memory. I do not believe it, and the reason is structural. Collapse is not caused by agents writing bad code; it is caused by *nothing in the system being responsible for coherence between intents*. A brilliant agent with a million-token context still cannot know that a path is owned, that a duplicate exists, or that a spec staged a future decision, unless something durable and queryable says so. Coherence is not an emergent property of intelligence. It is a property of substrate.
 
-That substrate is what I am now extracting from this codebase to release as [spec-spine](https://github.com/bartekus/spec-spine): the compiler, the registries, the gate, the refusal rule, the grammar, Apache-2.0, adoptable by any repo in four steps. Not because my codebase is special, but because the failure mode is universal and the cure turned out to be portable.
+That substrate is what I intend to lift out of this codebase and release standalone: the compiler, the registries, the gate, the refusal rule, the grammar, Apache-2.0, adoptable by any repo. Not because my codebase is special, but because the failure mode is universal and the cure should be portable.
 
 Agentic code collapse is real, it is already eating codebases, and it is optional. You do not prevent it by reviewing harder or prompting better. You prevent it by making incoherence impossible to merge.
+
+An update from June 2026: the extraction shipped. The substrate is now a standalone tool, [spec-spine](https://github.com/bartekus/spec-spine), and the full write-up of its model is in [Inside spec-spine](/writing/inside-spec-spine).

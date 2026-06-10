@@ -1,7 +1,7 @@
 ---
 title: "Production in the dev loop: Hetzner, Flux, and a read-only MCP"
 description: "My Kubernetes cluster behaves like an extension of local development: the agent can see everything and touch nothing, and the only write path is git."
-date: "2026-02-15"
+date: "2026-06-06"
 tags: ["Kubernetes", "Local-First"]
 draft: false
 readingTime: 9
@@ -16,7 +16,7 @@ This post is about that arrangement: a deliberately small Hetzner cluster, a Git
 
 ## The cluster: small on purpose
 
-The cluster is two Hetzner Cloud machines in Nuremberg: one control-plane node and one worker, provisioned by the excellent [hetzner-k3s](https://github.com/vitobotta/hetzner-k3s) from a single declarative `cluster.yaml` (the K3s version pinned in the same file). On it run the platform services of [open-agentic-platform](https://github.com/bartekus): an Encore.ts governance service, a Rust deployment orchestrator, a self-hosted OIDC provider (Rauthy), ingress, cert-manager, and the usual supporting cast.
+The cluster is two Hetzner Cloud machines in Nuremberg: one control-plane node and one worker, provisioned by the excellent [hetzner-k3s](https://github.com/vitobotta/hetzner-k3s) from a single declarative `cluster.yaml` (K3s pinned at v1.33.11). On it run the platform services of [open-agentic-platform](https://github.com/bartekus): an Encore.ts governance service, a Rust deployment orchestrator, a self-hosted OIDC provider (Rauthy), ingress, cert-manager, and the usual supporting cast.
 
 The point is not scale; the point is *price of realism*. Two modest instances cost less per month than most teams spend on a single observability seat, and that changes the economics of development. When prod-shaped infrastructure is this cheap, you stop maintaining an elaborate local simulation of production and start treating the real thing as part of the everyday loop: real TLS, real OIDC flows, real resource limits, real failure modes.
 

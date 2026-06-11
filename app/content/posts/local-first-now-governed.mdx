@@ -2,6 +2,7 @@
 title: "Local-first, now governed"
 description: "The local-first thesis grew a governance layer: why the agentic execution plane belongs on your machine, with no SaaS in the trust path."
 date: "2025-09-10"
+updated: "2026-06-10"
 tags: ["Local-First", "Governance"]
 draft: false
 readingTime: 8
@@ -26,25 +27,25 @@ For a prototype, fine. For software that answers to an auditor, a regulator, or 
 
 The shape I build toward: agents execute locally; only what you choose to promote leaves.
 
-The concrete instance in my work is OPC, the desktop cockpit of open-agentic-platform: a Tauri v2 + React application where humans and agents share one execution surface. Local workspaces. Git and GitHub context. Structural and semantic analysis of the repository. Snapshots and checkpoints, so agent work is rewindable. Approval gates, so the irreversible steps wait for a human.
+The concrete shape I am designing toward is a desktop cockpit where humans and agents share one execution surface. Local workspaces. Git and GitHub context. Structural and semantic analysis of the repository. Snapshots and checkpoints, so agent work is rewindable. Approval gates, so the irreversible steps wait for a human.
 
-The agents run against your checkout, on your hardware, under your keys. The conversation scrollback, the intermediate artifacts, the failed attempts: all of it stays in your custody by construction, not by policy.
+In that shape, agents run against your checkout, on your hardware, under your keys. The conversation scrollback, the intermediate artifacts, the failed attempts: all of it stays in your custody by construction, not by policy.
 
 ## Governance without SaaS in the trust path
 
 The usual objection: surely governance is where the cloud earns its keep; approvals, audit, identity all want a server.
 
-They want *a* server. They do not want someone else's. The whole governance loop runs on infrastructure you operate:
+They want *a* server. They do not want someone else's. The whole governance loop can run on infrastructure you operate:
 
-- **Identity** comes from Rauthy, an OIDC provider you run, issuing tokens scoped to what each actor may authorise.
-- **Deployment** goes through a scope-gated API you run; every request is checked against those scopes.
-- **Audit** is emitted at the source: every pipeline run writes a self-authenticating governance certificate; requirements hash, frozen build-spec hash, per-stage artifact hashes, and the certificate's own SHA-256. An independent verifier checks it offline and refuses to trust the system that produced it.
+- **Identity** from an OIDC provider you run yourself, issuing tokens scoped to what each actor may authorise.
+- **Deployment** through a scope-gated API you run; every request checked against those scopes.
+- **Audit** emitted at the source: every pipeline run writing a self-authenticating governance certificate (requirements hash, frozen build-spec hash, per-stage artifact hashes, and the certificate's own SHA-256), checked offline by an independent verifier that refuses to trust the system that produced it.
 
-There is no SaaS in the trust path unless you put it there. That is not a slogan; it is a property you can verify by reading the deployment manifests.
+There is no SaaS in the trust path unless you put it there. That is not a slogan; it is a property anyone should be able to verify by reading the deployment manifests.
 
 ## Local-first is not anti-cloud
 
-To be precise about what this is not: the cloud remains an excellent place to run workloads. My own platform ships Terraform and Helm for managed Kubernetes; promotion targets can be Azure, Hetzner, or anything that runs containers.
+To be precise about what this is not: the cloud remains an excellent place to run workloads. Promotion targets should be interchangeable (Azure, Hetzner, anything that runs containers), which is exactly what Terraform and Helm are for.
 
 The distinction worth defending is **cloud as capacity versus cloud as custodian**. Renting compute is healthy. Renting the chain of custody for how your software came to exist is how you end up unable to answer the only question that matters in an incident review: who authorized this change, and can you prove it?
 
@@ -54,7 +55,7 @@ Capacity, yes. Custodian, no.
 
 The old local-first thesis said: own the substrate. The governed version says: own the substrate, and own the law that governs change on it.
 
-Specifications live in your repository as markdown, compiled to a deterministic registry by a compiler you can build from source. The gate that refuses drift between spec and code runs in your CI. The certificates that prove what happened are files in your run directory, verifiable by anyone, beholden to no vendor.
+Specifications living in your repository as markdown, compiled to a deterministic registry by a compiler you can build from source. A gate refusing drift between spec and code, running in your CI. Certificates proving what happened as plain files in your run directory, verifiable by anyone, beholden to no vendor. That is the law layer I intend to build.
 
 For regulated industry and public-sector buyers, this is not an aesthetic preference. Sovereignty constraints rule out closed control planes; audit obligations rule out evidence that lives in a vendor's dashboard. A local execution plane plus independently verifiable audit artifacts is, as far as I can tell, the only shape that satisfies both.
 
@@ -63,3 +64,5 @@ For regulated industry and public-sector buyers, this is not an aesthetic prefer
 Local-first used to be a hosting decision. With agents in the loop, it is a trust decision: the question is no longer "where does my app run" but "where does the proof of how my software came to exist live, and who controls it".
 
 My answer: on your machine, under your keys, behind gates you can read the source of. The droplet grew up.
+
+An update from June 2026: the layer this essay reached for got built. The cockpit has a name, OPC, the desktop execution plane of open-agentic-platform (Tauri v2 + React); identity comes from Rauthy, an OIDC provider I run; deployment goes through a scope-gated API; and every pipeline run writes the self-authenticating certificate described above, checked by a verifier that does not trust its producer. The thesis graduated from argument to running code: [Architecting intent vs vibe coding](/writing/architecting-intent-vs-vibe-coding) picks up where this leaves off.

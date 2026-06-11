@@ -1,82 +1,55 @@
 # bartekus.com
 
-Personal website and blog for Bartek Kus - Solution Architect, Principal Software Engineer & Founder.
+Personal website and blog for Bartek Kus: Solution Architect and Principal Software Engineer; creator of [spec-spine](https://github.com/bartekus/spec-spine) and open-agentic-platform.
 
 ## Tech Stack
 
-- **Framework**: React 18 + Vite + TypeScript
-- **Styling**: Tailwind CSS with custom design system
-- **Routing**: React Router v6
-- **Blog**: MDX with gray-matter for frontmatter
-- **SEO**: react-helmet-async for meta tags
+- **Framework**: React Router v7 (framework mode, SPA build, no SSR) + React 19 + TypeScript
+- **Build**: Vite 7 (MDX via `@mdx-js/rollup` with remark-gfm, remark-frontmatter, rehype-prism-plus; image optimization on build)
+- **Styling**: Tailwind CSS v4 (theme in `app/app.css` via `@theme`; no tailwind config file) + shadcn/ui primitives
+- **Blog**: MDX with gray-matter frontmatter, parsed at build time via `import.meta.glob`
+- **SEO**: custom `SEO` component (OG/Twitter tags + JSON-LD), generated `rss.xml`, `atom.xml`, and `sitemap.xml`
 - **Animation**: Framer Motion
-- **Deployment**: Cloudflare Pages
+- **Deployment**: Cloudflare Pages (static assets from `build/client`)
 - **Analytics**: Umami (optional)
 - **Comments**: Giscus (optional)
 
-## Features
-
-- 🎨 Custom design system with light/dark mode
-- 📝 MDX blog with syntax highlighting
-- 🔍 Client-side search with Fuse.js
-- 📱 Fully responsive design
-- ♿ WCAG 2.1 AA accessibility
-- 🚀 95+ Lighthouse scores
-- 📊 SEO optimized with JSON-LD structured data
-- 🔒 Secure headers and CSP
-- 📄 Printable resume
-- 🌐 RSS/Atom feeds
-
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+ and npm
-- Git
-
-### Installation
-
 ```bash
-# Clone the repository
 git clone https://github.com/bartekus/bartekus.com.git
 cd bartekus.com
-
-# Install dependencies
 npm install
-
-# Copy environment variables
-cp public/.env.example .env
-
-# Start development server
 npm run dev
 ```
 
-The site will be available at `http://localhost:8080`.
+The site will be available at `http://localhost:5173`.
 
 ### Environment Variables
 
-See `public/.env.example` for required environment variables.
+All optional, bound in `app/config.ts`:
 
-Optional integrations:
-- **Umami**: Add `VITE_UMAMI_WEBSITE_ID` and `VITE_UMAMI_SRC`
-- **Giscus**: Add Giscus repo and category IDs for blog comments
-- **Formspree**: Add endpoint for contact form
+- `VITE_SITE_URL`: canonical site URL used by the RSS and sitemap generators (defaults to `https://bartekus.com`)
+- `VITE_UMAMI_WEBSITE_ID`, `VITE_UMAMI_SRC`: Umami analytics
+- `VITE_GISCUS_*`: Giscus blog comments
+- `VITE_FORMSPREE_ENDPOINT`: contact form
 
 ## Content Management
 
 ### Adding Blog Posts
 
-Create a new MDX file in `src/content/posts/`:
+Drop an MDX file into `app/content/posts/`; the writing index, post page, feeds, and sitemap all derive from frontmatter at build time. No registration step.
 
 ```mdx
 ---
 title: "Your Post Title"
 description: "Brief description"
-date: "2024-01-15"
+date: "2026-01-15"
+updated: "2026-06-10" # optional; shown on the post and used as sitemap lastmod
 tags: ["Tag1", "Tag2"]
 draft: false
 readingTime: 8
-cover: "/images/cover.jpg"  # optional
+cover: "/images/cover.jpg" # optional
 ---
 
 # Your Post Title
@@ -84,64 +57,47 @@ cover: "/images/cover.jpg"  # optional
 Your content here...
 ```
 
+Dates are date-only strings rendered as written (formatted with `timeZone: "UTC"`). House style: no em dashes; later corrections go in a closing "An update from <Month Year>" paragraph plus the `updated` field rather than silent edits.
+
+### Adding Pages
+
+Routes are explicit, not file-based: create the component in `app/routes/`, then register it in `app/routes.ts` (the catch-all `*` route must stay last). Add static pages to `STATIC_ROUTES` in `app/scripts/generate-sitemap.ts`.
+
 ### Project Structure
 
 ```
-src/
+app/
 ├── components/
-│   ├── layout/          # Header, Footer, Layout
-│   ├── seo/            # SEO component
-│   └── ui/             # Reusable UI components
+│   ├── layout/         # Header, Footer, Layout
+│   ├── seo/            # SEO component (OG + JSON-LD)
+│   └── ui/             # Reusable UI components (shadcn/ui style)
 ├── content/
 │   └── posts/          # MDX blog posts
-├── pages/              # Route pages
-├── hooks/              # Custom React hooks
-├── config.ts           # Site configuration
-└── index.css           # Design system & global styles
+├── lib/
+│   └── posts.ts        # Frontmatter parsing + post registry (import.meta.glob)
+├── routes/             # Route components (registered in app/routes.ts)
+├── scripts/            # Prebuild: resume sync, RSS/Atom, sitemap
+├── data/               # resume.json (overwritten from gist on build)
+└── config.ts           # Site configuration + env bindings
 ```
-
-## Building for Production
-
-```bash
-# Type check
-npm run check
-
-# Build
-npm run build
-
-# Preview production build
-npm run preview
-```
-
-## Deployment
-
-### Cloudflare Pages
-
-1. Connect your GitHub repository to Cloudflare Pages
-2. Configure build settings:
-  - Build command: `npm run build`
-  - Build output directory: `dist`
-3. Add environment variables in Cloudflare dashboard
-4. Deploy!
-
-### Custom Domain
-
-1. Go to Cloudflare Pages project settings
-2. Add your custom domain
-3. Update DNS records as instructed
-4. SSL certificate will be provisioned automatically
 
 ## Scripts
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build locally
-- `npm run check` - Type check with TypeScript
-- `npm run format` - Format code with Prettier
+- `npm run dev`: start the dev server (Vite, port 5173)
+- `npm run build`: prebuild (resume sync + RSS/Atom + sitemap), then `react-router build`
+- `npm run preview`: preview the built bundle
+- `npm run typecheck`: `react-router typegen && tsc`
+- `npx prettier --write .`: format (printWidth 133, double quotes)
 
-## License
+Note: `app/data/resume.json` is fetched from a GitHub Gist during prebuild; local edits to it are overwritten on the next build.
 
-MIT License - See LICENSE file for details.
+## Deployment
+
+Cloudflare Pages:
+
+1. Connect the GitHub repository to Cloudflare Pages
+2. Build command: `npm run build`; output directory: `build/client`
+3. Add environment variables in the Cloudflare dashboard
 
 ## Contact
 

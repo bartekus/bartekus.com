@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prebuild": "tsx app/scripts/sync-resume.ts && tsx app/scripts/generate-rss.ts",
+    "prebuild": "tsx app/scripts/sync-resume.ts && tsx app/scripts/generate-rss.ts && tsx app/scripts/generate-sitemap.ts",
     "build": "react-router build",
     "dev": "react-router dev",
     "preview": "vite preview",

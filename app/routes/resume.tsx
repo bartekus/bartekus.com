@@ -1,4 +1,4 @@
-import { Download, Mail, Linkedin, Github, Twitter, Phone } from "lucide-react";
+import { Download, Mail, Linkedin, Github, Globe, Phone, FileText } from "lucide-react";
 import { SEO } from "~/components/seo/SEO";
 import { Button } from "~/components/ui/button";
 import resumeData from "~/data/resume.json";
@@ -28,14 +28,16 @@ interface Basics {
 
 interface Skill {
   name: string;
-  level: string;
+  level?: string;
   keywords: string[];
+  value?: string;
 }
 
 interface Education {
   institution: string;
   studyType: string;
   area: string;
+  credential?: string;
   startDate: string;
   endDate?: string;
   summary?: string;
@@ -46,10 +48,21 @@ interface Work {
   name: string;
   position: string;
   location: string;
+  employmentType?: string;
   startDate: string;
   endDate?: string;
-  summary: string;
+  summary?: string;
   highlights?: string[];
+}
+
+interface Project {
+  name: string;
+  type?: string;
+  url?: string;
+  repository?: string;
+  description?: string;
+  highlights?: string[];
+  keywords?: string[];
 }
 
 interface Reference {
@@ -62,18 +75,15 @@ interface Language {
   fluency: string;
 }
 
-interface Interest {
-  name: string;
-}
-
 interface ResumeData {
   basics: Basics;
+  work: Work[];
+  projects?: Project[];
   skills: Skill[];
   education: Education[];
-  work: Work[];
   references?: Reference[];
+  referencesNote?: string;
   languages?: Language[];
-  interests?: Interest[];
 }
 
 const resume = resumeData as ResumeData;
@@ -94,8 +104,11 @@ const formatDate = (dateString: string | undefined): string => {
 const formatDateRange = (startDate: string, endDate?: string): string => {
   const start = formatDate(startDate);
   const end = formatDate(endDate);
-  return `${start} - ${end}`;
+  return `${start} – ${end}`;
 };
+
+// Strip protocol for compact link display (e.g. "github.com/bartekus")
+const displayUrl = (url: string): string => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
 // Get profile icon component
 const getProfileIcon = (network: string) => {
@@ -105,31 +118,34 @@ const getProfileIcon = (network: string) => {
       return Github;
     case "linkedin":
       return Linkedin;
-    case "twitter":
-    case "x":
-      return Twitter;
+    case "website":
+      return Globe;
     default:
       return null;
   }
 };
 
 export default function Resume() {
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const { basics, skills, education, work, references, languages, interests } = resume;
+  const { basics, work, projects, skills, education, references, referencesNote, languages } = resume;
 
   return (
     <>
       <SEO title="Resume" description={`Resume of ${basics.name} - ${basics.label}`} path="/resume" />
 
       <div className="container px-4 py-12 max-w-4xl mx-auto">
-        {/* Print Button - Hidden on print */}
-        <div className="mb-8 print:hidden flex justify-end">
-          <Button onClick={handlePrint} variant="outline">
-            <Download className="h-4 w-4" />
-            Download PDF
+        {/* Download buttons - Hidden on print */}
+        <div className="mb-8 print:hidden flex flex-wrap justify-end gap-3">
+          <Button asChild variant="outline">
+            <a href="/Bartlomiej_Kus_Resume.pdf" download>
+              <Download className="h-4 w-4" />
+              Download PDF
+            </a>
+          </Button>
+          <Button asChild variant="outline">
+            <a href="/Bartlomiej_Kus_Resume.docx" download>
+              <FileText className="h-4 w-4" />
+              Download DOCX
+            </a>
           </Button>
         </div>
 
@@ -150,19 +166,19 @@ export default function Resume() {
                   {basics.phone}
                 </a>
               )}
-              {basics.profiles.map((profile) => {
+              {basics.profiles.map((profile, index) => {
                 const IconComponent = getProfileIcon(profile.network);
                 if (!IconComponent) return null;
                 return (
                   <a
-                    key={profile.network}
+                    key={`${profile.network}-${index}`}
                     href={profile.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 hover:text-primary print:text-foreground"
                   >
                     <IconComponent className="h-4 w-4" />
-                    {profile.network.charAt(0).toUpperCase() + profile.network.slice(1)}
+                    {profile.username ?? profile.network}
                   </a>
                 );
               })}
@@ -174,21 +190,24 @@ export default function Resume() {
             )}
           </section>
 
-          {/* Summary */}
+          {/* Profile / Summary */}
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-3 text-primary">Summary</h2>
+            <h2 className="text-2xl font-semibold mb-3 text-primary">Profile</h2>
             <p className="text-text-muted leading-relaxed">{basics.summary}</p>
           </section>
 
           {/* Experience */}
           <section className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4 text-primary">Experience</h2>
+            <h2 className="text-2xl font-semibold mb-4 text-primary">Professional Experience</h2>
             <div className="space-y-6">
               {work.map((job, index) => (
                 <div key={index}>
-                  <h3 className="text-lg font-semibold">{job.position}</h3>
-                  <p className="text-text-muted">
-                    {job.name} • {formatDateRange(job.startDate, job.endDate)} • {job.location}
+                  <h3 className="text-lg font-semibold">
+                    {job.position} <span className="text-text-muted font-normal">· {job.name}</span>
+                  </h3>
+                  <p className="text-text-muted text-sm">
+                    {formatDateRange(job.startDate, job.endDate)} · {job.location}
+                    {job.employmentType && ` · ${job.employmentType}`}
                   </p>
                   {job.summary && <p className="mt-2 text-text-muted italic">{job.summary}</p>}
                   {job.highlights && job.highlights.length > 0 && (
@@ -203,6 +222,47 @@ export default function Resume() {
             </div>
           </section>
 
+          {/* Selected Projects */}
+          {projects && projects.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold mb-4 text-primary">Selected Projects</h2>
+              <div className="space-y-6">
+                {projects.map((project, index) => {
+                  const links = [project.url, project.repository].filter(Boolean) as string[];
+                  return (
+                    <div key={index}>
+                      <h3 className="text-lg font-semibold">{project.name}</h3>
+                      <p className="text-text-muted text-sm flex flex-wrap gap-x-2">
+                        {project.type && <span>{project.type}</span>}
+                        {links.map((link) => (
+                          <span key={link}>
+                            ·{" "}
+                            <a
+                              href={link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="hover:text-primary print:text-foreground"
+                            >
+                              {displayUrl(link)}
+                            </a>
+                          </span>
+                        ))}
+                      </p>
+                      {project.description && <p className="mt-2 text-text-muted">{project.description}</p>}
+                      {project.highlights && project.highlights.length > 0 && (
+                        <ul className="mt-2 space-y-1 text-text-muted list-disc list-inside ml-4">
+                          {project.highlights.map((highlight, idx) => (
+                            <li key={idx}>{highlight}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
           {/* Skills */}
           <section className="mb-8 print:page-break-before">
             <h2 className="text-2xl font-semibold mb-4 text-primary">Technical Skills</h2>
@@ -213,7 +273,7 @@ export default function Resume() {
                     {skill.name}
                     {skill.level && <span className="text-text-muted text-sm font-normal ml-2">({skill.level})</span>}
                   </h3>
-                  <p className="text-text-muted text-sm">{skill.keywords.join(", ")}</p>
+                  <p className="text-text-muted text-sm">{skill.value ?? skill.keywords.join(", ")}</p>
                 </div>
               ))}
             </div>
@@ -225,12 +285,10 @@ export default function Resume() {
             <div className="space-y-4">
               {education.map((edu, index) => (
                 <div key={index}>
-                  <h3 className="text-xl font-semibold">
-                    {edu.studyType} in {edu.area}
-                  </h3>
+                  <h3 className="text-xl font-semibold">{edu.credential ?? `${edu.studyType} in ${edu.area}`}</h3>
                   <p className="text-text-muted">
-                    {edu.institution} • {formatDateRange(edu.startDate, edu.endDate)}
-                    {edu.location && ` • ${edu.location}`}
+                    {edu.institution} · {formatDateRange(edu.startDate, edu.endDate)}
+                    {edu.location && ` · ${edu.location}`}
                   </p>
                   {edu.summary && <p className="mt-1 text-text-muted text-sm italic">{edu.summary}</p>}
                 </div>
@@ -253,20 +311,6 @@ export default function Resume() {
             </section>
           )}
 
-          {/* Interests */}
-          {interests && interests.length > 0 && (
-            <section className="mb-8 print:keep-together">
-              <h2 className="text-2xl font-semibold mb-3 text-primary">Interests</h2>
-              <div className="flex flex-wrap gap-2">
-                {interests.map((interest, index) => (
-                  <span key={index} className="text-text-muted text-sm">
-                    {interest.name}
-                  </span>
-                ))}
-              </div>
-            </section>
-          )}
-
           {/* References */}
           {references && references.length > 0 && (
             <section className="print:keep-together">
@@ -279,6 +323,7 @@ export default function Resume() {
                   </div>
                 ))}
               </div>
+              {referencesNote && <p className="text-text-muted text-sm mt-4">{referencesNote}</p>}
             </section>
           )}
         </div>

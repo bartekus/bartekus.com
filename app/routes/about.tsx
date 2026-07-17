@@ -53,7 +53,7 @@ export default function About() {
           <p>
             <strong>
               <a
-                href="https://github.com/stagecraft-ing/open-agentic-platform"
+                href="https://github.com/statecrafting/open-agentic-platform"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"

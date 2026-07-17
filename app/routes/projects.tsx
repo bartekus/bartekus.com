@@ -30,7 +30,7 @@ export default function Projects() {
             title="open-agentic-platform"
             description="A governed control plane for AI-native software delivery: 200 hash-verifiable specs compiled to a deterministic registry, agent actions reconciled to the specs that authorised them, self-authenticating governance certificates, and OWASP ASI 2026 traceability."
             tags={["Agentic AI", "Governance", "Audit"]}
-            href="https://github.com/stagecraft-ing/open-agentic-platform"
+            href="https://github.com/statecrafting/open-agentic-platform"
           />
 
           <CardProject

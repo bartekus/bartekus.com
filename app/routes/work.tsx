@@ -23,7 +23,7 @@ export default function Work() {
             title="open-agentic-platform - Governed Control Plane"
             description="A governed control plane for AI-native software delivery. 200 hash-verifiable specs compile to a deterministic registry; a PR-time gate refuses spec/code drift; every pipeline run emits a self-authenticating governance certificate, with OWASP ASI 2026 control-to-spec traceability from a single CLI invocation."
             tags={["Agentic AI", "Governance", "Rust", "TypeScript", "AGPL-3.0"]}
-            href="https://github.com/stagecraft-ing/open-agentic-platform"
+            href="https://github.com/statecrafting/open-agentic-platform"
           />
 
           <CardProject

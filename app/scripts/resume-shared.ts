@@ -146,7 +146,7 @@ export function normalizeSep(text: string): string {
 
 // Group header profiles into display rows: each "website" profile starts a new
 // row, keeping its associated accounts beside it. This reproduces the reference
-// header's two-row link block (personal links, then stagecraft links).
+// header's two-row link block (personal links, then statecraft links).
 export function groupProfiles(profiles: Profile[]): Profile[][] {
   const rows: Profile[][] = [];
   for (const p of profiles) {

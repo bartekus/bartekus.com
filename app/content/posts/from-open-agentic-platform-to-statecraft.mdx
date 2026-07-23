@@ -1,0 +1,61 @@
+---
+title: "From Open Agentic Platform to Statecraft"
+description: "This week I archived my flagship and rebuilt it ground-up in days. What died, what survived, and why a spec corpus made killing a quarter-million governed lines the cheap option."
+date: "2026-07-23"
+tags: ["Agentic AI", "Governance"]
+draft: false
+readingTime: 10
+cover: "/images/aradia.jpg"
+---
+
+# From Open Agentic Platform to Statecraft
+
+This week I archived my flagship. The repository behind most of the essays on this site, open-agentic-platform, is now read-only, along with three of its satellites: the factory, the template, and the bootstrapper. Their READMEs are tombstones pointing at successors. If you arrived here from one of those tombstones, this is the essay that explains it.
+
+The short version: the ideas won and the codebase lost. Everything the platform argued for (specs as law, drift refused at merge, audit chains a stranger can verify) survived intact and runs in production today under a new name, **[Statecraft](https://github.com/statecrafting/statecraft)**. What did not survive was the architecture that carried those ideas, and the honest way to fix an architecture that has drifted from its own thesis is the way I fixed it: rewrite the specs first, then let the machinery refuse everything that lagged.
+
+## What the Open Agentic Platform was
+
+For most of a year, open-agentic-platform was where I worked out governed agentic delivery in public. By the end it was 225 frozen, hash-verifiable specs governing roughly 290,000 lines of Rust and TypeScript: a web control plane that owned identity, approvals, and audit; a desktop cockpit (OPC, Tauri + React) where agents did the work; a Rust deployment orchestrator; a software factory in one repository and its runnable template in another; and a Go CLI that could stand the whole estate up on Hetzner from nothing.
+
+Each piece earned its own essay. The [OWASP ASI 2026 mapping](/writing/owasp-agentic-top-10-against-a-real-platform) ran against it. The [collapse-resistance receipts](/writing/agentic-code-collapse) came from it. [spec-spine](/writing/inside-spec-spine) was extracted from it. None of that work is disowned; the essays stand as written, and the repository stays public precisely so their references keep resolving.
+
+## What was actually wrong
+
+Nothing in the previous paragraph failed. The failure was quieter: the platform had become several products pretending to be one, and the seams were where the thesis leaked.
+
+The factory lived in its own repository with its own contract, and the template it stamped lived in a third; keeping generator and baseline in lockstep required a cross-repo discipline that existed because the architecture demanded it, not because the problem did. The desktop cockpit was a second execution plane with its own release train, its own SBOMs, its own installer matrix; a fine product, and a standing tax on every change that touched the governance surface. The orchestrator was a standalone service with its own API boundary to defend. Every seam needed its own contract, every contract needed its own gate, and an increasing share of the corpus existed to govern the platform's own plumbing rather than the delivery of software.
+
+Meanwhile the actual product had clarified. What I ship is not "governed agent execution" in the abstract. It is governed delivery: a customer's application, stamped from a known template, bound to its specs, operated on real infrastructure, with paperwork an auditor can check without trusting me. Once the product is stated that way, the right shape is obvious and it is not five repositories with a desktop app in the middle.
+
+## The shape that replaced it
+
+Statecraft is a two-plane system, and the symmetry is the whole design.
+
+The first plane is the control plane: **statecraft**, one application, with tenants, factory, fleet, and governance as services inside it. The second plane is every application it stamps: independent, self-contained, owing the control plane nothing at runtime. The bridge between the planes is a template called **[enrahitu](https://github.com/statecrafting/enrahitu)**.
+
+EnRaHiTu is an acronym: **En**core.ts + **ra**uthy + **hi**qlite + **Tu**rso/libSQL. It is a single container that carries everything an application needs: typed APIs, a real OIDC identity provider, embedded Raft-replicated SQLite, zero managed-infrastructure dependencies. The factory consumes exactly one thing from it, a versioned `template.toml` contract, and is forbidden by spec from reaching past it. The old cross-repo lockstep problem did not get solved so much as deleted: there is one template, one contract, and a factory that cannot see anything else.
+
+The recursion is the part I care most about: the control plane is itself the first production EnRaHiTu app. Statecraft is built on the same chassis it stamps for others, governed by the same spec spine it offers its tenants. When I claim the template can carry a real product, the evidence is that it carries mine.
+
+Around those two planes, the rest of the family fell into place. The desktop cockpit is retired; its governance verbs live on in **[statecraft-cli](https://github.com/statecrafting/statecraft-cli)**, one Rust binary that is a CLI for humans and an MCP server for agents, which turns out to be what the cockpit was actually for. The orchestrator's core survived as an in-process native addon inside the fleet service; the standalone service around it did not. The reusable mechanisms were extracted into Apache-2.0 primitives small enough to audit in an afternoon: [action-gate](https://github.com/statecrafting/action-gate) (deterministic policy decisions), [attest-ledger](https://github.com/statecrafting/attest-ledger) (append-only signed records), [trust-window](https://github.com/statecrafting/trust-window) (graduated privilege from rolling evidence), [canonical-keysort-json](https://github.com/statecrafting/canonical-keysort-json) (hashes that agree everywhere). The licensing philosophy carried over unchanged: the control plane is AGPL-3.0 so the audit chain cannot be absorbed and stripped; everything a stamped application consumes is Apache-2.0 so adoption is unencumbered.
+
+On names: Statecraft because governance is the product, and the craft of state (who may act, what was decided, what can be proven afterwards) is literally what the machinery does. The GitHub org is **statecrafting**, the front door is [statecraft.ing](https://statecraft.ing). If you find stray links to "stagecraft" in the wild, that was the name for about a week mid-transition; the theatre metaphor lost to the governance one, and I do not regret the choice.
+
+## The rewrite itself is the argument
+
+Here is the part that justifies an essay rather than a changelog entry.
+
+The pivot was decided on July 19. The spec corpora were rewritten first: the thesis spec ground-up, then the service specs, each one stating what the new system is rather than patching descriptions of the old one. Those rewrites merged by July 20. The control plane booted on July 21 and was live at its production domain, running on its own template, on the 22nd. Archiving the old repositories, today, was the last step, not the first.
+
+Days, not months, and not because the work was small. It was possible because of an asymmetry I have been writing about all year without getting to test at full scale: **when intent lives in a governed spec corpus, code is a derived artifact, and derived artifacts are cheap to regenerate.** The expensive assets were the decisions: what a factory owes an auditor, where a trust boundary sits, what a template contract must freeze, which paths an agent may touch. Those were already written down, versioned, and hash-frozen. Rewriting them for the new shape was editing, not archaeology. The agents doing the implementation worked from rewritten law with the coupling gate refusing anything that cited the old order, which meant the rewrite could be aggressive precisely because it could not be silently incomplete: every file still bound to a dead spec was a build failure, not a surprise for later.
+
+Compare the counterfactual. In a conventional codebase, the intent behind a quarter-million lines exists as scrollback, tribal memory, and comments of varying honesty. A ground-up rewrite means re-deriving all of it from the artifact, which is why sensible teams almost never attempt one, and why the ones that do talk about it in quarters. I killed my flagship in four days, and the reason is not that I am fast; it is that the flagship was never the asset. The corpus was.
+
+[Agentic code collapse](/writing/agentic-code-collapse) argued that a spec substrate keeps agent-built systems coherent as they grow. This month taught me the stronger corollary: the same substrate is what makes them safely disposable. A system you can rewrite from its specs in days is a system you will actually fix when the architecture drifts, instead of appeasing it with adapters for another year. Governance is usually sold as brakes. This is the part where it turns out to be the engine.
+
+## Where things stand
+
+Statecraft runs in production, operating itself, stamping tenant apps from enrahitu, governed end to end by [spec-spine](https://github.com/statecrafting/spec-spine). The OAP-era numbers (225 specs, 290,000 lines) are retired with the codebase they measured; the new family is smaller, live, and honest about which milestones are done and which are ladder rungs, and the [registry at statecraft.ing](https://statecraft.ing) derives that status from the compiled corpus rather than from marketing copy.
+
+The essays that reference the old platform now carry a note pointing here. The ideas in them did not change owners; they changed vessels. That, in the end, is the whole story: hold the contracts sacred and the code loosely. This is the first time I have been able to demonstrate the second half at full scale, and it is a strange, excellent feeling to delete a year of work and lose nothing that mattered.

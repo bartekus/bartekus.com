@@ -66,7 +66,7 @@ export default function Home() {
             </div>
             <h2 className="text-xl font-semibold mb-2">Governed agentic delivery</h2>
             <p className="text-text-muted">
-              Creator of spec-spine and open-agentic-platform: specs as law, drift refused at merge, and audit chains an auditor
+              Creator of spec-spine and Statecraft: specs as law, drift refused at merge, and audit chains an auditor
               can verify independently.
             </p>
           </motion.div>

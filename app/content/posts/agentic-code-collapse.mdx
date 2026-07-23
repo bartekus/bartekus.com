@@ -2,7 +2,7 @@
 title: "Agentic code collapse, and the substrate that prevents it"
 description: "Agent-built codebases have a characteristic failure mode: each diff is locally plausible while the system slides into incoherence. Receipts from a quarter-million governed lines on why mine hasn't."
 date: "2026-05-15"
-updated: "2026-06-10"
+updated: "2026-07-23"
 tags: ["Agentic AI", "Architecture"]
 draft: false
 readingTime: 11
@@ -10,6 +10,8 @@ cover: "/images/brain-network-memory.jpg"
 ---
 
 # Agentic code collapse, and the substrate that prevents it
+
+*Update, July 2026: the codebase these receipts come from, open-agentic-platform, has since been rebuilt ground-up as [Statecraft](https://github.com/statecrafting/statecraft) under the same spec-spine substrate; the rewrite itself is the strongest evidence yet for the argument below. [From Open Agentic Platform to Statecraft](/writing/from-open-agentic-platform-to-statecraft) tells the rename story.*
 
 There is a failure mode stalking every team that has handed serious codebase work to AI agents, and it does not have a settled name yet. I call it **agentic code collapse**: the point at which an agent-built system has accumulated so much locally-plausible, globally-incoherent change that both humans and agents lose the ability to extend it. Velocity does not decline gracefully; it inverts. Every new feature spends most of its budget rediscovering what the system already is.
 

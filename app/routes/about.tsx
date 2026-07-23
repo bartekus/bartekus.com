@@ -6,7 +6,7 @@ export default function About() {
     <>
       <SEO
         title="About"
-        description="Bartek Kus is a systems architect working on governed agentic software delivery: spec-spine, open-agentic-platform, and a decade of trust infrastructure."
+        description="Bartek Kus is a systems architect working on governed agentic software delivery: spec-spine, Statecraft, and a decade of trust infrastructure."
         path="/about"
       />
 
@@ -37,7 +37,7 @@ export default function About() {
           <p>
             <strong>
               <a
-                href="https://github.com/bartekus/spec-spine"
+                href="https://github.com/statecrafting/spec-spine"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
@@ -53,18 +53,19 @@ export default function About() {
           <p>
             <strong>
               <a
-                href="https://github.com/statecrafting/open-agentic-platform"
+                href="https://github.com/statecrafting/statecraft"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary hover:underline"
               >
-                open-agentic-platform
+                Statecraft
               </a>
             </strong>{" "}
-            is where those ideas run at full scale: a governed control plane for AI-native software delivery. Two hundred frozen
-            specs compile to a deterministic registry, every agent action reconciles to the spec that authorised it, and every
-            pipeline run emits a self-authenticating governance certificate an auditor can verify without trusting the system that
-            produced it. Mapping the platform against the OWASP ASI 2026 controls is a single CLI invocation.
+            is where those ideas run at full scale: the governed agentic delivery control plane. A factory stamps applications
+            from a versioned template contract (enrahitu: Encore.ts, rauthy, hiqlite, and Turso in one self-contained container),
+            a fleet plane operates them, and every substantive change is bound to the spec that authorised it, with drift refused
+            at merge time. The platform is itself the first production app of its own template, governed by the same machinery it
+            offers.
           </p>
 
           <h2 className="text-2xl font-semibold text-foreground mt-12 mb-4">How I Work</h2>

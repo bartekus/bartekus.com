@@ -22,8 +22,8 @@ export default function Press() {
             <p className="text-text-muted leading-relaxed">
               Bartek Kus is a systems architect based in Edmonton, Canada, working on the trust problem in AI-native software
               delivery: AI can write the code; the unsolved problem is trusting what it wrote. He is the creator of spec-spine, an
-              open-source governance engine that refuses code drifting from its owning spec at merge time, and open-agentic-platform,
-              a governed control plane where every agent action reconciles to the specification that authorised it. His earlier work
+              open-source governance engine that refuses code drifting from its owning spec at merge time, and Statecraft,
+              a governed delivery control plane where every agent action reconciles to the specification that authorised it. His earlier work
               includes identity verification infrastructure at Oliu.id (OIDC, SSI, DID) and a decade of platform engineering for
               regulated industries. Bartek writes about architecting intent, deterministic gating of probabilistic systems, and
               trust infrastructure.
@@ -49,7 +49,7 @@ export default function Press() {
             </div>
             <div className="p-6 rounded-lg border border-border bg-card">
               <h3 className="font-semibold mb-2 text-primary">Current Projects</h3>
-              <p className="text-text-muted">spec-spine and open-agentic-platform</p>
+              <p className="text-text-muted">spec-spine and Statecraft</p>
             </div>
           </div>
         </section>

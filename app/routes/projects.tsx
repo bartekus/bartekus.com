@@ -23,14 +23,14 @@ export default function Projects() {
             title="spec-spine"
             description="A typed, hash-verifiable authority ledger over a markdown spec corpus. Refuses code that drifts from its owning spec at PR time; deterministic to the byte across five platforms; governs itself. Rust, Apache-2.0, on crates.io and npm."
             tags={["Rust", "Governance", "Open Source"]}
-            href="https://github.com/bartekus/spec-spine"
+            href="https://github.com/statecrafting/spec-spine"
           />
 
           <CardProject
-            title="open-agentic-platform"
-            description="A governed control plane for AI-native software delivery: 200 hash-verifiable specs compiled to a deterministic registry, agent actions reconciled to the specs that authorised them, self-authenticating governance certificates, and OWASP ASI 2026 traceability."
+            title="Statecraft"
+            description="The governed agentic delivery control plane: tenants, a factory that stamps applications from a versioned template contract, a fleet plane that operates them, and a governance UI. Itself the first production app of its own template; every change bound to the spec that authorised it."
             tags={["Agentic AI", "Governance", "Audit"]}
-            href="https://github.com/statecrafting/open-agentic-platform"
+            href="https://github.com/statecrafting/statecraft"
           />
 
           <CardProject
@@ -46,9 +46,10 @@ export default function Projects() {
           />
 
           <CardProject
-            title="OPC - Local-First Cockpit"
-            description="Tauri v2 + React desktop cockpit for governed agent execution: local workspaces, git context, snapshots, and human approval gates. The execution plane of open-agentic-platform; your code and your agents stay on your machine."
-            tags={["Tauri", "Local-First", "Desktop"]}
+            title="enrahitu"
+            description="EnRaHiTu (Encore.ts + rauthy + hiqlite + Turso/libSQL): a self-contained, single-container application core with zero managed-infrastructure dependencies. The template chassis the Statecraft factory stamps; typed APIs, a real OIDC provider, and embedded Raft-replicated SQLite in one image."
+            tags={["TypeScript", "Encore.ts", "Template"]}
+            href="https://github.com/statecrafting/enrahitu"
           />
 
           <CardProject

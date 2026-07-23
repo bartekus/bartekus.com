@@ -6,9 +6,19 @@
     <link>https://bartekus.com</link>
     <atom:link href="https://bartekus.com/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jul 2026 20:31:43 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 23 Jul 2026 21:21:44 GMT</lastBuildDate>
     <managingEditor>bartekus@gmail.com (Bartek Kus)</managingEditor>
     <webMaster>bartekus@gmail.com (Bartek Kus)</webMaster>
+    <item>
+      <title>From Open Agentic Platform to Statecraft</title>
+      <description>This week I archived my flagship and rebuilt it ground-up in days. What died, what survived, and why a spec corpus made killing a quarter-million governed lines the cheap option.</description>
+      <link>https://bartekus.com/writing/from-open-agentic-platform-to-statecraft</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/from-open-agentic-platform-to-statecraft</guid>
+      <pubDate>Thu, 23 Jul 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Governance</category>
+    </item>
     <item>
       <title>Yolo mode is earned: three layers of Claude Code settings</title>
       <description>I run Claude Code with permission prompts off. That is safe only because of what sits underneath: a global deny floor, project hooks as reflexes, and a config that is itself governed.</description>

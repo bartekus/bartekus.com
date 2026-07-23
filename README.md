@@ -1,6 +1,6 @@
 # bartekus.com
 
-Personal website and blog for Bartek Kus: Solution Architect and Principal Software Engineer; creator of [spec-spine](https://github.com/bartekus/spec-spine) and open-agentic-platform.
+Personal website and blog for Bartek Kus: Solution Architect and Principal Software Engineer; creator of [spec-spine](https://github.com/statecrafting/spec-spine) and [Statecraft](https://github.com/statecrafting/statecraft).
 
 ## Tech Stack
 

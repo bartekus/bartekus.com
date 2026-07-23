@@ -20,23 +20,24 @@ export default function Work() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           <CardProject
-            title="open-agentic-platform - Governed Control Plane"
-            description="A governed control plane for AI-native software delivery. 200 hash-verifiable specs compile to a deterministic registry; a PR-time gate refuses spec/code drift; every pipeline run emits a self-authenticating governance certificate, with OWASP ASI 2026 control-to-spec traceability from a single CLI invocation."
+            title="Statecraft - Governed Delivery Control Plane"
+            description="The governed agentic delivery control plane: tenants, a factory that stamps applications from a versioned template contract, a fleet plane that operates them on Hetzner k3s, and a governance UI. A PR-time gate refuses spec/code drift, and the platform is itself the first production app of its own template. Successor to the open-agentic-platform work."
             tags={["Agentic AI", "Governance", "Rust", "TypeScript", "AGPL-3.0"]}
-            href="https://github.com/statecrafting/open-agentic-platform"
+            href="https://github.com/statecrafting/statecraft"
           />
 
           <CardProject
             title="spec-spine - The Governance Spine, Standalone"
             description="Lifted the governance spine out of a 200-spec platform into a standalone Rust library and CLI. Typed authority over files, sections, and symbols; byte-identical output across five platforms; Apache-2.0 on crates.io and npm. It governs itself: its own coupling gate runs against its own spec corpus in CI."
             tags={["Rust", "Open Source", "Apache-2.0", "CLI"]}
-            href="https://github.com/bartekus/spec-spine"
+            href="https://github.com/statecrafting/spec-spine"
           />
 
           <CardProject
             title="OPC - Local-First Execution Plane"
-            description="A Tauri v2 + React desktop cockpit where humans and agents share one execution surface: local workspaces, git context, structural and semantic analysis, snapshots, and human approval gates. The agentic execution plane stays on your machine; no SaaS in the trust path."
+            description="Built a Tauri v2 + React desktop cockpit where humans and agents shared one execution surface: local workspaces, git context, snapshots, and human approval gates, with no SaaS in the trust path. Retired in the Statecraft rewrite; its governance verbs live on in statecraft-cli, one binary serving humans as a CLI and agents as an MCP server."
             tags={["Tauri", "Rust", "React", "Local-First"]}
+            href="https://github.com/statecrafting/statecraft-cli"
           />
 
           <CardProject

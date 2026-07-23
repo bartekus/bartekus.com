@@ -7,25 +7,26 @@ export default function Now() {
       <SEO title="Now" description="What Bartek Kus is currently working on and focused on." path="/now" />
 
       <div className="container px-4 py-20 max-w-3xl mx-auto">
-        <SectionHeader title="What I'm Doing Now" kicker="Last updated: June 2026" />
+        <SectionHeader title="What I'm Doing Now" kicker="Last updated: July 2026" />
 
         <div className="prose prose-lg max-w-none space-y-8 text-text-muted">
           <section>
             <h2 className="text-2xl font-semibold text-foreground mb-4">Current Focus</h2>
             <ul className="list-disc list-inside space-y-3 ml-4">
               <li>
-                <strong className="text-foreground">spec-spine</strong> - Just shipped v0.1.0: a standalone, Apache-2.0 release of
-                the governance spine as a Rust library and CLI, on crates.io and npm with prebuilt binaries for five platforms. Now
-                focused on the adoption guide, early adopter feedback, and language bindings.
+                <strong className="text-foreground">Statecraft</strong> - The governed agentic delivery control plane, rebuilt
+                ground-up from the open-agentic-platform work and live in production. Tenants, a factory that stamps applications
+                from a versioned template contract, a fleet plane operating them on Hetzner k3s, and a governance UI; the platform
+                is itself the first production app of its own template.
               </li>
               <li>
-                <strong className="text-foreground">open-agentic-platform</strong> - Deep in the factory governance envelope:
-                signing authority, run-grants, and certificate countersigning. The spec corpus just crossed 200 specifications,
-                every one compiled, gated, and traceable to code.
+                <strong className="text-foreground">enrahitu</strong> - The EnRaHiTu template chassis: Encore.ts + rauthy +
+                hiqlite + Turso in one self-contained container with zero managed-infrastructure dependencies. The Encore
+                toolchain is vendored and driven as a library; there is no CLI anywhere in the loop.
               </li>
               <li>
-                <strong className="text-foreground">OWASP ASI 2026</strong> - Maintaining the control-to-spec traceability mapping
-                and writing about what mapping a real platform against the agentic security controls taught me.
+                <strong className="text-foreground">spec-spine</strong> - Now governing every repository in the Statecraft
+                family, including the rewrite that produced it. Ongoing work on adoption, feedback, and language bindings.
               </li>
             </ul>
           </section>

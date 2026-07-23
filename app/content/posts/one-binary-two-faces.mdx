@@ -1,0 +1,42 @@
+---
+title: "One binary, two faces: statecraft-cli"
+description: "I retired a desktop app and replaced it with a Rust binary that is a CLI for humans and an MCP server for agents. The interesting part is why those had to be the same binary."
+date: "2026-07-23"
+tags: ["Tooling", "Agentic AI"]
+draft: false
+readingTime: 8
+---
+
+# One binary, two faces: statecraft-cli
+
+Of everything retired in [the Statecraft rewrite](/writing/from-open-agentic-platform-to-statecraft), the desktop cockpit was the piece with the most engineering sunk into it. OPC was a Tauri v2 + React application: local workspaces, git context, snapshots, approval gates, an execution surface where humans and agents shared a screen. [An earlier essay](/writing/local-first-now-governed) reached for exactly that shape before it had a name. Killing it was the least obvious call of the rewrite, so this essay is the reasoning, and what took its place: **[statecraft-cli](https://github.com/statecrafting/statecraft-cli)**, one Rust binary called `statecraft`, which is a CLI for humans and an MCP server for agents.
+
+## The cockpit assumed the wrong verb
+
+A cockpit is a surface for *watching*. Its founding assumption is that the human sits with the work as it happens: observing agents, inspecting diffs, steering in real time. That assumption was already dying when I built it, and my own writing was the evidence. [Yolo mode is earned](/writing/yolo-mode-is-earned) describes a working style where the agent runs without permission prompts because layered machinery makes the dangerous paths unreachable; nobody in that essay is watching a screen. The honest description of how governed agentic work actually feels is not "supervision." It is *jurisdiction*: the human authors contracts, grants approvals, and holds the irreversible boundaries; the agent works; the machinery adjudicates.
+
+Once you say it that way, the product question answers itself. Jurisdiction does not need a window; it needs verbs. Request an approval. Check a coupling. Trigger a stamp. Upgrade a template. The cockpit was a beautifully rendered place to stand around waiting to perform a verb that a one-line command performs better, and it carried a desktop app's full tax to do it: a release train per platform, installers, signing, an update channel, a UI that had to re-implement every capability the platform grew. The verbs were the product. The window was overhead.
+
+## Two faces, one implementation
+
+The successor's design is its whole name. `statecraft` exposes the control plane's governance verbs twice from a single binary: as subcommands for a human at a shell, and as an MCP server over stdio for an agent, Claude Code first. Same verbs, same implementation, two grammars.
+
+The two-faces property is not packaging convenience; it is the governance argument in binary form. If the human tool and the agent tool are separate programs, they drift, and the drift is exactly where trouble lives: the agent's path acquires a capability the human path lacks, or the human path grows a shortcut the audit trail never sees, and six months later "what can an agent actually do" has two subtly different true answers. One binary makes the drift structurally impossible. Whatever a verb does, it does identically for both faces; an approval requested by an agent through MCP and one requested by a human at the shell are the same request, on the same authenticated client, landing in the same ledger.
+
+And the binary is deliberately a *client*. Authority lives in the control plane, which decides what any caller may do; the CLI holds credentials and speaks the API. This matters because the alternative, a fat tool that embeds policy locally, is how you end up trusting whatever runs on a laptop. Here the laptop can be lost, the binary can be old, and no decision of consequence moves: the control plane is where consequence lives.
+
+## MCP is the part that changes the game
+
+The MCP face deserves its own paragraph, because it inverts a relationship I have been fighting the wrong way around for two years.
+
+Without it, an agent participates in governance the way a contractor participates in building code: externally, through wrappers. You shell out to CLIs, parse their output, and hope the harness intercepts what it should. The governance is real but the agent is not a party to it; it is an object of it, and every wrapper is a place where the object can slip.
+
+With the MCP face, the agent is a native client of the governance system itself. When Claude Code needs an approval, it does not print a message and wait for a human to notice; it calls the approval verb, which creates a real approval in the control plane, which a human grants or refuses with full context, which the agent then observes. Coupling checks, factory stages, template upgrades: each is a tool the agent invokes *under* governance rather than a ceremony performed around it. The agent's relationship to the rules stops being supervisory fiction and becomes ordinary API citizenship: authenticated, scoped, logged, deniable.
+
+There is also no TUI, by written decision rather than by neglect. The temptation to grow one is permanent, and the answer is recorded in the project's thesis spec where an agent can be refused for violating it: faces are for shells and for MCP clients. Anything richer belongs in the governance UI, on the plane where authority actually lives.
+
+## What the cockpit got right lives on
+
+Retirement is not repudiation. OPC's custody argument (your code and your agents stay on your machine; no SaaS in the trust path) was correct and survives fully: the CLI runs locally, the agent runs locally, and what leaves the machine is governance traffic, not your work. The approval gates survived as first-class control-plane objects rather than dialog boxes. Even the cockpit's real habit, watching, survives where it belongs: the governance UI renders what the ledger records, which is a better window than any desktop app, because it shows what *happened* rather than what a viewport happened to frame.
+
+What did not survive is the idea that a governed delivery system needs a fourth plane with its own release engineering. Two planes, a web front door, and one small sharp binary with two faces: that is the whole interface now. The cockpit taught me what the verbs were. The CLI is just the cockpit with everything that was not a verb removed.

@@ -5,11 +5,25 @@
   <link href="https://bartekus.com/atom.xml" rel="self" />
   <link href="https://bartekus.com" />
   <id>https://bartekus.com/</id>
-  <updated>2026-07-23T21:54:57.857Z</updated>
+  <updated>2026-07-23T22:01:37.065Z</updated>
   <author>
     <name>Bartek Kus</name>
     <email>bartekus@gmail.com</email>
   </author>
+  <entry>
+    <title>EnRaHiTu: the whole application in one container</title>
+    <link href="https://bartekus.com/writing/enrahitu-the-whole-app-in-one-container" />
+    <id>https://bartekus.com/writing/enrahitu-the-whole-app-in-one-container</id>
+    <updated>2026-07-23T00:00:00.000Z</updated>
+    <published>2026-07-23T00:00:00.000Z</published>
+    <summary>Encore.ts for typed APIs, rauthy for identity, hiqlite for replicated SQLite, Turso&apos;s libSQL underneath: the template chassis Statecraft stamps, and why zero managed-infrastructure dependencies is the entire point.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Architecture" />
+    <category term="Local-First" />
+  </entry>
   <entry>
     <title>From Open Agentic Platform to Statecraft</title>
     <link href="https://bartekus.com/writing/from-open-agentic-platform-to-statecraft" />
@@ -23,6 +37,48 @@
     </author>
     <category term="Agentic AI" />
     <category term="Governance" />
+  </entry>
+  <entry>
+    <title>One binary, two faces: statecraft-cli</title>
+    <link href="https://bartekus.com/writing/one-binary-two-faces" />
+    <id>https://bartekus.com/writing/one-binary-two-faces</id>
+    <updated>2026-07-23T00:00:00.000Z</updated>
+    <published>2026-07-23T00:00:00.000Z</published>
+    <summary>I retired a desktop app and replaced it with a Rust binary that is a CLI for humans and an MCP server for agents. The interesting part is why those had to be the same binary.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Tooling" />
+    <category term="Agentic AI" />
+  </entry>
+  <entry>
+    <title>Rewriting under governance: notes from a four-day teardown</title>
+    <link href="https://bartekus.com/writing/rewriting-under-governance" />
+    <id>https://bartekus.com/writing/rewriting-under-governance</id>
+    <updated>2026-07-23T00:00:00.000Z</updated>
+    <published>2026-07-23T00:00:00.000Z</published>
+    <summary>The rename essay tells you why the platform was rebuilt. This one is the mechanic&apos;s log: specs rewritten before code, authority transferred edge by edge, agents forbidden from bending the law to match their output, and the three boot defects the gates never promised to catch.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Agentic AI" />
+    <category term="Governance" />
+  </entry>
+  <entry>
+    <title>The factory is a service now</title>
+    <link href="https://bartekus.com/writing/the-factory-is-a-service-now" />
+    <id>https://bartekus.com/writing/the-factory-is-a-service-now</id>
+    <updated>2026-07-23T00:00:00.000Z</updated>
+    <published>2026-07-23T00:00:00.000Z</published>
+    <summary>factory-encore promised a technology-agnostic software factory. Statecraft kept the factory and shot the framework: what changed when the contract moved from a technology-free document to a versioned template.toml with a gate behind it.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Governance" />
+    <category term="Architecture" />
   </entry>
   <entry>
     <title>Yolo mode is earned: three layers of Claude Code settings</title>

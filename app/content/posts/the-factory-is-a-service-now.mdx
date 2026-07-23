@@ -1,0 +1,42 @@
+---
+title: "The factory is a service now"
+description: "factory-encore promised a technology-agnostic software factory. Statecraft kept the factory and shot the framework: what changed when the contract moved from a technology-free document to a versioned template.toml with a gate behind it."
+date: "2026-07-23"
+tags: ["Governance", "Architecture"]
+draft: false
+readingTime: 8
+---
+
+# The factory is a service now
+
+Of the four repositories I [archived this week](/writing/from-open-agentic-platform-to-statecraft), the one I was fondest of was factory-encore. It had the cleanest idea: separate the *process* of building software (requirements, design, specification) from the *implementation* (frameworks, languages, patterns) by placing a formal contract between them. Business documents went in; a frozen, technology-free Build Specification came out; an adapter turned the specification into a running application. The process layer never named a framework. Add a stack by adding an adapter.
+
+I still believe every word of that idea. I archived the repo anyway, because the idea was wearing the wrong product around it, and it took shipping the successor to see the mistake clearly.
+
+## Nobody installs a factory
+
+factory-encore was a framework: a thing you would clone, configure, and operate yourself to stamp your own applications. Its sibling template-encore was the runnable baseline the factory composed from, in a separate repository, held in sync by a cross-repo lockstep protocol so the generator could never silently diverge from the baseline it targeted.
+
+Notice what that architecture assumes: a customer who wants to *own a factory*. That customer barely exists. Organizations do not want factories; they want the things factories produce, arriving with the paperwork that proves how they were produced. The factory is the vendor's concern. By shipping it as a framework, I had exported my own manufacturing tooling as the product and left the actual product (a governed, delivered application) as an exercise for the operator.
+
+The lockstep protocol was the architecture confessing this. Two repositories that must never drift, bound by CI choreography, is one product pretending to be two; the discipline existed because the repo boundary did, not because the problem demanded it. And "technology-agnostic" had quietly become a liability ledger: the agnosticism lived in adapters that mostly did not exist yet, which means it was a promise, while the one real Encore.ts path was a fact. Frameworks are judged on their promises. Products are judged on their facts.
+
+## Where the factory went
+
+In [Statecraft](https://github.com/statecrafting/statecraft), the factory is a service. It lives inside the control plane alongside the other services (tenants, fleet, governance), and its job is narrow: given a tenant and a request, stamp an application from the [enrahitu](/writing/enrahitu-the-whole-app-in-one-container) template into that tenant's own GitHub org, under that tenant's own GitHub App installation, and record every step of the run in the control plane's ledger.
+
+The contract survived the move but changed species. The Build Specification was a technology-free document standing between process and implementation. Its successor, `template.toml`, is a versioned machine contract published by the template itself, and it comes with the enforcement the old contract never had: the factory is forbidden, by owning spec, from reaching past the contract into template internals. Not discouraged by convention; refused at the coupling gate. The old cross-repo lockstep dissolved into something stronger and simpler: one template, one contract, one consumer that is physically incapable of depending on anything else.
+
+What I gave up is real, and I want to name it rather than spin it. The dream of "add a stack by adding an adapter" is gone; Statecraft stamps EnRaHiTu applications, full stop. But the deeper separation the old factory argued for did not die; it moved down the stack and got teeth. Process and implementation are still divided by a frozen contract. The contract is just honest now about which implementation exists, and versioned so the division can evolve without breaking either side.
+
+## Stamping is a governed run, not a code generator
+
+The other thing that changed is what a "run" produces. A code generator's output is code. This factory's output is code *plus custody*: the stamp is recorded as a run in the control plane, the produced repository belongs to the tenant from its first commit (their org, their GitHub App installation, their keys), and the run-side paperwork is built for adversarial verification. The certificate toolkit carried over from the old world intact: tenant-emit builds a signed governance certificate from a finished run directory, and tenant-tail re-verifies that paperwork offline, identity-free, with zero trust in the producer. The factory can vouch for a run, and the tenant can check the vouching without believing a word the factory says.
+
+And because a stamped application knows exactly which template version it came from, the relationship between the copy and the original is a contract rather than a divergence. Template upgrades become a governed verb (exposed through [statecraft-cli](/writing/one-binary-two-faces)) instead of the slow fork-rot that kills every cloned starter kit. The factory does not just create applications; it stays accountable to them across versions.
+
+## The boundary I had to find twice
+
+The lesson generalizes past factories, which is why it earns an essay. The old design drew the product boundary around the *mechanism*, because the mechanism was the interesting engineering. The new design draws it around the *obligation*: what a tenant actually needs to receive, hold, and verify. Mechanisms make satisfying frameworks and confusing products. Obligations make boring services that people can actually buy.
+
+A factory, it turns out, is a capability of a control plane, the way a printing press is a capability of a publisher. I spent a year shipping the press. The publisher works better.

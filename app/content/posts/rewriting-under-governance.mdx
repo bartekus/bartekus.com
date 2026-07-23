@@ -1,0 +1,52 @@
+---
+title: "Rewriting under governance: notes from a four-day teardown"
+description: "The rename essay tells you why the platform was rebuilt. This one is the mechanic's log: specs rewritten before code, authority transferred edge by edge, agents forbidden from bending the law to match their output, and the three boot defects the gates never promised to catch."
+date: "2026-07-23"
+tags: ["Agentic AI", "Governance"]
+draft: false
+readingTime: 10
+---
+
+# Rewriting under governance: notes from a four-day teardown
+
+People who ask me about spec governance always ask the adoption question: how do you start governing a codebase that already exists? Fair question, well covered. But this July I ran the experiment that I think teaches more, and nobody had asked about it because it sounds insane: how do you *destroy* a governed system, under its own governance, without a gap in authority at any point in between?
+
+[The rename essay](/writing/from-open-agentic-platform-to-statecraft) covers why the Open Agentic Platform became Statecraft and what the new shape is. This post is the mechanic's log: what the four days actually consisted of, which rules did real work, and what broke anyway. It is the companion piece to [agentic code collapse](/writing/agentic-code-collapse), which argued the substrate keeps agent-built systems coherent as they grow; consider this the destructive test of the same claim.
+
+## Day one: rewrite the law, not the code
+
+The pivot was decided on July 19, and the first commits were not code. They were spec corpora, rewritten ground-up: the thesis spec of each repo stated what the new system *is*, in the present tense, rather than amending descriptions of the old one paragraph by paragraph.
+
+That distinction sounds stylistic and is actually structural. A patched spec inherits the old system's decomposition; it drags the corpse along in its section headings. A ground-up rewrite forces every ownership claim to be re-argued from the new architecture, and the compiled registry then *is* the new architecture, before a line of implementation exists. For one day, the specs described a system that did not exist yet, and the coupling gate held the whole codebase in a state of documented violation. That is the correct order. Intent leads; the artifact follows; the gate measures the distance between them while it closes.
+
+By July 20 the rewritten corpora were merged. Implementation, mostly agent-executed, ran against rewritten law with a simple property I never had in any pre-governance rewrite: **completion was checkable**. A rewrite is finished when the coupling gate is green with no waivers outstanding, not when the team feels done. Every file still bound to a dead spec was a build failure with a name, not a surprise waiting in a code path nobody exercised.
+
+## Moving authority without dropping it
+
+The subtlest work was not deleting the old platform; it was relocating what survived. Five native packages, scattered across three repositories under three npm scopes, consolidated into one governed repo under one scope. Each package had an owning spec in its donor repo, and the lazy move (delete the donor spec, write a fresh one in the new repo) would have worked mechanically while silently destroying history: retire a spec and you retire the argued record of why the thing it owns exists.
+
+The rule we followed instead: **transfer the edge, never drop the spec.** The donor spec gives up exactly the one path that moved and keeps everything it still owns; the receiving repo's spec picks up the establishing edge for the arrived code. No exporting spec was retired in the consolidation. The authority graph stayed connected through the entire migration, which means that today you can still trace any moved package back through its donor's spec history to the original decision that created it. Provenance survived the reorg, which is the whole reason to bother with an authority ledger in the first place.
+
+## The rule that mattered most
+
+Statecraft's repo rules include one that reads like paranoia until a rewrite makes it load-bearing. It is called the coherence guard, and it says: if the coupling gate fails because code and its owning spec disagree, the agent must not resolve the failure by editing the spec to match the code it just wrote. Surface the contradiction; let a human decide; if the change is genuinely right and the spec genuinely stale, waive with a cited justification in the PR.
+
+In steady state this rule fires rarely. During a rewrite it is the only thing standing between "governed teardown" and "an agent laundering its own mistakes into law." The failure mode it blocks is seductive precisely because it is locally reasonable: the gate is red, the agent has authority to edit markdown, and the shortest path to green is to make the law agree with the output. Every such edit is the gate devouring itself. Four days of aggressive, agent-executed change produced exactly the pressure this rule exists for, and holding it is why the rewritten corpus can be trusted to describe intent rather than merely transcribe the code that happened.
+
+The escape valve matters as much as the wall: the waiver is not a bypass, it is a *recorded* bypass, one line in a PR body naming what drifted and why that was acceptable. Gates without waivers get disabled the first week they are inconvenient. Waivers without citation are just disabling with extra steps. The pairing is the design.
+
+## What the gates never promised to catch
+
+Honesty section. The control plane's first boot, July 21, failed three times before it stood.
+
+The OIDC origin needed an explicit port and the configuration had assumed the default. The runtime gate configuration had been baked into the image when the design said it belonged on the data volume. And outbound mail silently required the SMTPS port, 465, rather than the submission port the config guessed. Three defects, all environmental, all invisible to a coupling gate that reasons about specs and code, because no spec claims to know which port your mail relay listens on.
+
+Two more lessons came out of the bring-up. First-boot seeding had a circular dependency (the API path that would create the first admin required an authenticated admin), resolved the honest way: through the IdP's own admin surface, and recorded as a known asymmetry. And the published `:latest` image had silently lagged the main branch by dozens of files while every gate stayed green, because gates verify what is in the repo, not what your registry cached; the fix is boring and absolute, deploy by digest, never by tag.
+
+I include these because the failure modes governance does not cover are exactly as instructive as the ones it does. The gates did not prevent three boot defects. What they did was make each defect *shallow*: with intent fully written down, every failure was a one-line divergence between a spec's stated expectation and an environment's actual behavior, localized in minutes, fixed without archaeology. Ungoverned rewrites die by the hundredth such defect compounding into fog. This one had three, serially, each cheap.
+
+## The corollary I keep returning to
+
+Four days, then, from decision to a production control plane on a new architecture, with the old flagship archived and no orphaned authority anywhere in the graph. The speed is the headline but the mechanism is the story: at no point did anyone re-derive intent from code, because intent never lived in the code to begin with.
+
+The steady-state pitch for governance is that it prevents drift. The rewrite taught me the sharper version: it makes your system *disposable*, in the best sense. When the corpus is the asset, the implementation is a derived artifact you can regenerate when the architecture stops earning its keep, and "we should really rebuild this" stops being a five-year lament and becomes a four-day log. This log, as it happens.

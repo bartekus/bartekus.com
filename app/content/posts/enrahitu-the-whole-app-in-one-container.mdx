@@ -1,0 +1,50 @@
+---
+title: "EnRaHiTu: the whole application in one container"
+description: "Encore.ts for typed APIs, rauthy for identity, hiqlite for replicated SQLite, Turso's libSQL underneath: the template chassis Statecraft stamps, and why zero managed-infrastructure dependencies is the entire point."
+date: "2026-07-23"
+tags: ["Architecture", "Local-First"]
+draft: false
+readingTime: 9
+---
+
+# EnRaHiTu: the whole application in one container
+
+Ask a modern SaaS team what their application *is* and you will get a diagram with a small box labeled "our code" surrounded by larger boxes labeled with vendor names: managed Postgres, managed identity, managed queue, managed cache, managed secrets. The application is the small box; the product is the constellation. Every arrow into a vendor box is a bill, an operational dependency, a data-residency question, and, the part I care most about, a hole in the audit story: a place where "what happened and who authorised it" is answered by someone else's logs under someone else's retention policy.
+
+[Statecraft](https://github.com/statecrafting/statecraft) stamps applications for tenants, and a stamped application that arrives with six vendor dependencies is not a deliverable; it is a procurement project. So the template the factory stamps from had to answer a blunt question: how much of a real application can live inside one container? The answer is a chassis called **[enrahitu](https://github.com/statecrafting/enrahitu)**, and the answer is: all of it.
+
+## The acronym is the bill of materials
+
+EnRaHiTu is **En**core.ts + **ra**uthy + **hi**qlite + **Tu**rso/libSQL. Four load-bearing ingredients, one image.
+
+**Encore.ts** provides the application skeleton: declarative, type-safe API contracts that generate their infrastructure and clients from a single source of truth. I have [written before](/writing/architecting-intent-vs-vibe-coding) about why I choose contracts a machine can verify over conventions a human must remember; Encore.ts is that worldview applied to a request handler, and it matters double when most of the code is written by agents that will exploit any convention you fail to enforce.
+
+**rauthy** is a real OpenID Connect identity provider, embedded. Not a vendor tenant, not an API key to a third party: the IdP runs inside the application's own boundary, passkey-first, and on first boot it seeds its own signing keys and client credentials into the application's data volume. Identity is the layer regulated buyers interrogate hardest, and the answer "it is in the container; here is the volume; here are the keys' custody story" beats a subprocessor list every time. A decade of identity work taught me that the IdP is the last thing you want to rent.
+
+**hiqlite** and **Turso's libSQL** are the durability story: embedded SQLite, with Raft replication available when a cell needs high availability and strong consistency without leaving the binary. There is no database server to provision because the database is not a server; it is a library with a consensus protocol. Above it, the template exposes one typed data API (CoreLedger, an append-oriented ledger surface); application code does not hold a SQL client at all, which closes the classic agent failure mode of ad-hoc queries drifting away from the schema's intent.
+
+The name has a lineage: the project was `enrahi` before the fourth ingredient earned its syllable. Credit where load is borne.
+
+## No CLI in the loop
+
+The strangest design decision, and the one I defend hardest: enrahitu vendors the Encore toolchain (the Rust runtime core, the TypeScript parser and compiler) and drives it directly as a library through napi bindings, published as `@statecrafting/toolchain`. The `encore` CLI is not used anywhere: not in development, not in CI, not in the container build.
+
+A CLI is a wonderful thing for a human at a keyboard and a governance hole for everything else. It is an opaque boundary in the middle of your build: version-drifting, environment-sensitive, exiting nonzero in ways you parse from stderr. When the factory stamps an application, the build must be a function, not a session: same inputs, same image, byte for byte, with every step attributable. Consuming the toolchain as a pinned library turns "run the tool and hope" into an ordinary typed call inside a governed build, and it means a stamped tenant application can rebuild itself forever without any assumption about what is installed on the machine doing the building.
+
+## The container is the unit of governance
+
+Here is where the chassis stops being an infrastructure preference and becomes part of the governance argument.
+
+Statecraft's fleet plane places stamped applications as a unit of exactly three things: the EnRaHiTu container, its volume, and its ingress. That triple is the whole operational footprint of a tenant cell. Backup is the volume. Migration is the volume. The blast radius of a compromise is the container. The data-residency answer is "wherever that volume is, and nowhere else." When an auditor asks where the application's state lives, the answer has one noun in it.
+
+Compare the constellation model: the same question fans out into a subprocessor list, a shared-responsibility matrix per vendor, and an audit trail assembled from four dashboards with four retention policies. None of those vendors is doing anything wrong; the problem is architectural. Every managed dependency splits custody of the evidence, and [the whole Statecraft thesis](/writing/from-open-agentic-platform-to-statecraft) is that evidence you cannot hold, you cannot certify.
+
+There is an honest price. One container means a cell scales vertically before it scales horizontally; Raft replication is there when a cell warrants a cluster, but the design center is many independent single-container cells, not one elastic hyperscale app. For the workloads Statecraft targets (line-of-business applications delivered under governance, where the operations budget is small and the audit requirements are not), that trade is not a compromise. It is the correct answer arrived at honestly.
+
+## A template with a contract, not a starter kit
+
+The last thing that separates enrahitu from every "starter template" you have cloned and regretted: the factory that stamps it is forbidden, by spec, from knowing anything about its internals. The template publishes a versioned `template.toml` contract; the factory consumes that contract and nothing else. The rule is enforced the way everything in this family is enforced, by the [spec corpus and the coupling gate](/writing/inside-spec-spine), not by a code-review convention.
+
+That one constraint is what makes the template upgradable as a product. A stamped application knows which template version it came from; the contract knows what changed between versions; and upgrading is a governed verb rather than a weekend of diffing your fork against upstream. Starter kits rot precisely because the relationship between the copy and the original is unspecified. Here it is the most specified thing in the system.
+
+The proof, as with everything in this family, is recursive: the Statecraft control plane itself runs on this chassis in production. One container, its volume, its ingress, an embedded IdP, an embedded replicated database, and a typed API surface stamped from the same contract it offers everyone else. The small box in the diagram grew until it swallowed the constellation, and the audit story got simpler at every step.

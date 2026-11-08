@@ -1,0 +1,77 @@
+---
+title: "From the factory to small tools"
+description: "In July I described one platform: a factory, a fleet plane, tenants, certificates. In October that shape was retired. What stands in public now is a family of small tools, each making one claim that can be graded."
+date: "2026-11-07"
+tags: ["Agentic AI", "Architecture", "Governance"]
+draft: false
+readingTime: 8
+cover: "/images/from-factory-to-small-tools.jpg"
+---
+
+# From the factory to small tools
+
+The July essays on this site described one thing. [From Open Agentic Platform to Statecraft](/writing/from-open-agentic-platform-to-statecraft) called it a two-plane system: a control plane with tenants, a factory and a fleet inside it, and a second plane of applications the factory stamped from a template. [The factory is a service now](/writing/the-factory-is-a-service-now) argued that the factory belonged inside that control plane. [One binary, two faces](/writing/one-binary-two-faces) described the CLI as a client of it. The essays were accurate when written, and they described a shape that was retired in October 2026.
+
+What stands in public now is not a platform. It is a family of small tools with explicit boundaries, and this essay is about why the family is the right shape and the platform was not. The public record is [statecraft.ing](https://statecraft.ing), with the catalog at [/registry](https://statecraft.ing/registry); this is the reasoning behind it.
+
+## What the platform claimed
+
+The July shape made one claim, and the claim was large: governed delivery, end to end. A tenant's application was stamped from a known template, bound to its specs, operated on real infrastructure, with paperwork an auditor could check. The factory stamped. The fleet plane operated. A certificate toolkit (tenant-emit built a signed certificate from a finished run; tenant-tail re-verified it offline) produced the paperwork. The control plane was itself the first application built on the template it stamped for others. I wrote that sentence with some pride, and it was true.
+
+Notice what kind of sentence it was. It was a sentence about a deployment. It said that a system was running and operating itself. It did not say which of its parts were specified, which were implemented, which were tested, and which had only ever run in the one place I was looking at. It could not say that, because a platform is a composite, and the honest grade of a composite claim is the lowest grade of any part. Nobody reports that number. Everyone reports the deployment.
+
+## A claim you cannot grade
+
+The family now uses a fixed vocabulary for what a repository is allowed to say about itself: **specified, implemented, tested, released, deployed**. These are different statements. statecraft-cli's constitution puts it as its twelfth principle: the four grades are made separately and none is inferred from the completeness of a specification. The website's version is shorter: a library capability, a release and a deployed service are separate claims.
+
+A platform that does everything cannot use that vocabulary. "The factory stamps applications" was a claim about a service, a template contract, a chassis, a ledger, an identity provider and a deployment pipeline at once. Grade it as deployed and you have said something true about one installation and nothing about whether a stranger could reproduce it. Grade it as tested and you have to answer for every seam, including the ones nobody wrote a negative test for. Grade it as released and you discover that the primitives it rested on were at version 0.1.0 and the template's three-node topology had never run anywhere but one host.
+
+That is not a complaint about the engineering. It is a statement about the shape of the claim. A claim that cannot be graded cannot be refuted either, and a claim that cannot be refuted is marketing, however carefully it was built.
+
+## Small tools, one claim each
+
+Here is what the public family says about itself today, with each grade exactly as the repository states it.
+
+| Tool | The one claim | Grade |
+|---|---|---|
+| [spec-spine](https://github.com/statecrafting/spec-spine) | A typed, hash-verifiable authority ledger over a markdown corpus; a PR-time gate refuses drift | Released: v0.32.0 on crates.io, npm and PyPI |
+| [statecraft-cli](https://github.com/statecrafting/statecraft-cli) | A local environment for one unit of governed agent work, judged independently | Specified, implemented and tested; not released (0.0.0, `publish = false`) |
+| [rahi](https://github.com/statecrafting/rahi) | The Rust chassis for governed cells; an app extends it, never forks it | 0.7.1 release candidate on crates.io; supported topology N=1 |
+| [aicortex](https://github.com/statecrafting/aicortex) | Governed memory over MCP whose recalled content is data, never instruction | Specified; being built one spec per pull request |
+| [rustev](https://github.com/statecrafting/rustev) | A decision engine that produces proposals, never grants | Released: v0.5.0 on crates.io |
+| [wire-witness](https://github.com/statecrafting/wire-witness) | Captured wire exchanges as testimony that authorizes nothing | v0.1.0 tag; not on crates.io |
+| [action-gate](https://github.com/statecrafting/action-gate), [attest-ledger](https://github.com/statecrafting/attest-ledger), [canonical-keysort-json](https://github.com/statecrafting/canonical-keysort-json) | Decide, record, serialize; three primitives small enough to audit in an afternoon | Released: 0.3.0, 0.2.0 and 0.1.1 on crates.io |
+
+Read the right-hand column again. It is uneven, and the unevenness is the point. The CLI is not released and says so in its README's first heading. The chassis supports one node and records that three nodes on Kubernetes have never run. The memory store's README still opens with "specified, not yet built" while its catalog shows a handful of specs complete. wire-witness has a tag and no crate. None of that could be said about a platform, because a platform has to be one thing, and one thing has one grade.
+
+Each of these tools is the subject of its own essay: [the chassis](/writing/from-enrahitu-to-rahi), [the memory](/writing/aicortex-memory-that-cannot-instruct), [the decision engine](/writing/rustev-proposals-never-grants), [the witness](/writing/wire-witness-testimony-not-authority), [the primitives](/writing/three-primitives-action-gate-attest-ledger-canonical-json), [the CLI](/writing/statecraft-cli-independent-acceptance) and [the spine](/writing/spec-spine-check-delta-verify).
+
+## A boundary is a refusal
+
+Small is not the property that matters. Bounded is. Every tool in the family states what it refuses to own, and the refusal is what makes the claim gradable.
+
+Rustev proposes and never grants: it does not authorize, hold knowledge or execute effects, so the question "is rustev correct" is a question about proposals and evidence records, not about whether something bad happened downstream. wire-witness produces testimony and never grants authority to execute, admit evidence, change policy or decide acceptance; its claim ends at the custody facts. aicortex's recalled content is data unless a human promoted it, so the memory can be wrong without being dangerous. statecraft-cli's boundaries table hands specification semantics to spec-spine, memory to aicortex, the chassis to rahi, and record hashing to the primitives, and then names what it deferred by name rather than by omission: publication, signing, any user interface, adaptive autonomy, breadth across providers, scheduling across repositories.
+
+The platform drew its boundary around the obligation to a tenant, which I argued in July was the right boundary for a product. It was. It was the wrong boundary for a claim. An obligation is satisfied or not; a claim is specified, implemented, tested, released or deployed, and those are the words an outsider can check.
+
+## The same argument, one level up
+
+Two earlier essays set this up without my noticing. [Architecting intent](/writing/architecting-intent-vs-vibe-coding) argued that the human's job in agentic work is to author the contract, and that the contract has to be small enough to be a contract: a spec that says everything constrains nothing. [Agentic code collapse](/writing/agentic-code-collapse) argued that coherence is a property of substrate, not of intelligence, and that the substrate works by making incoherence impossible to merge.
+
+A platform asks one substrate to hold coherence across several products that are pretending to be one. The July essay admitted this about the old platform ("several products pretending to be one") and fixed it by merging them into two planes. That was the wrong direction. The seams did not go away; they went internal, where the coupling gate could see them but no outsider could grade them. The October answer went the other way: split along the seams, and make each seam a public contract. The family's exit codes are one contract (0 ok, 1 finding, 2 refused, 3 usage, 4 failed) shared between spec-spine and the CLI. The `--json` envelope is another. The CLI reads readiness from spec-spine's `registry plan` rather than computing it. These are the places where tools meet, and because they are written down, a tool can be replaced without the others noticing.
+
+This is the collapse argument applied to a product family rather than a codebase. Each tool is a locally coherent diff. The contracts between them are the authority graph. The thing that keeps the family from sliding into incoherence is that no tool may claim what another owns.
+
+## The second reset
+
+I owe the reader a plain statement. This is the second time in four months I have retired the thing the previous essays described. In July, open-agentic-platform became Statecraft in four days, and I wrote [two](/writing/from-open-agentic-platform-to-statecraft) [essays](/writing/rewriting-under-governance) about how a governed spec corpus makes a system disposable. In October, the platform shape itself was retired and the public family took its place. Six repositories left the catalog in a single reviewed pull request; [that retirement is its own essay](/writing/retiring-six-repositories-under-governance).
+
+The July essays were right that a corpus makes rebuilding cheap. What I did not say, because I had not learned it yet, is that cheapness cuts both ways. When regenerating code costs days instead of quarters, you can rebuild the wrong shape very quickly, and the speed hides the fact that the shape is wrong. The July rewrite produced a system that ran. It did not produce a system whose claims an outsider could grade, and the reason is that I was still authoring a platform, which is to say I was still authoring one claim.
+
+Building with agents moves the human's work up a level. Generation is cheap, integration is mechanical if the substrate is right, and what remains for the human is the shape of the claim itself: what this thing says about itself, and what evidence that statement requires. I got that shape wrong twice before the claim fit in a sentence a stranger could check. I do not think two resets is a scandal. I think it is roughly what it costs to learn that the unit of a product is the claim and not the deployment, and I would rather record the lesson than pretend the July essays described something that still exists.
+
+## What survived both resets
+
+spec-spine survived both, and is on its thirty-second minor release. The three primitives survived both, because they were small enough to be claims already. The thesis survived both: AI can write the code, and the unsolved problem is trusting what it wrote. The grading vocabulary is new, and it is the only thing I would now refuse to give up.
+
+A declaration is a starting point. Verification is a separate question. The family is built so that those two sentences can be true of every repository separately, and [statecraft.ing](https://statecraft.ing) is where the declarations and the verification are shown side by side, with declared lifecycle on one axis and qualification on another. When the next reset comes, and it will, the record of what each tool claimed and what it could show will be there, graded, in the past tense where it belongs.

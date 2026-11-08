@@ -1,0 +1,83 @@
+---
+title: "From EnRaHiTu to Rahi"
+description: "The July chassis had four ingredients in one container. Rahi keeps two, moves everything to Rust, and becomes a library an application extends and never forks. What was traded, and what the proof actually covers."
+date: "2026-11-07"
+tags: ["Architecture", "Rust", "Identity", "Local-First"]
+draft: false
+readingTime: 8
+cover: "/images/from-enrahitu-to-rahi.jpg"
+---
+
+# From EnRaHiTu to Rahi
+
+In July I wrote about [EnRaHiTu](/writing/enrahitu-the-whole-app-in-one-container): Encore.ts for typed APIs, rauthy for identity, hiqlite for replicated SQLite, Turso's libSQL underneath, all of it in one container. The acronym was the bill of materials. Three months later the bill is two syllables shorter. Drop Encore and Turso, and what remains is **[rahi](https://github.com/statecrafting/rahi)**: rauthy plus hiqlite, a Rust chassis for governed cells.
+
+This essay is the account of that subtraction. Not a correction of the July piece, which described a system that existed and worked as described, but a record of what I learned by building the next one. enrahitu was retired on 2026-10-07. rahi is what the same ideas look like once the template ambition is removed and the runtime is replaced.
+
+## Why rebuild instead of amend
+
+The enrahitu corpus grew to thirty-eight specs around one ambition: a template that outside organisations would stamp, extend, and upgrade under. That ambition pulled a membership product into the chassis, a stamp contract and a scaffold verb, three packaging pivots, a second frontend flavour, and a chassis-boundary upgrade mechanism to hold it all together. None of it had a customer. The products that would actually consume the chassis were in-house, written in Rust, and wanted a library to depend on, not a template to be stamped from. Amending around the ambition would have preserved the confusion that created it.
+
+The second reason was the runtime. Encore.ts had been kept for its static application model and its infrastructure seam. Everything else about it was overhead for this job: the Node runtime, the vendored toolchain I had been so proud of driving as a library, the napi addon that let TypeScript reach hiqlite. The lineage document that opens the rahi corpus says it plainly: keep the model as a hand-authored manifest verified at build, drop the runtime.
+
+So rahi is a rebuild, not a fork. Every enrahitu decision that survived is cited by provenance URI in the spec that carries it, and the lineage document lists what was carried, what was cut, and what changed, so nobody has to reconstruct the reasoning from a diff.
+
+## Seven things an application should never build twice
+
+The chassis thesis names seven responsibilities. An application built on rahi gets all of them by composing crates, and builds none of them itself.
+
+- Identity. rauthy, a real OpenID Connect provider, co-deployed in the same container as a released binary and never forked. It is reached only through the application's own origin: a loopback-only raw proxy under `/auth/*`, discovery-driven, with the IdP's `sub` as the principal and no local account row. The same-origin rule is not a convenience; it is what keeps cookies, redirects, and audience checks inside one trust boundary. [Identity in practice](/writing/identity-in-practice) made the case for OIDC and for running rauthy; rahi is that recommendation turned into a default nobody has to re-derive.
+
+- Replicated state. hiqlite, embedded in-process with its own Raft cluster. The ten store decisions carried from enrahitu are intact: transaction atomicity, key-only notify, ten-second leases with fencing, a revision watermark, migrations as a deploy step, compare-and-swap by unique index, a backup surface separate from archive.
+
+- A hash-chained decision ledger. Compare-and-swap append on a unique parent index; head plus a hot window resident; sealed segments archived and verifiable without history. Since 0.7.0 every decision also names its deployment epoch.
+
+- A deny-by-default capability kernel. A declared ceiling, verified emission, denials ledgered, and the gate's configuration hash anchored so a recorded decision binds to the exact policy that produced it.
+
+- An axum edge. Probes, `/metrics` always on, OpenTelemetry with an in-process ring buffer, the decision id carried on spans, trusted proxy hops, operator-gated internal surfaces.
+
+- Single-container packaging. One volume layout, one public URL input, first-boot provisioning, a die-together supervisor for the app and its IdP, and the operational verbs: preflight, migrate, backup, restore. Restore is a cluster reset, and the archive is one artifact that includes the keys.
+
+- A dev substrate. `rahi-harness` boots the real built binary in tests, waits on `/readyz` and never `/healthz`, and gives each test file one instance. The thing you test is the thing you ship.
+
+Nine crates carry these: `rahi-types`, `rahi-store`, `rahi-ledger`, `rahi-kernel`, `rahi-edge`, `rahi-idp`, `rahi-ops`, `rahi-cli`, `rahi-harness`. The reference application, `hello-cell`, is a manifest, one resource kind, and one page.
+
+## Extend, never fork
+
+Here is the sentence that separates rahi from the July design: a consumer depends on published crates and pins a version. There is no `template.toml`, and nothing stamps.
+
+The July essay was proud of the template contract, and for the problem it solved it was right: if you are going to hand out copies, the relationship between copy and original must be the most specified thing in the system. But a copy is still a copy. Every stamped application carried the chassis's source in its own tree, and an upgrade was a governed verb that still had to reconcile two trees. A library removes the second tree. An application is a Rust binary that implements the `Cell` trait (a manifest, migrations, routes, operator routes, one line of `main`), and when the chassis changes, the application bumps a version and recompiles. The consumer contract is written down: the trait, the manifest schema, the environment surface, the exit codes, the archive format, the chain record format, the chassis's HTTP surfaces. Pre-1.0, a minor bump may change that contract and a patch bump may not.
+
+**A chassis is something you build on, not something you build from.** That is the whole difference between a library and a template, and it is why the dependency direction in rahi points one way only: nothing in the chassis depends on any application.
+
+## What dropping Encore cost
+
+I want to be exact about the losses, because the July essay argued for Encore on grounds that were true and are still true.
+
+Encore generated infrastructure and typed clients from one declarative source. rahi's manifest is hand-authored TOML, verified at build; extraction from source is explicitly a later spec, named only if a product needs it. The typed request handlers are axum handlers written by hand. The TypeScript ecosystem is gone from the chassis entirely, and with it the option of a TypeScript consumer; "no Node, no Encore" is a line in the README. The toolchain-as-library work, which I defended hardest in July, had nothing left to drive once the runtime it drove was removed.
+
+Turso's libSQL left too. hiqlite's SQLite group is the only application store; there is no second relational database, no CoreLedger with a Postgres driver behind it. Vector search, when aicortex needs it, is an aicortex spec over the same store, not a second engine.
+
+What the trade bought is coherence of language and process. The supervisor, the verbs, the IdP proxy, the kernel, the ledger, and the test harness are all Rust in one binary. There is no shell beyond the container entrypoint. The products that consume the chassis are Rust, so composition happens at the crate boundary, with the compiler checking the seams, instead of across a napi bridge. A chassis whose entire job is to be composed has to live in the language of the things composing it. Once the consumers were Rust, Encore was a second runtime carrying a first-class responsibility, and the honest move was to let it go.
+
+## What is proven, and what is not
+
+The README keeps implementation, publication, and operational proof in separate columns, and I will keep them separate here.
+
+Released: 0.7.1, a release candidate dated 2026-10-16, with all nine crates on crates.io. Versions 0.1.0 through 0.7.0 published the same nine. 0.7.0 added deployment epochs, remote identity, and a split N=3 overlay for qualification; 0.7.1 is a patch that provisions a split cell's backup admin, found by running the N=3 acceptance procedure against the 0.7.0 image.
+
+Exercised against the pinned identity provider: spec 037's live workflow runs the whole suite against rauthy 0.36.2 pinned by digest, with gated skips refused. That proof covers login, audience and scope enforcement, fresh backups, restart, and restore that brings back the original user, the original note, and the original ledger head.
+
+Supported topology: N=1. Three replicas have run only as three processes on one host, without rauthy, in a test that CI runs: each replica mints its own decision ids and none of thirty concurrent denials is lost. N=3 on Kubernetes has never run. The README says so in three places, and the changelog says N=3 is not supported until the acceptance criteria run on a named release.
+
+The declared gaps are also written down: a backward-clock revocation gap during transition; an old restore can revive refresh credentials; a SIGKILL before the store finishes shutting down leaves hiqlite's unclean marker, so the next boot refuses until an operator makes a recovery decision; a v0.1.0 volume has no supported path to the current version. A release candidate with a gap list is a more useful artifact than a release without one.
+
+## Upstream
+
+rauthy and hiqlite are both sebadob's projects, and I contribute to both upstream. rahi consumes rauthy as a released binary and never forks it. hiqlite it embeds through a registry-published patched build, `hiqlite-patched`, pinned exactly; that pin is a dependency the chassis would rather not have, and it exists so the chassis does not have to wait on an upstream release to carry a fix it needs today. The right direction for the family is for patches to land upstream and for the pin to disappear. I am not going to list pull requests here; the repositories are public and the record speaks for itself.
+
+## What survived from July
+
+The argument of the July essay was never really about Encore. It was that the container is the unit of governance: one image, one volume, one ingress, and an audit story with one noun in it. That argument survived intact. Identity is still inside the boundary. State is still a library with a consensus protocol, not a server. The ledger still records what was decided and who decided it, and backup is still the volume.
+
+What changed is the shape of the thing being governed. In July it was a stamped copy with a versioned contract. Now it is a library with a consumer contract, extended by binaries that never carry its source. Same seven responsibilities, one language, no template. The acronym got shorter because the design did.

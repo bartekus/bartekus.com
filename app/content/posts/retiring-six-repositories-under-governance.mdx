@@ -1,0 +1,73 @@
+---
+title: "Retiring six repositories under governance"
+description: "On 2026-10-07 six repositories left the public family in one reviewed pull request. A retirement is a governed act with a record. This is what that record contains, what it does not, and why that matters."
+date: "2026-11-07"
+tags: ["Governance", "Architecture"]
+draft: false
+readingTime: 8
+cover: "/images/retiring-six-repositories-under-governance.jpg"
+---
+
+# Retiring six repositories under governance
+
+On 2026-10-07, six repositories left the public statecrafting family: tenant-emit, tenant-tail, trust-window, chancery, fact-fold and hqgit, along with a setup-acceptance scratch repository dated 2026-09-24. Their histories were preserved in a private archive. The public catalog, the organization profile and the website copy were amended in one reviewed pull request, and the specs that govern those surfaces still record the amendment as awaiting owner ratification.
+
+That paragraph is the whole event. The rest of this essay is about why a paragraph like that has to exist, what it must contain, and what it is allowed to leave out. [The previous essay](/writing/from-factory-to-small-tools) explained why the family got smaller. This one is about the mechanics of making it smaller without lying about it.
+
+## Four words that are not synonyms
+
+The hardest part of retiring software is the vocabulary, because four words get used interchangeably and mean four different things.
+
+**Archived** is a state a hosting provider puts a repository in: read-only, still resolvable, with a banner. It is a claim about a URL. **Deleted** means the URL no longer resolves and nothing public says why. **Preserved** means the history exists somewhere, which says nothing about whether you can reach it. **Retired** is a status in a lifecycle: the thing has left the set of things the family vouches for, and the catalog, the allowlist and the public copy no longer name it as current.
+
+The six repositories are in different combinations of these states today, and the record says so rather than smoothing it over. The pull request says they were being archived on GitHub with history kept in the private archive. hqgit still resolves as an archived repository with a one-line description naming the retirement date and the archive. The other names do not resolve publicly. All six are retired in the lifecycle sense: the catalog's source allowlist, the organization profile and the site copy no longer describe them, and that is the claim the family actually makes. "Preserved" is a claim about the archive, which is private, so an outsider cannot check it and the record does not pretend otherwise.
+
+For the reader who arrived from an old essay: tenant-emit and tenant-tail were the certificate toolkit of the retired factory, one building a signed governance certificate from a finished run directory and the other re-verifying it offline. trust-window was a primitive for graduated privilege from rolling evidence, listed among the Apache-2.0 primitives in July. hqgit was a specified, never built, evidence ledger for software change. chancery and fact-fold were smaller. All of that is past tense now.
+
+## What the record contains
+
+The retirement lives in a pull request against the organization's `.github` repository, which is where the public catalog and the statecraft.ing frontend are built. A retirement is a change to public surfaces, so it is governed the way any other change to those surfaces is governed: by the specs that own them and the gate that refuses drift.
+
+The record names the **which**: seven repository names, listed once in the pull request summary, once in a "Repository retirement record" section of the adoption document, and once in the amendment to the catalog spec. It names the **when**: decided 2026-10-07, merged the same day. It names **where history lives**: the private archive, by its repository name. And it names **what public surfaces changed**, file by file. The catalog's source allowlist lost three entries, the three that had been required catalog sources; the remaining nine kept their pins from the 2026-10-03 snapshot. The public source inventory lost its retired rows. The profile README, the products route, the reading list and an architecture component lost the copy that described trust scoring, artifact emission and independent verification. Three specs gained short amendments saying that a retired repository leaves the profile, the roster and the allowlist, with the catalog spec naming this retirement specifically. The derived registry and index shards were regenerated, with spec-spine 0.28.0, so the gate could see that the specs and the code still agreed.
+
+The record also names what it did **not** touch, which matters as much. The pinned spec-spine corpus still mentioned hqgit in the authored text of three of its own specs, and the pull request left that alone, because spec-spine is the authority for its own text and a change there belongs in spec-spine followed by a pin refresh here. The earlier evidence and receipts in the adoption document, which describe a twelve-source snapshot with 336 specs, were left exactly as observed. Rustev, doc-manus and butler-ai were explicitly named as unchanged.
+
+And the record carries its own verification, graded. Lint, freshness, coverage and coupling ran locally against spec-spine 0.28.0 at the exact head, the catalog export was run twice and compared byte for byte, and the unit and browser tests passed, with the sentence "these are local results" attached. The repository's own CI run was a separate claim and was stated as one.
+
+## What the record does not contain
+
+A reason.
+
+The adoption document says "Decided 2026-10-07" and then states the decision: remove them from the allowlist, the inventory, the profile and the site. It does not say why those seven. The pull request does not either. The closest thing in the public family to a reason is in a neighbour: statecraft-cli's boundaries spec assesses tenant-emit and tenant-tail as tied to the retired factory's run-directory model, trust-window as a library with no consumer, fact-fold as not that product's concern, and chancery as a donor of lessons only. Those are reuse dispositions from one tool's point of view, written three weeks earlier for a different purpose. They are not the retirement's reason, and I will not retrofit them into one.
+
+I want to be precise about what kind of problem that is. In the family's own exit-code vocabulary, a finding is exit 1 and a failure is exit 4. A missing reason is a finding. The record did what a record must do: it made the state of the world checkable. Anyone can open the pull request, see which names left which files, see which specs were amended, and see that the amendment is still marked as awaiting the owner's ratification. Nothing was hidden, nothing was rewritten, and the derived shards prove that the surfaces and their specs still agree. What the record did not do is carry the owner's judgment about why the set shrank, and a reader who wants that judgment is right to ask for it.
+
+A scandal would be a reason that contradicts the record, or a record that was edited after the fact to agree with a reason. Neither happened. A finding is something the next retirement should carry, and the fact that I can name it is itself a product of having a record at all. In an ungoverned organization the six repositories would have quietly gone read-only one evening and the absence of a reason would have been invisible, because there would have been nowhere for a reason to be missing from.
+
+## Ratification took a month
+
+The three amended specs kept `status: approved`, and each ratification section said the 2026-10-07 amendment awaits owner ratification. For a month, it did.
+
+That is honest, and it is also uncomfortable, and I would rather show the discomfort than hide it. The family's rule is that a spec's ratification is the owner's act, not a consequence of a merge. The pull request was reviewed and merged; the amendment was live on the site; the gate was green. None of that is ratification. The owner follow-up list in the pull request said "ratify the spec 001, 002 and 003 amendments" as its first item, and until that line was acted on, the public catalog was operating under an amendment that its own governance said was provisional. I am the owner. The finding was mine. The ratification line, dated 2026-11-07, went in with the next governed change to the catalog, the one that re-pinned every source and moved the producer to spec-spine 0.32.0. A month is a long time for a one-line act, and the record now shows exactly how long.
+
+## enrahitu was not retired
+
+One name is missing from the list above, and the omission is deliberate. enrahitu, the template that the July essays made the bridge between two planes, is no longer a public repository, and it was not part of the 2026-10-07 retirement. It was folded into rahi, and that is a different kind of act.
+
+rahi's lineage note, dated 2026-09-03, calls rahi a rebuild of the enrahitu chassis rather than an amendment of it. It then does something a retirement record does not: it carries a table of what was kept, decision by decision, each row citing the enrahitu spec that made it, under `enrahitu://` provenance URIs the rahi specs can cite. The ten hiqlite decisions. The same-origin identity proxy. The deny-by-default kernel with ledgered denials. The single-volume layout and die-together supervision. Then a list of what was cut: the membership domain, the stamp contract and scaffold verb, the chassis-boundary upgrade mechanics, the Encore toolchain. And one line that is the whole change: library, not template.
+
+The name is the forwarding address. enrahitu was Encore, Rauthy, Hiqlite and Turso; drop Encore and Turso and the letters that remain are rahi. That is supersession, in exactly the sense spec-spine's lifecycle gives the word: the successor inherits the authority, the predecessor keeps its history, and the graph answers "where did this go." A retirement says a thing left the set. A supersession says a thing became another thing, and names it. [From enrahitu to rahi](/writing/from-enrahitu-to-rahi) tells that story on its own terms.
+
+## An append-only record of a removal is still a record
+
+The primitive that makes this whole essay possible is the one [attest-ledger](https://github.com/statecrafting/attest-ledger) embodies: an append-only, hash-linked record whose verifier does not trust the producer. [The primitives essay](/writing/three-primitives-action-gate-attest-ledger-canonical-json) covers the mechanics. The point I need here is smaller and more general.
+
+An append-only ledger cannot forget. It can only append a record that says "removed." The catalog in the `.github` repository is a build-time registry, the counterpart to attest-ledger's run-time chain, and a retirement is an entry in it, not an erasure from it. That is why the adoption document keeps its twelve-source snapshot untouched below the retirement record: the earlier evidence describes what was observed on 2026-10-03, the retirement describes what was decided on 2026-10-07, and both are true. spec-spine's own corpus map, written for a different removal, states the principle in one line: a citation outlives the document it cites.
+
+A removal is itself a record. That is the opposite of how most organizations treat retirement, where the goal is for the thing to disappear cleanly. Here the goal is for the disappearance to be visible: which, when, where the history went, what changed in public, verified how, and ratified by whom. All six are in the record now, and the record also shows that the sixth arrived a month after the other five.
+
+## What a retirement owes
+
+Which repositories. When. Where the history lives. What public surfaces changed, file by file, with the derived ledger regenerated so the gate can confirm the specs agree. What was deliberately not touched, and why it belongs to someone else. Verification, graded as local or as a CI run. Ratification by the owner. And a reason.
+
+The 2026-10-07 retirement carried the first seven. It owes the last two, and the record is the only reason I know that.

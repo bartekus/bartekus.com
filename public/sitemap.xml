@@ -35,8 +35,12 @@
     <lastmod>2026-07-23</lastmod>
   </url>
   <url>
+    <loc>https://bartekus.com/writing/aicortex-memory-that-cannot-instruct</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
     <loc>https://bartekus.com/writing/architecting-intent-vs-vibe-coding</loc>
-    <lastmod>2026-06-10</lastmod>
+    <lastmod>2026-11-07</lastmod>
   </url>
   <url>
     <loc>https://bartekus.com/writing/design-principles-resilient-systems</loc>
@@ -44,11 +48,19 @@
   </url>
   <url>
     <loc>https://bartekus.com/writing/enrahitu-the-whole-app-in-one-container</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://bartekus.com/writing/from-enrahitu-to-rahi</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://bartekus.com/writing/from-factory-to-small-tools</loc>
+    <lastmod>2026-11-07</lastmod>
   </url>
   <url>
     <loc>https://bartekus.com/writing/from-open-agentic-platform-to-statecraft</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-11-07</lastmod>
   </url>
   <url>
     <loc>https://bartekus.com/writing/identity-in-practice</loc>
@@ -56,7 +68,7 @@
   </url>
   <url>
     <loc>https://bartekus.com/writing/inside-spec-spine</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-11-07</lastmod>
   </url>
   <url>
     <loc>https://bartekus.com/writing/local-first-now-governed</loc>
@@ -64,7 +76,7 @@
   </url>
   <url>
     <loc>https://bartekus.com/writing/one-binary-two-faces</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-11-07</lastmod>
   </url>
   <url>
     <loc>https://bartekus.com/writing/owasp-agentic-top-10-against-a-real-platform</loc>
@@ -76,19 +88,43 @@
   </url>
   <url>
     <loc>https://bartekus.com/writing/production-in-the-dev-loop</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-11-07</lastmod>
   </url>
   <url>
     <loc>https://bartekus.com/writing/rag-beyond-demo</loc>
     <lastmod>2026-06-10</lastmod>
   </url>
   <url>
+    <loc>https://bartekus.com/writing/retiring-six-repositories-under-governance</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
     <loc>https://bartekus.com/writing/rewriting-under-governance</loc>
     <lastmod>2026-07-23</lastmod>
   </url>
   <url>
+    <loc>https://bartekus.com/writing/rustev-proposals-never-grants</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://bartekus.com/writing/spec-spine-check-delta-verify</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://bartekus.com/writing/statecraft-cli-independent-acceptance</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
     <loc>https://bartekus.com/writing/the-factory-is-a-service-now</loc>
-    <lastmod>2026-07-23</lastmod>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://bartekus.com/writing/three-primitives-action-gate-attest-ledger-canonical-json</loc>
+    <lastmod>2026-11-07</lastmod>
+  </url>
+  <url>
+    <loc>https://bartekus.com/writing/wire-witness-testimony-not-authority</loc>
+    <lastmod>2026-11-07</lastmod>
   </url>
   <url>
     <loc>https://bartekus.com/writing/yolo-mode-is-earned</loc>

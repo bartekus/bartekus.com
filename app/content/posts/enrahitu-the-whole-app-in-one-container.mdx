@@ -2,16 +2,20 @@
 title: "EnRaHiTu: the whole application in one container"
 description: "Encore.ts for typed APIs, rauthy for identity, hiqlite for replicated SQLite, Turso's libSQL underneath: the template chassis Statecraft stamps, and why zero managed-infrastructure dependencies is the entire point."
 date: "2026-07-23"
+updated: "2026-11-07"
 tags: ["Architecture", "Local-First"]
 draft: false
 readingTime: 9
+cover: "/images/rahi-the-whole-app-in-one-container.jpg"
 ---
 
 # EnRaHiTu: the whole application in one container
 
+*Update, November 2026: enrahitu is retired, and so is the factory that stamped it. Drop Encore and Turso from EnRaHiTu and what remains is [rahi](https://github.com/statecrafting/rahi): a Rust chassis with co-deployed rauthy, hiqlite and a hash-chained decision ledger, released as a 0.7.1 release candidate on crates.io with a single-node supported topology. The argument for one container stands; the stack that carried it did not. [From EnRaHiTu to Rahi](/writing/from-enrahitu-to-rahi) tells that story.*
+
 Ask a modern SaaS team what their application *is* and you will get a diagram with a small box labeled "our code" surrounded by larger boxes labeled with vendor names: managed Postgres, managed identity, managed queue, managed cache, managed secrets. The application is the small box; the product is the constellation. Every arrow into a vendor box is a bill, an operational dependency, a data-residency question, and, the part I care most about, a hole in the audit story: a place where "what happened and who authorised it" is answered by someone else's logs under someone else's retention policy.
 
-[Statecraft](https://github.com/statecrafting/statecraft) stamps applications for tenants, and a stamped application that arrives with six vendor dependencies is not a deliverable; it is a procurement project. So the template the factory stamps from had to answer a blunt question: how much of a real application can live inside one container? The answer is a chassis called **[enrahitu](https://github.com/statecrafting/enrahitu)**, and the answer is: all of it.
+[Statecraft](https://statecraft.ing) stamps applications for tenants, and a stamped application that arrives with six vendor dependencies is not a deliverable; it is a procurement project. So the template the factory stamps from had to answer a blunt question: how much of a real application can live inside one container? The answer is a chassis called **enrahitu**, and the answer is: all of it.
 
 ## The acronym is the bill of materials
 

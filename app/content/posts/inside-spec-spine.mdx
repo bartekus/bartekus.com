@@ -2,7 +2,7 @@
 title: "Inside spec-spine: a typed authority ledger over markdown"
 description: "The governance spine I lifted out of my platform and open-sourced: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec."
 date: "2026-06-09"
-updated: "2026-07-23"
+updated: "2026-11-07"
 tags: ["Open Source", "Governance"]
 draft: false
 readingTime: 13
@@ -11,11 +11,13 @@ cover: "/images/data-vortex.jpg"
 
 # Inside spec-spine: a typed authority ledger over markdown
 
-*Update, July 2026: the platform spec-spine was extracted from, open-agentic-platform, has since been rebuilt ground-up as [Statecraft](https://github.com/statecrafting/statecraft); spec-spine now governs every repository in that family. [From Open Agentic Platform to Statecraft](/writing/from-open-agentic-platform-to-statecraft) tells the rename story.*
+*Update, November 2026: spec-spine is now 0.32.0 on crates.io, npm and PyPI, with `delta` and `verify` alongside `check`, and its specs have been renumbered. The rebuilt platform named in the July note below has since been retired in favour of a family of small tools. [spec-spine at 0.32: check, delta, verify](/writing/spec-spine-check-delta-verify) covers what changed.*
+
+*Update, July 2026: the platform spec-spine was extracted from, open-agentic-platform, has since been rebuilt ground-up as [Statecraft](https://statecraft.ing); spec-spine now governs every repository in that family. [From Open Agentic Platform to Statecraft](/writing/from-open-agentic-platform-to-statecraft) tells the rename story.*
 
 Every codebase eventually faces the question: *who is allowed to change this file?* In most repositories the answer is archaeology. You read git blame, you ask whoever has been around longest, you check a wiki that was last updated two reorgs ago. The answer exists, but it is reconstructed, not queried; and the moment AI agents start producing most of your diffs, reconstruction stops scaling entirely.
 
-[spec-spine](https://github.com/bartekus/spec-spine) is my answer to that question, released standalone today under Apache-2.0 after five months of running it inside my own platform. One sentence: a typed, hash-verifiable authority ledger over a markdown spec corpus, with a PR-time gate that refuses code drifting from its owning spec. This post is the technical companion to [the philosophy piece](/writing/architecting-intent-vs-vibe-coding): what the tool actually is, how the model works, and where the discipline came from.
+[spec-spine](https://github.com/statecrafting/spec-spine) is my answer to that question, released standalone today under Apache-2.0 after five months of running it inside my own platform. One sentence: a typed, hash-verifiable authority ledger over a markdown spec corpus, with a PR-time gate that refuses code drifting from its owning spec. This post is the technical companion to [the philosophy piece](/writing/architecting-intent-vs-vibe-coding): what the tool actually is, how the model works, and where the discipline came from.
 
 ## The model: territory, declared and typed
 

@@ -2,12 +2,16 @@
 title: "One binary, two faces: statecraft-cli"
 description: "I retired a desktop app and replaced it with a Rust binary that is a CLI for humans and an MCP server for agents. The interesting part is why those had to be the same binary."
 date: "2026-07-23"
+updated: "2026-11-07"
 tags: ["Tooling", "Agentic AI"]
 draft: false
 readingTime: 8
+cover: "/images/one-binary-two-faces.jpg"
 ---
 
 # One binary, two faces: statecraft-cli
+
+*Update, November 2026: statecraft-cli has since been respecified as a local environment for governed agent work: register a repository, prepare an isolated workspace, supervise an agent through one unit of work, judge the result independently, keep a reviewable account. It is implemented and tested against local fakes but not released, and the control plane it was once a client of is retired. [statecraft-cli: acceptance is independent](/writing/statecraft-cli-independent-acceptance) describes the current design; read the essay below as the reasoning that led there.*
 
 Of everything retired in [the Statecraft rewrite](/writing/from-open-agentic-platform-to-statecraft), the desktop cockpit was the piece with the most engineering sunk into it. OPC was a Tauri v2 + React application: local workspaces, git context, snapshots, approval gates, an execution surface where humans and agents shared a screen. [An earlier essay](/writing/local-first-now-governed) reached for exactly that shape before it had a name. Killing it was the least obvious call of the rewrite, so this essay is the reasoning, and what took its place: **[statecraft-cli](https://github.com/statecrafting/statecraft-cli)**, one Rust binary called `statecraft`, which is a CLI for humans and an MCP server for agents.
 

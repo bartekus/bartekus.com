@@ -2,6 +2,7 @@
 title: "From Open Agentic Platform to Statecraft"
 description: "This week I archived my flagship and rebuilt it ground-up in days. What died, what survived, and why a spec corpus made killing a quarter-million governed lines the cheap option."
 date: "2026-07-23"
+updated: "2026-11-07"
 tags: ["Agentic AI", "Governance"]
 draft: false
 readingTime: 10
@@ -10,9 +11,11 @@ cover: "/images/aradia.jpg"
 
 # From Open Agentic Platform to Statecraft
 
+*Update, November 2026: the control plane this essay introduces was retired in October 2026, along with the factory, the fleet plane, the enrahitu template and the primitives that only made sense inside it. What survived is a family of small, separately released tools under statecrafting, catalogued at [statecraft.ing](https://statecraft.ing); nothing below describes anything current. [From the factory to small tools](/writing/from-factory-to-small-tools) explains the decision and [Retiring six repositories under governance](/writing/retiring-six-repositories-under-governance) is the log of carrying it out.*
+
 This week I archived my flagship. The repository behind most of the essays on this site, open-agentic-platform, is now read-only, along with three of its satellites: the factory, the template, and the bootstrapper. Their READMEs are tombstones pointing at successors. If you arrived here from one of those tombstones, this is the essay that explains it.
 
-The short version: the ideas won and the codebase lost. Everything the platform argued for (specs as law, drift refused at merge, audit chains a stranger can verify) survived intact and runs in production today under a new name, **[Statecraft](https://github.com/statecrafting/statecraft)**. What did not survive was the architecture that carried those ideas, and the honest way to fix an architecture that has drifted from its own thesis is the way I fixed it: rewrite the specs first, then let the machinery refuse everything that lagged.
+The short version: the ideas won and the codebase lost. Everything the platform argued for (specs as law, drift refused at merge, audit chains a stranger can verify) survived intact and runs in production today under a new name, **[Statecraft](https://statecraft.ing)**. What did not survive was the architecture that carried those ideas, and the honest way to fix an architecture that has drifted from its own thesis is the way I fixed it: rewrite the specs first, then let the machinery refuse everything that lagged.
 
 ## What the Open Agentic Platform was
 
@@ -32,13 +35,13 @@ Meanwhile the actual product had clarified. What I ship is not "governed agent e
 
 Statecraft is a two-plane system, and the symmetry is the whole design.
 
-The first plane is the control plane: **statecraft**, one application, with tenants, factory, fleet, and governance as services inside it. The second plane is every application it stamps: independent, self-contained, owing the control plane nothing at runtime. The bridge between the planes is a template called **[enrahitu](https://github.com/statecrafting/enrahitu)**.
+The first plane is the control plane: **statecraft**, one application, with tenants, factory, fleet, and governance as services inside it. The second plane is every application it stamps: independent, self-contained, owing the control plane nothing at runtime. The bridge between the planes is a template called **enrahitu**.
 
 EnRaHiTu is an acronym: **En**core.ts + **ra**uthy + **hi**qlite + **Tu**rso/libSQL. It is a single container that carries everything an application needs: typed APIs, a real OIDC identity provider, embedded Raft-replicated SQLite, zero managed-infrastructure dependencies. The factory consumes exactly one thing from it, a versioned `template.toml` contract, and is forbidden by spec from reaching past it. The old cross-repo lockstep problem did not get solved so much as deleted: there is one template, one contract, and a factory that cannot see anything else.
 
 The recursion is the part I care most about: the control plane is itself the first production EnRaHiTu app. Statecraft is built on the same chassis it stamps for others, governed by the same spec spine it offers its tenants. When I claim the template can carry a real product, the evidence is that it carries mine.
 
-Around those two planes, the rest of the family fell into place. The desktop cockpit is retired; its governance verbs live on in **[statecraft-cli](https://github.com/statecrafting/statecraft-cli)**, one Rust binary that is a CLI for humans and an MCP server for agents, which turns out to be what the cockpit was actually for. The orchestrator's core survived as an in-process native addon inside the fleet service; the standalone service around it did not. The reusable mechanisms were extracted into Apache-2.0 primitives small enough to audit in an afternoon: [action-gate](https://github.com/statecrafting/action-gate) (deterministic policy decisions), [attest-ledger](https://github.com/statecrafting/attest-ledger) (append-only signed records), [trust-window](https://github.com/statecrafting/trust-window) (graduated privilege from rolling evidence), [canonical-keysort-json](https://github.com/statecrafting/canonical-keysort-json) (hashes that agree everywhere). The licensing philosophy carried over unchanged: the control plane is AGPL-3.0 so the audit chain cannot be absorbed and stripped; everything a stamped application consumes is Apache-2.0 so adoption is unencumbered.
+Around those two planes, the rest of the family fell into place. The desktop cockpit is retired; its governance verbs live on in **[statecraft-cli](https://github.com/statecrafting/statecraft-cli)**, one Rust binary that is a CLI for humans and an MCP server for agents, which turns out to be what the cockpit was actually for. The orchestrator's core survived as an in-process native addon inside the fleet service; the standalone service around it did not. The reusable mechanisms were extracted into Apache-2.0 primitives small enough to audit in an afternoon: [action-gate](https://github.com/statecrafting/action-gate) (deterministic policy decisions), [attest-ledger](https://github.com/statecrafting/attest-ledger) (append-only signed records), trust-window (graduated privilege from rolling evidence), [canonical-keysort-json](https://github.com/statecrafting/canonical-keysort-json) (hashes that agree everywhere). The licensing philosophy carried over unchanged: the control plane is AGPL-3.0 so the audit chain cannot be absorbed and stripped; everything a stamped application consumes is Apache-2.0 so adoption is unencumbered.
 
 On names: Statecraft because governance is the product, and the craft of state (who may act, what was decided, what can be proven afterwards) is literally what the machinery does. The GitHub org is **statecrafting**, the front door is [statecraft.ing](https://statecraft.ing). If you find stray links to "stagecraft" in the wild, that was the name for about a week mid-transition; the theatre metaphor lost to the governance one, and I do not regret the choice.
 

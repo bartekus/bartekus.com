@@ -9,6 +9,9 @@ const __dirname = path.dirname(__filename);
 const SITE_URL = process.env.VITE_SITE_URL || "https://bartekus.com";
 const AUTHOR_NAME = "Bartek Kus";
 const AUTHOR_EMAIL = "bartekus@gmail.com";
+// Keep in sync with siteConfig.description in app/config.ts (this script runs outside Vite, so it cannot import it).
+const SITE_DESCRIPTION =
+  "AI can write the code; the unsolved problem is trusting what it wrote. I build the governance layer: specs as law, drift refused at merge, and evidence you can inspect.";
 
 interface PostMeta {
   title: string;
@@ -74,7 +77,7 @@ function generateRSS(posts: Post[]): string {
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Bartek Kus</title>
-    <description>Pragmatic full-stack engineer; identity; local-first infra; AI-assisted dev.</description>
+    <description>${escapeXml(SITE_DESCRIPTION)}</description>
     <link>${SITE_URL}</link>
     <atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
@@ -114,7 +117,7 @@ function generateAtom(posts: Post[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Bartek Kus</title>
-  <subtitle>Pragmatic full-stack engineer; identity; local-first infra; AI-assisted dev.</subtitle>
+  <subtitle>${escapeXml(SITE_DESCRIPTION)}</subtitle>
   <link href="${SITE_URL}/atom.xml" rel="self" />
   <link href="${SITE_URL}" />
   <id>${SITE_URL}/</id>

@@ -55,16 +55,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
         {/* Favicons */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        {/*<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />*/}
-        {/*<link rel="preload" href="/site.webmanifest" as="manifest" />*/}
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
 
         {/* Theme Color */}
         <meta name="theme-color" content="#2D6AE3" media="(prefers-color-scheme: light)" />
         <meta name="theme-color" content="#6FA4FF" media="(prefers-color-scheme: dark)" />
 
         {/* RSS/Atom */}
-        {/*<link rel="alternate" type="application/rss+xml" title={`${siteConfig.author.name} RSS Feed`} href="/rss.xml" />*/}
-        {/*<link rel="alternate" type="application/atom+xml" title={`${siteConfig.author.name} Atom Feed`} href="/atom.xml" />*/}
+        <link rel="alternate" type="application/rss+xml" title={`${siteConfig.author.name} RSS Feed`} href="/rss.xml" />
+        <link rel="alternate" type="application/atom+xml" title={`${siteConfig.author.name} Atom Feed`} href="/atom.xml" />
 
         {/* React Router-managed meta/link tags (route-level `meta` / `links` exports) */}
         <Meta />

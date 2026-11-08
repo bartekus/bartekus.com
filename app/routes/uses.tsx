@@ -120,7 +120,7 @@ export default function Uses() {
                 <strong className="text-foreground">This site:</strong> Cloudflare Pages, static build, no server
               </li>
               <li>
-                <strong className="text-foreground">Registries:</strong> crates.io, npm and PyPI, published from CI with provenance
+                <strong className="text-foreground">Registries:</strong> crates.io, npm and PyPI, published from CI
               </li>
               <li>
                 <strong className="text-foreground">Analytics:</strong> Umami

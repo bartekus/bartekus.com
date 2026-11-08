@@ -3,7 +3,7 @@ export const siteConfig = {
   title: "Bartek Kus - Architecting Intent for AI-Native Software",
   heading: "Architecting intent: governance for AI-native software delivery.",
   description:
-    "AI can write the code; the unsolved problem is trusting what it wrote. I build the governance layer: specs as law, drift refused at merge, and audit chains a regulator can verify.",
+    "AI can write the code; the unsolved problem is trusting what it wrote. I build the governance layer: specs as law, drift refused at merge, and evidence you can inspect.",
   url: import.meta.env.VITE_SITE_URL || "https://bartekus.com",
   author: {
     name: "Bartek Kus",

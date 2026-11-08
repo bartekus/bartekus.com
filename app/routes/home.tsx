@@ -66,8 +66,8 @@ export default function Home() {
             </div>
             <h2 className="text-xl font-semibold mb-2">Governed agentic delivery</h2>
             <p className="text-text-muted">
-              Creator of spec-spine and Statecraft: specs as law, drift refused at merge, and audit chains an auditor
-              can verify independently.
+              Creator of spec-spine and the statecrafting tool family: specs as law, drift refused at merge, and evidence an
+              auditor can inspect independently.
             </p>
           </motion.div>
 
@@ -100,9 +100,9 @@ export default function Home() {
             <div className="mb-4 p-3 rounded-lg bg-success/10 w-fit">
               <Sparkles className="h-6 w-6 text-success" aria-hidden="true" />
             </div>
-            <h2 className="text-xl font-semibold mb-2">Typed contracts everywhere</h2>
+            <h2 className="text-xl font-semibold mb-2">Rust-first, typed contracts</h2>
             <p className="text-text-muted">
-              Encore.ts backends instead of Express, Rust toolchains, deterministic compilers: systems that prove what they claim
+              Rust toolchains, deny-by-default kernels, deterministic builds verified in CI: systems that prove what they claim
               instead of asking for trust.
             </p>
           </motion.div>

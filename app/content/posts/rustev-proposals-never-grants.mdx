@@ -1,0 +1,63 @@
+---
+title: "rustev: proposals, never grants"
+description: "An embeddable Rust engine for decisions over partially trusted information: a definition compiles into a plan, execution is bounded, every decision leaves evidence, and the output is always a proposal."
+date: "2026-11-07"
+tags: ["Agentic AI", "Architecture", "Rust"]
+draft: false
+readingTime: 7
+cover: "/images/rustev-proposals-never-grants.jpg"
+---
+
+# rustev: proposals, never grants
+
+A year ago I wrote down the rule I build by: [a probabilistic core may propose; only a deterministic shell may admit](/writing/probabilistic-ai-behind-deterministic-gates). That essay was about the shell. It spent its pages on hashes, exit codes, schemas at boundaries, verifiers that do not trust producers. It said almost nothing about the proposing half, except that it should be kept behind the gate.
+
+[rustev](https://github.com/statecrafting/rustev) is the proposing half, built so the shell has something legible to admit. One sentence: an embeddable Rust engine for making, evaluating, and recording decisions over evolving, partially trusted information. The name of the output type is the thesis. **rustev produces proposals, never grants.** It does not authorise, it does not own knowledge, and it does not execute effects. Those belong to the application and to neighbouring components, each optional. rustev is usable without any of them.
+
+## A definition compiles into a plan
+
+The unit of work is a versioned decision definition. It enters through a typed builder or as canonical JSON, and the compiler turns it into a plan or refuses it with a typed reason. A plan has an identity, a hash over its canonical form, and that identity includes things most systems treat as runtime configuration: which backends may answer which questions, the declared fallbacks, the retry policy. Change a retry count and you have a different plan with a different identity, which means a different thing to replay against and a different thing to put in an evidence record.
+
+Exact computation lives in Rust. Fixed-point decimals, millisecond time, value kinds that do not silently convert, a closed and versioned registry of exact operators. Inputs carry provenance, freshness, and conflict markers, because the information a decision runs over is partially trusted by assumption, not by exception.
+
+Semantic questions, the ones a rules engine cannot answer, go to backends. A backend is interchangeable, and it discloses what it can return; the compiler does capability matching against those disclosures and refuses, with a typed reason, a plan it cannot satisfy. The shipped rules backend is deterministic: authored, identified rules programs, not a model. Model-backed backends sit behind the same trait and the same disclosure rule, which is the point. The plan does not know whether a question was answered by a rule or by a model, but the evidence record does.
+
+## Abstention is an answer
+
+Most decision systems have two outcomes and pretend the second is rare. rustev has a third, and it is first-class: a plan may abstain, and the selection policy has explicit handling for the unresolved case rather than a default that quietly picks something. A backend that cannot answer says so. A question whose inputs are stale or in conflict says so. The proposal that comes out the other end carries that abstention as structure, not as a confidence score someone downstream has to threshold.
+
+This matters more for model-backed questions than for rules. A model will produce an answer to anything. The only way to make its silence meaningful is to give it a typed place to be silent, and to refuse to let the plan paper over it.
+
+## Bounded execution
+
+The runtime crate is where the probabilistic part gets its fence. Admission and concurrency are bounded. There is one end-to-end deadline per decision, on an injectable clock, so a test can drive time and a deadline is a fact about the decision rather than about the machine it ran on. Cost budgets are reserved before dispatch, not reconciled after. Retries and fallback are declared in the plan and are part of its identity, so the question "what did this plan permit itself to do when a backend failed" has one answer that was fixed before the first call went out. Cancellation is honest: an attempt that ends without a stop records the remote state it left behind instead of pretending the call never happened. Run records are delivered under a declared sink policy.
+
+None of this makes the backend deterministic. It makes the envelope around the backend deterministic: how long, how much, how many times, with what fallback, recorded where. That envelope is what the shell can check.
+
+## Evidence, replay, and the regression gate
+
+Every decision produces an evidence record. The evaluation crate turns records into something you can argue with offline: retained decisions are reproduced from bounded replay bundles, candidates are compared, and evaluation reports bind the task adapter rules into their own identity so a report cannot be reinterpreted later under different scoring. Unusable bundles are reported per case rather than silently skipped. Regression gates and temperature fits run against the same bundles.
+
+Offline replay never contacts a backend. That is the invariant that makes replay worth anything: if a replay could reach out for a fresh answer, it would be a new decision wearing an old one's identity. Spec 026 defines the separate path for that case, live re-execution, as a new decision from a newly identified snapshot with fresh authorisation, fresh deadlines, and fresh budgets, allowed to compare itself against a retained proposal and forbidden to reuse a historical decision identity or rewrite a replay bundle. The README's status section still records live re-execution as not implemented, so I will leave its grade there and let the registry speak for what has landed since.
+
+## Why "proposal" is the only honest output
+
+Here is the argument I most want to make, because it is the one that connects this engine to everything else in the family.
+
+A model-backed decision cannot know its own authority context. It does not know who is asking, under what consent, with what blast radius, against which policy that may have changed since the plan was compiled. The engine could be handed all of that, and some systems do exactly this: pass the authority context into the model's prompt and let the output be an action. That is the design that turns a prompt injection into an executed effect, and it is the design the [OWASP agentic entries](/writing/owasp-agentic-top-10-against-a-real-platform) keep circling.
+
+If instead the engine's output is a proposal, typed, identified, bounded, with evidence attached, then authority stays where it can be checked. The application decides whether to act. A gate decides whether the action is permitted. A ledger records what was decided. The engine's job is to make the proposal legible enough that those three can do theirs: here is the plan identity, here is the snapshot, here is which backend answered what, here is what it cost and how long it took, here is where it abstained. Legibility is the deliverable. Grant is somebody else's verb.
+
+This is why rustev refuses three jobs by charter. It does not authorise, because authorisation needs the context it does not have. It does not own knowledge, because a decision engine that is also the store of record for the facts it decides over cannot be audited by anyone who does not trust it. And it does not execute effects, because the moment it can, every one of its outputs becomes a grant whether or not it was labelled one.
+
+## Where it stands
+
+v0.5.0 is released on crates.io under the `rustev` facade crate, published 2026-11-06, with the tag following on 2026-11-07. The crates are `rustev-contract`, `rustev-core`, `rustev-runtime`, `rustev-eval`, `rustev-backend-rules`, `rustev-remote-http`, and `rustev-cli` (whose binary is `rustev`: plan check, compile and show; run; replay; eval; gate; calibrate fit and qualify). The workspace also carries the `rustev-jev` integration. The release notes are generated from the governed corpus and list, per spec, what changed and which approval covers it.
+
+The remote adapter protocol is versioned and ships as both client and server over HTTP, with adapter-scoped shared-state batching that stays off until qualified. The Jev integration is a remote decision backend through an AI gateway, and its evidence is development evidence: the gateway reports the served model as unknown, and the production transport is approved but not implemented. There is no quality or calibration claim anywhere in the corpus; datasets and reports are synthetic or of synthetic provenance, and real labelled data is admitted only under its own spec. A reference package for support routing and one for lodging exist as worked examples; neither amends a core crate.
+
+I am stating these limits because the register of the README is to state them, and because an engine whose whole purpose is to make decisions legible should not be described in a way that is less legible than its own evidence.
+
+## The engine the shell was waiting for
+
+The 2025 essay ended by saying the point is not to make AI deterministic but to make trust deterministic. rustev is the piece that was missing between those two sentences. Trust can be made deterministic only if the thing being trusted arrives in a shape the deterministic machinery can inspect: a plan with an identity, a run with a deadline and a budget, an answer with an origin, a silence with a type. rustev's job is to produce that shape and nothing more. What happens to the proposal next is, by design, not its concern.

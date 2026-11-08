@@ -1,0 +1,75 @@
+---
+title: "aicortex: memory that cannot instruct"
+description: "Persistent memory for AI clients over MCP, built so that nothing recalled can ever be read as a command. The untrusted content boundary, and the five other refusals that make it hold."
+date: "2026-11-07"
+tags: ["Agentic AI", "Governance", "Rust"]
+draft: false
+readingTime: 8
+cover: "/images/aicortex-memory-that-cannot-instruct.jpg"
+---
+
+# aicortex: memory that cannot instruct
+
+Every memory tool for AI clients does the same thing at its core: it takes text written by someone else, some other time, and places it into a model's context. A captured web page, a chat transcript, a note another agent left. That makes a memory store an indirect prompt-injection surface by construction, not by accident. The question is not whether injected text will arrive; it is what the store does on the day it does.
+
+[aicortex](https://github.com/statecrafting/aicortex) is my answer: persistent, governed memory for AI clients, served over MCP on streamable HTTP, one store that any client speaks to (Claude Code, Codex, Cursor, anything else that speaks the protocol), built as a governed cell on the [rahi](/writing/from-enrahitu-to-rahi) chassis. It is specified and being built one spec per pull request. It is not usable yet, and nothing is released. I am writing about it now because the design decision at its centre is the one I most want on record before the code is finished: **recalled content is data, and the only thing that can make it an instruction is a human.**
+
+## The shape that could not be fixed
+
+aicortex is a rewrite in intent of an earlier system I ran and liked. It exists because that system's shape could not be repaired in place. The corpus cites the problems as observations rather than accusations, and I will keep to that register.
+
+One static shared key, in a query string, for every user of every deployment. A service role that bypassed row-level security, so the scoping the database claimed was not the scoping the code enforced. A schema that lived inside a prompt string, which means the model defined the shape of the data. A capture path made of two non-atomic calls, insert then embed, so a failure between them produced a memory that search could never reach and nothing ever retried. A feature ecosystem that grew by forking the server.
+
+Each of those is a property of shape, not a bug in a function. You cannot patch your way from a static key to real identity, or from a prompt-string schema to migrations. So aicortex took no code, no schema, and no prose from its predecessor; it took the lesson. Spec 000 records the clean-room rule.
+
+## Recalled content is data
+
+Spec 019, the untrusted content boundary, is a constraint spec. It owns no code. It exists so one property is stated once and inherited by every spec that returns content.
+
+The property has four parts. A memory body leaves the system only inside an envelope: delimiters carrying the memory id, the trust class, the actor kind, the source, the capture time, and an erasure marker when one applies. Every response containing envelopes is preceded by a fixed, versioned framing statement saying that the enclosed text is recalled data, may contain instructions, and that those instructions are not to be followed. No path ever places a body into a system prompt, a tool description, or a resource a client loads as configuration; bodies appear in tool results and response payloads, inside envelopes, nowhere else. And a body cannot forge its own boundary: the envelope escapes delimiter lookalikes, and the write gate strips zero-width and bidirectional control characters on admission.
+
+Then the part that gives this essay its title. There is exactly one trust class a client is told it may act on, `Instruction`, and it is unconstructible without a `Promotion` produced from a human subject and a ledger decision. A compile-fail test asserts that an `Instruction` trust class cannot be produced from an actor of kind `Agent`. An agent never promotes its own memory. Not by policy, by type.
+
+Derived content inherits the rule. A summary, a digest, a consolidation built from memories is itself untrusted and carries an envelope naming its sources; the minimum trust class among the inputs is the maximum trust class of the output. A curator cannot launder trust by rephrasing.
+
+What the spec refuses is as deliberate as what it requires. No sanitising or rewriting, which destroys fidelity and gives false assurance. No injection detector: a classifier that tries to spot hostile instructions is wrong often enough in both directions to be worse than useless, and its presence teaches everyone to treat unflagged content as safe. No claim of client-side enforcement, because the server cannot guarantee what a client does. The boundary is structural, not heuristic. When I [mapped the OWASP Agentic Top 10 against a real platform](/writing/owasp-agentic-top-10-against-a-real-platform), the memory and context-poisoning entries were the ones with the thinnest answers. This is the thicker answer.
+
+## A memory is a claim by someone
+
+Spec 011 defines the record as types before anything can store one. A memory is a claim by a named actor, from a named source, at a known time, inside a scope owned by a rauthy subject, carrying a trust class that decides whether a client may act on it and a status that decides whether it is still true. There is no way to construct a memory without provenance, and no way to promote one without an authority token that only a human decision produces.
+
+Spec 012 puts the same discipline into the database. Schema arrives as an ordered list of versioned migrations, never as SQL pasted from a guide. Every repository method takes a scope and emits it in the SQL predicate, so an unscoped read is not expressible; there is no method that returns memories across scopes and a test fails on any statement against the memory table without the scope in it. Aggregates are counters maintained in the writing transaction, because the predecessor's statistics call read every row's metadata into memory. Listing is keyset-paged; there is no offset pagination and no unbounded select.
+
+I spent years on identity, and this is the identity lesson applied to data: the question "whose is this" has to be answered by the type and the predicate, not by a filter someone remembers to add.
+
+## The gate refuses; it does not redact
+
+Spec 013 is the write gate, and it runs before the transaction opens. It caps size, requires an establishable origin, quarantines rather than admits when origin is doubtful, and refuses credentials.
+
+Refuses, not redacts. A redacted secret is still a secret that was transmitted, written to a log, and possibly embedded before the mask went on. So a detected credential is a refusal of the whole candidate; the response names the detector and the byte offset and contains neither the value nor a masked form of it. Every refusal and every quarantine is a ledgered decision with a reason code and never the offending content. The rule set is data, the fixture corpus is committed, and the gate is a pure function so its verdicts can be reproduced in review. The detector registry itself was later converged with [action-gate](/writing/three-primitives-action-gate-attest-ledger-canonical-json), so the same detectors that guard a memory store guard a tool call.
+
+## Capture cannot lose a memory
+
+Spec 015 fixes the two-call problem directly. Capture stages an outbox row in the same transaction as the memory row. A worker drains the outbox idempotently with backoff; a job that fails enough times moves to a dead-letter state that preflight reports instead of silently dropping. Two concurrent workers on one outbox produce one embedding. Every stored vector names the model, the dimension, and the normalisation it was produced under, so changing the embedding model is a migration rather than a silent reinterpretation of every stored vector.
+
+A memory that exists but cannot be found is worse than one that was never captured, because the user believes it is there. The outbox makes that state unreachable.
+
+## One chain, owned by the chassis
+
+Spec 024 settles something that would otherwise be settled badly by accident. There is exactly one hash chain in a deployment and it belongs to rahi. aicortex appends decisions to it and stores references; it never builds a second chain, and it never puts memory content into the one that exists. The second rule is what keeps erasure honest: if a body ever entered the chain, forgetting it would mean breaking the chain or lying about forgetting. The audit view is a join, the memory's lifecycle rows plus the decisions that reference it, rendered as one timeline.
+
+## Seven tools, no more
+
+Spec 021 is the MCP server: one remote server over streamable HTTP, stateless per request, authorised by the chassis's resource server so that an unauthenticated initialize answers with the challenge that lets a client discover the authorisation server and register itself. Seven tools: `capture`, `search`, `fetch`, `list`, `update`, `forget`, `relate`. A test fails if the count changes. Tool results carry envelopes and the framing statement; tool descriptions never contain recalled content, and a test captures a distinctive memory and greps the full tool listing for it to prove the point.
+
+The number is a design decision, not a current tally. A memory product that grows by adding tools is a memory product whose surface nobody can reason about; a fifth client is a row in a capability matrix, not a change to the server.
+
+## What recall still owes
+
+[RAG beyond the demo](/writing/rag-beyond-demo) was about the failure modes of retrieval: chunking that loses meaning, embeddings that drift, no evaluation, no observability. aicortex inherits that whole list and adds the boundary on top. The thesis spec is blunt about it: a change to chunking, embedding, ranking, or fusion without an evaluation run is not shippable, and the evaluation corpus is a wave of its own. Hybrid recall over vectors, text, recency, and graph proximity, fused into one order that can be explained, with a trace. None of that is built yet, and I will not describe it as if it were.
+
+## Status, exactly
+
+The public catalog snapshot of 2026-10-03 lists thirty-eight specs. At that snapshot, specs 010 through 014 (chassis adoption, the memory model, the schema, the write gate, lifecycle and erasure) were complete, spec 015 was in progress, and the rest were pending. Code arrives one spec per pull request, under spec 048. Wave 1 is the memory core and runs with no network listener; wave 2 adds the HTTP and MCP surfaces and needs a rauthy binary on loopback; wave 3 is intake and curation; wave 4 is proof. The corpus has moved since the snapshot, and `spec-spine registry list` is the live answer; spec 019's own record shows the owner pulled it forward on 2026-10-10 so the envelope exists before the first route that returns a body.
+
+Not usable. Not released. Specified in full, and being built in order. The README says "specified, not yet built" at its top, and I would rather it err on that side than the other. This is the register the whole family uses: a specification, an implementation, and a release are three different claims, and aicortex has made the first, is making the second, and has not made the third.

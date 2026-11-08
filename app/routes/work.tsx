@@ -20,23 +20,23 @@ export default function Work() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           <CardProject
-            title="Statecraft - Governed Delivery Control Plane"
-            description="The governed agentic delivery control plane: tenants, a factory that stamps applications from a versioned template contract, a fleet plane that operates them on Hetzner k3s, and a governance UI. A PR-time gate refuses spec/code drift, and the platform is itself the first production app of its own template. Successor to the open-agentic-platform work."
-            tags={["Agentic AI", "Governance", "Rust", "TypeScript", "AGPL-3.0"]}
-            href="https://github.com/statecrafting/statecraft"
-          />
-
-          <CardProject
             title="spec-spine - The Governance Spine, Standalone"
-            description="Lifted the governance spine out of a 200-spec platform into a standalone Rust library and CLI. Typed authority over files, sections, and symbols; byte-identical output across five platforms; Apache-2.0 on crates.io and npm. It governs itself: its own coupling gate runs against its own spec corpus in CI."
+            description="Lifted the governance spine out of a 200-spec platform into a standalone Rust library and CLI. Typed authority over files, sections, and symbols; a PR-time coupling gate that refuses drift; byte-identical release artifacts across four release triples in CI, with a fifth built and shipped. Apache-2.0, on crates.io, npm and PyPI. It governs itself: its own gate runs against its own spec corpus on every pull request."
             tags={["Rust", "Open Source", "Apache-2.0", "CLI"]}
             href="https://github.com/statecrafting/spec-spine"
           />
 
           <CardProject
-            title="OPC - Local-First Execution Plane"
-            description="Built a Tauri v2 + React desktop cockpit where humans and agents shared one execution surface: local workspaces, git context, snapshots, and human approval gates, with no SaaS in the trust path. Retired in the Statecraft rewrite; its governance verbs live on in statecraft-cli, one binary serving humans as a CLI and agents as an MCP server."
-            tags={["Tauri", "Rust", "React", "Local-First"]}
+            title="The statecrafting family - Small Tools, Explicit Boundaries"
+            description="A catalogued family of Apache-2.0 tools for governed software work: statecraft-cli (a local environment for governed agent work; implemented, not yet released), rahi (a Rust chassis for governed cells; 0.7.1 release candidate), rustev (decisions as proposals, never grants; 0.5.0), wire-witness (wire testimony, never authority; 0.1.0 tag), aicortex (governed memory over MCP; being built one spec per pull request) and three released primitives: action-gate, attest-ledger and canonical-keysort-json."
+            tags={["Rust", "Governance", "Apache-2.0", "MCP"]}
+            href="https://statecraft.ing"
+          />
+
+          <CardProject
+            title="statecraft-cli - Independent Acceptance for Agent Work"
+            description="Designed and implemented a local environment for governed agent work: register a repository, prepare an isolated workspace, supervise an agent through one unit of work, judge the result independently, keep a reviewable account. One machine, one repo, no account, no hosted service. A candidate cannot enlarge its own authority and refusals outlive the process. Specified and tested against local fakes; not yet released or live-qualified."
+            tags={["Rust", "Agentic AI", "Local-First"]}
             href="https://github.com/statecrafting/statecraft-cli"
           />
 

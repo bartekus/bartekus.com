@@ -1,0 +1,90 @@
+---
+title: "statecraft-cli: acceptance is independent"
+description: "What statecraft-cli is today: one machine, one repository, no account, and a judgment about an agent's work that the agent cannot write. Specified, implemented and tested; not released."
+date: "2026-11-07"
+tags: ["Agentic AI", "Tooling", "Rust", "Local-First"]
+draft: false
+readingTime: 10
+cover: "/images/statecraft-cli-independent-acceptance.jpg"
+---
+
+# statecraft-cli: acceptance is independent
+
+[statecraft-cli](https://github.com/statecrafting/statecraft-cli) is a local environment for governed agent work. It registers a repository, arms it, plans and prepares a managed workspace, supervises an agent through one unit of work, judges the result independently, and keeps a reviewable account of what happened. It runs on one machine, on one repository, with no account and no network service.
+
+Its status, exactly as the repository states it: the seven founding specs, 000 to 006, were ratified between 2026-09-16 and 2026-09-21; the corpus has grown well past them since, and `registry list` is the authority on each spec's state. Every verb the specs name is bound, built and tested by the workspace suite. Nothing is released. The workspace is at version 0.0.0 with `publish = false`, a deferral named F-02 covers publication, and the way to run it is `cargo run -p statecraft-cli -- <verb> <path>` from a checkout. No managed session has been live-qualified; every qualification path has been exercised against local fakes, and the records say so by marking them synthetic.
+
+That is a narrower thing than the one I described in July, and the first job of this essay is to say what changed.
+
+## What July said, and what the repository says now
+
+[One binary, two faces](/writing/one-binary-two-faces) described a Rust binary called `statecraft` that was a CLI for humans and an MCP server for agents, exposing the same governance verbs through both faces: request an approval, check a coupling, trigger a stamp, upgrade a template. The binary was deliberately a client. Authority lived somewhere else, in a service it spoke to, and the essay's argument was that one implementation serving both faces made drift between the human path and the agent path structurally impossible.
+
+The current repository does not describe that tool. Its boundaries spec says, in a section on what the predecessor is used for, that the client for a remote service and its verbs, the MCP face, the multi-project scheduler, the standby daemon and the web UI are not recovered. The predecessor reached 76 specs and a partly implemented product; its history is preserved elsewhere and is treated as evidence, not as a template. What was recovered from it is specific: contracts that had been paid for (the adapter seam, the closed capability vocabulary, the five outcome names, the three names for absence), some ordering lessons, and three measured failures. A foreign-origin browser POST reached a loopback API and disarmed a fixture project. A fabricated token in the supervisor's environment reached the gate suite, the hooks and the publishing path. A driven session could publish around the supervisor through a keyring-authenticated `gh` or plain SSH. Those three are why the current constitution is worded as enforcement rather than intent.
+
+The deeper change is in who holds the evidence. The July binary was what the current spec calls Mode A: the agent invokes the tool. The product observes only what the agent chooses to tell it, so a refusal the agent does not report is invisible. The current product is built Mode B first: the CLI launches the agent process, holds the event stream, counts refusals itself, owns the child's environment and decides the outcome. Mode A is not abandoned; every verb emits machine-readable output, so an agent can call them. But Mode A can never supply a supervisor, which is why it is second.
+
+I still think the July argument about one implementation was right. I was applying it to the wrong question. Whether humans and agents share a code path matters less than whether anyone other than the agent holds the record of what the agent did.
+
+## Acceptance is independent
+
+An agent's report that it finished is a claim. The product exists to turn claims into judgments, and the first of its four ideas is that **the judgment is formed by something the agent did not run**.
+
+`accept <path> <run-id>` runs the check suite here, over identified candidate bytes, from instructions read at a trusted base revision. A receipt is minted only on a clean tree with an unmoved HEAD. Where a structured report exists, a zero exit code is not read as success; the report is what is read. A check that did not run is `unknown`, never a pass, and absence is named as `none`, `not-recorded` or `stale` rather than rendered as success. The first vertical slice's acceptance criteria are written as refusals, and the first one is the whole idea: an adapter that reports success while the suite fails produces no receipt, and the report is retained in a field named for a claim.
+
+This principle is frozen. It is one of three anchors in the bootstrap spec that no later spec may contradict, ratified on 2026-09-16, and the constitution's sixth principle carries the text.
+
+## A candidate cannot enlarge its own authority
+
+The second frozen anchor. Policy, the verifier, the hooks, the check suite and the acceptance instructions are read at the base, never from the candidate under evaluation. The spec calls this the authority set, and adds the environment manifest that says which files the product manages.
+
+A candidate whose diff touches the authority set is reported as an authority change. It is not accepted on the strength of the suite it proposes, even when that suite passes; it requires a human decision recorded outside the candidate. There is no flag whose only effect is to remove a guard, and the product ships no default that bypasses permission enforcement.
+
+The reason this needs to be a product rule rather than a code review habit is measurable. spec-spine's `delta` spec records a scratch experiment from September: a candidate that deleted one acceptance command from its own spec's `## Verification` block, and renamed the function that command had checked, passed the coupling gate with no violation. So did a draft spec that extended another spec's authority over a file and then rewrote the file. Both are legitimate shapes for honest work, which is exactly why a gate cannot refuse them. What can be done is to classify the change under rules the candidate did not write, and let a human decide. statecraft-cli is the consumer that decision was designed for; [the spec-spine essay](/writing/spec-spine-check-delta-verify) covers the producer side.
+
+## Refusals outlive the process that was refused
+
+The third frozen anchor, and the one that forced Mode B. The supervisor counts refusals from the adapter's event stream, where the supervised process cannot reach them. An adapter that emits refusal events and exits zero produces an attempt whose outcome is `refused`. A refusal followed by a completed turn is evidence, not silence.
+
+The five outcomes are distinct and mean different things: `interrupted`, `refused`, `failed`, `cancelled` and `completed`. A retry is a new attempt appended to history; it never rewrites what came before, and the spec id doubles as the run id for exactly that reason. Killing the supervisor mid-attempt leaves an intent with no outcome, and the next start reconciles it, reports `unknown` where it cannot tell, and does not retry that effect. The product makes no exactly-once promise about an external effect unless it names the mechanism that delivers it.
+
+For a managed run, this goes further. Before any spawn, the run writes an intent record; once a process exists and before the prompt is delivered, a launched record; at the startup decision, an admission record; at the end, a result. `startup show` reads those bytes back and answers six separate questions, with six words that are kept apart: which harness revision was installed, which was selected, what was supplied, what was correlated, whether work was admitted, and whether the pair is qualified. A run cannot reach the last word, because a run session is not one of the qualification controls.
+
+## Protection claims name their mechanism
+
+The fourth idea is the constitution's eighth principle, and it is the one most tools get wrong by omission. Prompt text, instructions, a checked-in convention and a separate worktree are not security boundaries against hostile code, and nothing in the repository says otherwise. Every protective claim names what enforces it and what it leaves open.
+
+The consequences are concrete. A required capability that cannot be enforced causes refusal, before any process is spawned. Degradation is permitted only when it is explicit, recorded on the attempt and visible in the outcome. The execution adapter spec names three residuals its environment construction does not close, and closing them needs an operating-system mechanism that is deferred under its own name, F-09, to be reopened by a spec that names the mechanism and its own residuals. The first slice's spec says in so many words what it does not prove: that the environment is safe against hostile code. It proves that the record is complete through the supervisor's path, which is a different and smaller claim.
+
+I have come to think this is the most important of the four, because it is the one that keeps the other three honest. Independent acceptance over a candidate that could have rewritten the supervisor's disk is not independent. The product does not claim it is. It claims what the mechanism supports and names the gap.
+
+## Four separate consents
+
+A single "yes" is how most tools get permission, and it is how the predecessor got into trouble. The current product splits consent into acts that are never inferred from one another.
+
+**Registration** records that a repository is a target and attaches a read-only qualification verdict: `qualified` (a git work tree, a resolvable base, a corpus that compiles), `ungoverned` (a work tree with no corpus) or `unqualified`. It writes nothing inside the repository; the product's own state lives at `$STATECRAFT_HOME`, outside every target. **Qualification** is a separate thing again, and it is about the adapter, not the repository: a record that this adapter build has passed one negative suite against that provider version. An adapter with no such record still runs, and is labelled `unqualified` in the posture, the attempt record and the outcome, everywhere it appears. **Arming** consents to the target being driven. Only `run` requires it; discovery and inspection read an unarmed target, which is what registering one is for. And arming does not consent to an **execution posture**: which programs a session may invoke and under what permission floor is the adapter spec's question, answered per run.
+
+The environment spec lists six postures that stay distinct (it adds approval, which is about a subject rather than a repository, and eligibility, which is the join), and states that none is inferred from another. The four above are the ones an operator performs. Each is a different question, and the product refuses to let one answer stand in for the next.
+
+## What it refuses to own
+
+| Capability | Owner, and the relationship |
+|---|---|
+| Specification semantics, compilation, ownership, freshness | [spec-spine](https://github.com/statecrafting/spec-spine). The CLI invokes its supported commands and reads its structured reports; readiness comes from `registry plan` and `registry list`, never from the derived tree directly. It never becomes a second spec compiler. |
+| Application knowledge and recall | [aicortex](/writing/aicortex-memory-that-cannot-instruct). No dependency in the first slice; repository files stay readable without it; no second generic memory store is built here. |
+| Service chassis, identity, cell enforcement | [rahi](/writing/from-enrahitu-to-rahi). The CLI is not a local daemon, not a sandbox and not a UI framework, and takes no dependency on the chassis. |
+| Hash-linked records, canonical bytes, check composition | [attest-ledger, canonical-keysort-json and action-gate](/writing/three-primitives-action-gate-attest-ledger-canonical-json). attest-ledger's envelope is an actual dependency; its anchor verifier trusts the key the anchor carries, so trust roots are supplied by the CLI. action-gate allows on fallthrough, so the CLI supplies the required-check set and the deny ceiling itself. |
+
+What the CLI does own: registration and onboarding, the managed environment, workspace preparation, supervision, run state and recovery, independent acceptance, the reviewable outcome, and the shared evidence envelope crate. The deferrals are named rather than omitted: publication of any kind (F-02, narrowed on 2026-10-20 so that releasing this repository's own binaries counts as repository delivery, which has not happened), signing and key custody (every signature reads `unsigned` and every issuer `unknown` until then), any user interface, adaptive autonomy, cost and quota control, breadth across providers (lifted conditionally for one named second provider), and scheduling across repositories.
+
+## The exit codes a caller scripts against
+
+`0` did what was asked. `1` ran and reports a finding. `2` refused: a precondition was not met and nothing was done. `3` the arguments name no verb. `4` a failure nobody asked for. The command-surface spec owns the vocabulary, a test keeps the set closed, and spec-spine adopted the same five-tier contract as its own spec 132, so a consumer running both tools reads one number with one meaning.
+
+That contract is the small, boring thing I would point at if asked what the family is for. The CLI refuses a run on an unarmed target with a 2, and names `project arm <path>`. It reports an unqualified adapter with a labelled attempt and not a crash. It reads spec-spine's finding as a 1 and its own. None of this is clever. All of it is a tool declining to say more than it knows.
+
+## Where it stands
+
+Specified, implemented and tested, by the repository's own vocabulary, which makes the four grades separately and infers none from the others. Not released, and the README says so in its first heading. Run from a checkout. Qualified only against synthetic fakes until a live provider session shows that hooks passed through its settings are honored, which the records currently expect to be refused as `not-admitted` rather than assumed.
+
+The July essay ended by saying the cockpit taught me what the verbs were. The current repository taught me something I would put ahead of that: the verbs matter less than who holds the record of what they did. A tool that lets an agent report on itself is a tool that supervises nothing. This one judges, and it writes down what it could not judge.

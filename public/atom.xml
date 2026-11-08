@@ -1,20 +1,156 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Bartek Kus</title>
-  <subtitle>Pragmatic full-stack engineer; identity; local-first infra; AI-assisted dev.</subtitle>
+  <subtitle>AI can write the code; the unsolved problem is trusting what it wrote. I build the governance layer: specs as law, drift refused at merge, and evidence you can inspect.</subtitle>
   <link href="https://bartekus.com/atom.xml" rel="self" />
   <link href="https://bartekus.com" />
   <id>https://bartekus.com/</id>
-  <updated>2026-07-23T23:05:29.659Z</updated>
+  <updated>2026-11-08T03:53:45.616Z</updated>
   <author>
     <name>Bartek Kus</name>
     <email>bartekus@gmail.com</email>
   </author>
   <entry>
+    <title>aicortex: memory that cannot instruct</title>
+    <link href="https://bartekus.com/writing/aicortex-memory-that-cannot-instruct" />
+    <id>https://bartekus.com/writing/aicortex-memory-that-cannot-instruct</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>Persistent memory for AI clients over MCP, built so that nothing recalled can ever be read as a command. The untrusted content boundary, and the five other refusals that make it hold.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Agentic AI" />
+    <category term="Governance" />
+    <category term="Rust" />
+  </entry>
+  <entry>
+    <title>From EnRaHiTu to Rahi</title>
+    <link href="https://bartekus.com/writing/from-enrahitu-to-rahi" />
+    <id>https://bartekus.com/writing/from-enrahitu-to-rahi</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>The July chassis had four ingredients in one container. Rahi keeps two, moves everything to Rust, and becomes a library an application extends and never forks. What was traded, and what the proof actually covers.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Architecture" />
+    <category term="Rust" />
+    <category term="Identity" />
+    <category term="Local-First" />
+  </entry>
+  <entry>
+    <title>From the factory to small tools</title>
+    <link href="https://bartekus.com/writing/from-factory-to-small-tools" />
+    <id>https://bartekus.com/writing/from-factory-to-small-tools</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>In July I described one platform: a factory, a fleet plane, tenants, certificates. In October that shape was retired. What stands in public now is a family of small tools, each making one claim that can be graded.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Agentic AI" />
+    <category term="Architecture" />
+    <category term="Governance" />
+  </entry>
+  <entry>
+    <title>Retiring six repositories under governance</title>
+    <link href="https://bartekus.com/writing/retiring-six-repositories-under-governance" />
+    <id>https://bartekus.com/writing/retiring-six-repositories-under-governance</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>On 2026-10-07 six repositories left the public family in one reviewed pull request. A retirement is a governed act with a record. This is what that record contains, what it does not, and why that matters.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Governance" />
+    <category term="Architecture" />
+  </entry>
+  <entry>
+    <title>rustev: proposals, never grants</title>
+    <link href="https://bartekus.com/writing/rustev-proposals-never-grants" />
+    <id>https://bartekus.com/writing/rustev-proposals-never-grants</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>An embeddable Rust engine for decisions over partially trusted information: a definition compiles into a plan, execution is bounded, every decision leaves evidence, and the output is always a proposal.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Agentic AI" />
+    <category term="Architecture" />
+    <category term="Rust" />
+  </entry>
+  <entry>
+    <title>spec-spine at 0.32: check, delta, verify</title>
+    <link href="https://bartekus.com/writing/spec-spine-check-delta-verify" />
+    <id>https://bartekus.com/writing/spec-spine-check-delta-verify</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>Since June, spec-spine gained check, delta, verify, registry plan, a family exit-code contract, a JSON envelope, per-unit shards and a renumbered corpus, and lost init. Each exists because a PR branch is a stranger&apos;s bytes.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Governance" />
+    <category term="Tooling" />
+    <category term="Rust" />
+  </entry>
+  <entry>
+    <title>statecraft-cli: acceptance is independent</title>
+    <link href="https://bartekus.com/writing/statecraft-cli-independent-acceptance" />
+    <id>https://bartekus.com/writing/statecraft-cli-independent-acceptance</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>What statecraft-cli is today: one machine, one repository, no account, and a judgment about an agent&apos;s work that the agent cannot write. Specified, implemented and tested; not released.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Agentic AI" />
+    <category term="Tooling" />
+    <category term="Rust" />
+    <category term="Local-First" />
+  </entry>
+  <entry>
+    <title>Three primitives: gate, ledger, canonical bytes</title>
+    <link href="https://bartekus.com/writing/three-primitives-action-gate-attest-ledger-canonical-json" />
+    <id>https://bartekus.com/writing/three-primitives-action-gate-attest-ledger-canonical-json</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>action-gate, attest-ledger and canonical-keysort-json are the three smallest claims in the family. Each refuses to do its neighbour&apos;s job, and that refusal is what lets the bigger tools make theirs.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Rust" />
+    <category term="Governance" />
+    <category term="Tooling" />
+  </entry>
+  <entry>
+    <title>wire-witness: testimony, not authority</title>
+    <link href="https://bartekus.com/writing/wire-witness-testimony-not-authority" />
+    <id>https://bartekus.com/writing/wire-witness-testimony-not-authority</id>
+    <updated>2026-11-07T00:00:00.000Z</updated>
+    <published>2026-11-07T00:00:00.000Z</published>
+    <summary>A capture proxy that records the actual HTTP traffic between an agent harness and a model provider, and is built so its output can never decide anything. Why that limitation is the feature.</summary>
+    <author>
+      <name>Bartek Kus</name>
+      <email>bartekus@gmail.com</email>
+    </author>
+    <category term="Agentic AI" />
+    <category term="Governance" />
+    <category term="Rust" />
+  </entry>
+  <entry>
     <title>EnRaHiTu: the whole application in one container</title>
     <link href="https://bartekus.com/writing/enrahitu-the-whole-app-in-one-container" />
     <id>https://bartekus.com/writing/enrahitu-the-whole-app-in-one-container</id>
-    <updated>2026-07-23T00:00:00.000Z</updated>
+    <updated>2026-11-07T00:00:00.000Z</updated>
     <published>2026-07-23T00:00:00.000Z</published>
     <summary>Encore.ts for typed APIs, rauthy for identity, hiqlite for replicated SQLite, Turso&apos;s libSQL underneath: the template chassis Statecraft stamps, and why zero managed-infrastructure dependencies is the entire point.</summary>
     <author>
@@ -28,7 +164,7 @@
     <title>From Open Agentic Platform to Statecraft</title>
     <link href="https://bartekus.com/writing/from-open-agentic-platform-to-statecraft" />
     <id>https://bartekus.com/writing/from-open-agentic-platform-to-statecraft</id>
-    <updated>2026-07-23T00:00:00.000Z</updated>
+    <updated>2026-11-07T00:00:00.000Z</updated>
     <published>2026-07-23T00:00:00.000Z</published>
     <summary>This week I archived my flagship and rebuilt it ground-up in days. What died, what survived, and why a spec corpus made killing a quarter-million governed lines the cheap option.</summary>
     <author>
@@ -42,7 +178,7 @@
     <title>One binary, two faces: statecraft-cli</title>
     <link href="https://bartekus.com/writing/one-binary-two-faces" />
     <id>https://bartekus.com/writing/one-binary-two-faces</id>
-    <updated>2026-07-23T00:00:00.000Z</updated>
+    <updated>2026-11-07T00:00:00.000Z</updated>
     <published>2026-07-23T00:00:00.000Z</published>
     <summary>I retired a desktop app and replaced it with a Rust binary that is a CLI for humans and an MCP server for agents. The interesting part is why those had to be the same binary.</summary>
     <author>
@@ -70,7 +206,7 @@
     <title>The factory is a service now</title>
     <link href="https://bartekus.com/writing/the-factory-is-a-service-now" />
     <id>https://bartekus.com/writing/the-factory-is-a-service-now</id>
-    <updated>2026-07-23T00:00:00.000Z</updated>
+    <updated>2026-11-07T00:00:00.000Z</updated>
     <published>2026-07-23T00:00:00.000Z</published>
     <summary>factory-encore promised a technology-agnostic software factory. Statecraft kept the factory and shot the framework: what changed when the contract moved from a technology-free document to a versioned template.toml with a gate behind it.</summary>
     <author>
@@ -98,7 +234,7 @@
     <title>Inside spec-spine: a typed authority ledger over markdown</title>
     <link href="https://bartekus.com/writing/inside-spec-spine" />
     <id>https://bartekus.com/writing/inside-spec-spine</id>
-    <updated>2026-07-23T00:00:00.000Z</updated>
+    <updated>2026-11-07T00:00:00.000Z</updated>
     <published>2026-06-09T00:00:00.000Z</published>
     <summary>The governance spine I lifted out of my platform and open-sourced: typed ownership edges, two deterministic registries, and a PR gate that refuses code drifting from its owning spec.</summary>
     <author>
@@ -112,7 +248,7 @@
     <title>Production in the dev loop: Hetzner, Flux, and a read-only MCP</title>
     <link href="https://bartekus.com/writing/production-in-the-dev-loop" />
     <id>https://bartekus.com/writing/production-in-the-dev-loop</id>
-    <updated>2026-07-23T00:00:00.000Z</updated>
+    <updated>2026-11-07T00:00:00.000Z</updated>
     <published>2026-06-06T00:00:00.000Z</published>
     <summary>My Kubernetes cluster behaves like an extension of local development: the agent can see everything and touch nothing, and the only write path is git.</summary>
     <author>
@@ -154,7 +290,7 @@
     <title>Architecting intent vs vibe coding</title>
     <link href="https://bartekus.com/writing/architecting-intent-vs-vibe-coding" />
     <id>https://bartekus.com/writing/architecting-intent-vs-vibe-coding</id>
-    <updated>2026-06-10T00:00:00.000Z</updated>
+    <updated>2026-11-07T00:00:00.000Z</updated>
     <published>2026-01-15T00:00:00.000Z</published>
     <summary>AI can write the code; the unsolved problem is trusting what it wrote. Why review doesn&apos;t scale, and how specs-as-law makes agentic output governable.</summary>
     <author>

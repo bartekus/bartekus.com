@@ -1,0 +1,55 @@
+---
+title: "Three primitives: gate, ledger, canonical bytes"
+description: "action-gate, attest-ledger and canonical-keysort-json are the three smallest claims in the family. Each refuses to do its neighbour's job, and that refusal is what lets the bigger tools make theirs."
+date: "2026-11-07"
+tags: ["Rust", "Governance", "Tooling"]
+draft: false
+readingTime: 6
+cover: "/images/three-primitives-action-gate-attest-ledger-canonical-json.jpg"
+---
+
+# Three primitives: gate, ledger, canonical bytes
+
+When I wrote about [agentic code collapse](/writing/agentic-code-collapse), the promise at the end was to lift the substrate out of the platform and release it as something any repository could adopt. spec-spine was the large extraction. This essay is about the three small ones: [action-gate](https://github.com/statecrafting/action-gate), [attest-ledger](https://github.com/statecrafting/attest-ledger), and [canonical-keysort-json](https://github.com/statecrafting/canonical-keysort-json). Each was pulled out of the earlier platform's hardcoded policy kernel, relicensed Apache-2.0 by its sole copyright holder, given its own repository and its own spec corpus, and published to crates.io.
+
+They are the three smallest claims in the family. **Each one refuses to do the job next to it**, and the refusals are the point: the gate does not log, the ledger does not decide, the canonicaliser does not hash. Together they are the reason the bigger tools can make bigger claims without re-deriving the small ones.
+
+## action-gate: decide, and touch nothing
+
+`evaluate(context, checks)` returns `Allow`, `Deny`, or `Degrade`. That is the whole API, and it is a pure function: no host calls, no clock, no I/O. Checks are an ordered registry; each is a pure function of the context that returns `Some(decision)` to short-circuit or `None` to pass. A check owns its own parameters, so there is no global policy-bundle type to drift. The context is domain-neutral: an action name, a payload summary, a payload body, and an open attribute map the core never inspects. Only checks read attributes, which is what lets the same gate govern a shell tool call, an email send, or a memory write.
+
+The default is open: when no check fires, the gate allows. That is the honest default for a library that does not know your domain, and it is also a trap, so the trap is named. `GateBuilder::closed()` builds a deny-by-default gate: it denies when no check decides, denies when a required check is unregistered or abstains, and does not stop at an allow or a degrade, so a later deny still wins. The mode is part of `Gate::config_hash()`, a stable hash over the ordered check set and every check's parameters, so a closed gate never hashes like an open one and a recorded decision can be bound to the exact gate that produced it.
+
+`Degrade` is a signal, not an action. The gate does not perform a degraded operation; the consumer decides what degradation means. The autonomy decision (proceed, review, block) is a separate function of the gate's verdict, a trust level, and a risk tier, and it lives in the consumer. The gate judges the artifact and stops.
+
+It ships with a secrets detector registry that returns which detector fired and the byte offset where the value starts, never the value. That registry was converged with [aicortex](/writing/aicortex-memory-that-cannot-instruct)'s write gate, so a memory store and a tool-call gate refuse the same credentials for the same reasons. Current release: v0.3.0, published 2026-10-07 as `action-gate-core`.
+
+## attest-ledger: record, and judge nothing
+
+attest-ledger is a tamper-evident record ledger: append-only, hash-linked, Ed25519-signed, with an independent verifier that does not trust the producer. The README calls it the run-time counterpart to a build-time registry, the same primitive with a different clock, and that framing is exact. spec-spine's registry is typed, hash-verified, and append-only over a spec corpus; attest-ledger is typed, hash-verified, and append-only over whatever happened at runtime.
+
+A record's payload is an opaque JSON value the core never inspects. Every hash input, including the timestamp, is an argument, so `compute_record_hash` is a pure function and the verifier reproduces it byte for byte across platforms. Storage is not here: the core produces and verifies records and owns no persistence. A signed anchor pins a chain to a root; a separate audit-segment chain handles higher-volume append with cross-segment continuity.
+
+The distinction the project insists on is between integrity and authenticity. `verify_anchor` and `verify_chain_with_anchor` check the signature against the key the anchor itself carries. That proves the presented sequence is intact under that key, and nothing about who held the key. It suits a producer checking its own local chain, and nothing else. Authenticity needs a `TrustRootsV1`: the Ed25519 keys a verifier accepts, pinned out of band, with a canonical form and a digest so a deployment can pin "this root set" by hash. Wherever the verifier is not the signer (a receipt verified by another party, an exported chain, anything crossing a repository or tenant boundary), pinned roots are required and only exit 0 is success.
+
+Freshness is external too. A head commitment binds schema, chain, signed anchor, expected count, and terminal hash, and it is trusted only when it arrives through a channel outside the ledger's rollback domain. A head stored beside the ledger and rolled back with it is not a freshness authority, so the library does not claim rollback resistance for that arrangement. The CLI makes the grades visible: an integrity-only verification says so on stderr, and `--require-head` and `--require-roots` fail rather than silently fall back when their input is missing. Current release: v0.2.0, published 2026-10-10 as `attest-ledger-core`.
+
+## canonical-keysort-json: sort, and compute nothing
+
+The smallest of the three fixes a bug that is invisible until it is everywhere. `serde_json` has a `preserve_order` feature. Under Cargo's resolver 2, features unify monotonically: if any crate in the graph enables it, every crate gets it. One dependency flips key order for everyone, and every record hash computed over serialised JSON changes without any code in the hashing crate having moved.
+
+The fix is explicit canonicalisation at the emission boundary, in one shared crate every hashing consumer routes through. `canonicalize_value` recursively sorts object keys; arrays and scalars pass through unchanged, because array order is the caller's meaning and not the serialiser's. `to_canonical_string` sorts and serialises, producing the byte string a consumer feeds to its hash.
+
+It is explicitly not RFC 8785 and not gibson042's Canonical JSON, which escape non-ASCII and normalise floats and are byte-incompatible with a plain key sort. The name says `keysort` so nobody mistakes it for the stricter thing. And hashing is deliberately absent: it lives in attest-ledger, which owns record-hash construction. This crate guarantees canonical bytes and makes no claim past that. Current release: v0.1.1, published 2026-10-10.
+
+## Why three crates and not one
+
+The tempting design is a single "governance core" crate that gates, records, and canonicalises. I had that crate. It was the policy kernel in the earlier platform: a hardcoded `evaluate()` with its own serialisation, which nothing outside the platform could reuse or verify.
+
+Splitting it produced three claims small enough to check on their own. A gate decision is a pure function you can test exhaustively, with a config hash that names the gate. A ledger record is a hash chain you can verify offline, with a stated grade: integrity, or authenticity under pinned roots, or completeness under an external head. A canonical byte string is a sort you can read in one screen. None of the three can be talked into doing the next job: the gate has no clock to log with, the ledger has no checks to decide with, the canonicaliser has no digest function to hash with.
+
+That is what lets the larger tools stand on them. rahi's kernel anchors its gate configuration hash into its decision ledger, so a recorded denial names the policy that produced it, and its lockfile carries canonical-keysort-json. aicortex adopted closed-mode evaluation and the shared secret detectors rather than writing either twice. attest-ledger's hashes agree between a Rust producer and a Rust verifier on another machine because both route through the same key sort. Each dependency has its own specs, and each line in it answers to a spec in its own repository, not to the convenience of a consumer.
+
+Separate repositories with separate corpora cost something: three release trains, three gates, three changelogs. The alternative cost more. A shared crate that does three jobs has three reasons to change, and every change re-opens every consumer's trust in all three. Three crates that each do one job have one reason to change each, and a consumer that only needs canonical bytes never has to re-verify a gate.
+
+The family's thesis is that a library capability, a release, and a deployed service are separate claims. These three crates are where that discipline is cheapest to see: each makes exactly one library claim, each has a version on crates.io, and none of them pretends to be more than what its one function does.

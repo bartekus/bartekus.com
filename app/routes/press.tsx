@@ -22,10 +22,11 @@ export default function Press() {
             <p className="text-text-muted leading-relaxed">
               Bartek Kus is a systems architect based in Edmonton, Canada, working on the trust problem in AI-native software
               delivery: AI can write the code; the unsolved problem is trusting what it wrote. He is the creator of spec-spine, an
-              open-source governance engine that refuses code drifting from its owning spec at merge time, and Statecraft,
-              a governed delivery control plane where every agent action reconciles to the specification that authorised it. His earlier work
-              includes identity verification infrastructure at Oliu.id (OIDC, SSI, DID) and a decade of platform engineering for
-              regulated industries. Bartek writes about architecting intent, deterministic gating of probabilistic systems, and
+              open-source authority ledger that refuses code drifting from its owning spec at merge time, and of the statecrafting
+              tool family: small Apache-2.0 tools for governed software work, from a local environment for supervised agent work to
+              a decision engine that produces proposals, never grants. His earlier work includes identity verification
+              infrastructure at Oliu.id (OIDC, SSI, DID), platform engineering in regulated fintech, and solution architecture
+              for the Government of Alberta. Bartek writes about architecting intent, deterministic gating of probabilistic systems, and
               trust infrastructure.
             </p>
           </div>
@@ -49,7 +50,7 @@ export default function Press() {
             </div>
             <div className="p-6 rounded-lg border border-border bg-card">
               <h3 className="font-semibold mb-2 text-primary">Current Projects</h3>
-              <p className="text-text-muted">spec-spine and Statecraft</p>
+              <p className="text-text-muted">spec-spine and the statecrafting tool family</p>
             </div>
           </div>
         </section>
@@ -100,7 +101,7 @@ export default function Press() {
             </li>
             <li className="flex items-start">
               <span className="text-primary mr-2">•</span>
-              <span>OWASP ASI 2026 in practice: mapping agentic security controls to a real platform</span>
+              <span>OWASP agentic top 10 in practice: mapping security controls onto real systems</span>
             </li>
             <li className="flex items-start">
               <span className="text-primary mr-2">•</span>
@@ -108,7 +109,7 @@ export default function Press() {
             </li>
             <li className="flex items-start">
               <span className="text-primary mr-2">•</span>
-              <span>Local-first execution planes for AI-native development</span>
+              <span>Governed local work: supervising agents on one machine, with acceptance judged independently</span>
             </li>
           </ul>
         </section>

@@ -2,13 +2,113 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Bartek Kus</title>
-    <description>Pragmatic full-stack engineer; identity; local-first infra; AI-assisted dev.</description>
+    <description>AI can write the code; the unsolved problem is trusting what it wrote. I build the governance layer: specs as law, drift refused at merge, and evidence you can inspect.</description>
     <link>https://bartekus.com</link>
     <atom:link href="https://bartekus.com/rss.xml" rel="self" type="application/rss+xml" />
     <language>en-us</language>
-    <lastBuildDate>Thu, 23 Jul 2026 23:05:29 GMT</lastBuildDate>
+    <lastBuildDate>Sun, 08 Nov 2026 03:53:45 GMT</lastBuildDate>
     <managingEditor>bartekus@gmail.com (Bartek Kus)</managingEditor>
     <webMaster>bartekus@gmail.com (Bartek Kus)</webMaster>
+    <item>
+      <title>aicortex: memory that cannot instruct</title>
+      <description>Persistent memory for AI clients over MCP, built so that nothing recalled can ever be read as a command. The untrusted content boundary, and the five other refusals that make it hold.</description>
+      <link>https://bartekus.com/writing/aicortex-memory-that-cannot-instruct</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/aicortex-memory-that-cannot-instruct</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Governance</category>
+      <category>Rust</category>
+    </item>
+    <item>
+      <title>From EnRaHiTu to Rahi</title>
+      <description>The July chassis had four ingredients in one container. Rahi keeps two, moves everything to Rust, and becomes a library an application extends and never forks. What was traded, and what the proof actually covers.</description>
+      <link>https://bartekus.com/writing/from-enrahitu-to-rahi</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/from-enrahitu-to-rahi</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Architecture</category>
+      <category>Rust</category>
+      <category>Identity</category>
+      <category>Local-First</category>
+    </item>
+    <item>
+      <title>From the factory to small tools</title>
+      <description>In July I described one platform: a factory, a fleet plane, tenants, certificates. In October that shape was retired. What stands in public now is a family of small tools, each making one claim that can be graded.</description>
+      <link>https://bartekus.com/writing/from-factory-to-small-tools</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/from-factory-to-small-tools</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Architecture</category>
+      <category>Governance</category>
+    </item>
+    <item>
+      <title>Retiring six repositories under governance</title>
+      <description>On 2026-10-07 six repositories left the public family in one reviewed pull request. A retirement is a governed act with a record. This is what that record contains, what it does not, and why that matters.</description>
+      <link>https://bartekus.com/writing/retiring-six-repositories-under-governance</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/retiring-six-repositories-under-governance</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Governance</category>
+      <category>Architecture</category>
+    </item>
+    <item>
+      <title>rustev: proposals, never grants</title>
+      <description>An embeddable Rust engine for decisions over partially trusted information: a definition compiles into a plan, execution is bounded, every decision leaves evidence, and the output is always a proposal.</description>
+      <link>https://bartekus.com/writing/rustev-proposals-never-grants</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/rustev-proposals-never-grants</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Architecture</category>
+      <category>Rust</category>
+    </item>
+    <item>
+      <title>spec-spine at 0.32: check, delta, verify</title>
+      <description>Since June, spec-spine gained check, delta, verify, registry plan, a family exit-code contract, a JSON envelope, per-unit shards and a renumbered corpus, and lost init. Each exists because a PR branch is a stranger&apos;s bytes.</description>
+      <link>https://bartekus.com/writing/spec-spine-check-delta-verify</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/spec-spine-check-delta-verify</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Governance</category>
+      <category>Tooling</category>
+      <category>Rust</category>
+    </item>
+    <item>
+      <title>statecraft-cli: acceptance is independent</title>
+      <description>What statecraft-cli is today: one machine, one repository, no account, and a judgment about an agent&apos;s work that the agent cannot write. Specified, implemented and tested; not released.</description>
+      <link>https://bartekus.com/writing/statecraft-cli-independent-acceptance</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/statecraft-cli-independent-acceptance</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Tooling</category>
+      <category>Rust</category>
+      <category>Local-First</category>
+    </item>
+    <item>
+      <title>Three primitives: gate, ledger, canonical bytes</title>
+      <description>action-gate, attest-ledger and canonical-keysort-json are the three smallest claims in the family. Each refuses to do its neighbour&apos;s job, and that refusal is what lets the bigger tools make theirs.</description>
+      <link>https://bartekus.com/writing/three-primitives-action-gate-attest-ledger-canonical-json</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/three-primitives-action-gate-attest-ledger-canonical-json</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Rust</category>
+      <category>Governance</category>
+      <category>Tooling</category>
+    </item>
+    <item>
+      <title>wire-witness: testimony, not authority</title>
+      <description>A capture proxy that records the actual HTTP traffic between an agent harness and a model provider, and is built so its output can never decide anything. Why that limitation is the feature.</description>
+      <link>https://bartekus.com/writing/wire-witness-testimony-not-authority</link>
+      <guid isPermaLink="true">https://bartekus.com/writing/wire-witness-testimony-not-authority</guid>
+      <pubDate>Sat, 07 Nov 2026 00:00:00 GMT</pubDate>
+      <author>bartekus@gmail.com (Bartek Kus)</author>
+      <category>Agentic AI</category>
+      <category>Governance</category>
+      <category>Rust</category>
+    </item>
     <item>
       <title>EnRaHiTu: the whole application in one container</title>
       <description>Encore.ts for typed APIs, rauthy for identity, hiqlite for replicated SQLite, Turso&apos;s libSQL underneath: the template chassis Statecraft stamps, and why zero managed-infrastructure dependencies is the entire point.</description>

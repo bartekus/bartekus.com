@@ -1,0 +1,73 @@
+---
+title: "wire-witness: testimony, not authority"
+description: "A capture proxy that records the actual HTTP traffic between an agent harness and a model provider, and is built so its output can never decide anything. Why that limitation is the feature."
+date: "2026-11-07"
+tags: ["Agentic AI", "Governance", "Rust"]
+draft: false
+readingTime: 6
+cover: "/images/wire-witness-testimony-not-authority.jpg"
+---
+
+# wire-witness: testimony, not authority
+
+A coding harness reports what it believes happened. It says it sent the system prompt, called the model, received a response, ran the tool. Most of the time that account is accurate. But it is an account, produced by the process whose behaviour is in question, and a governance system that admits evidence on the strength of a self-report is a governance system with one witness who is also the defendant.
+
+[wire-witness](https://github.com/statecrafting/wire-witness) exists to add a second witness. It captures provider wire exchanges, the actual HTTP traffic between an agent harness and a model provider, and produces attributed observations with custody facts. Its output is testimony. **It never grants authority to execute, admit evidence, change policy, or decide acceptance.** That last sentence is the first invariant in the corpus, and the rest of the design is what it takes to make it true.
+
+## What a witness is for
+
+The distinction the project is built on is between observation and trust. A record states what the witness observed and which limitations applied. Provider claims and harness claims remain attributed claims; observing them does not make them facts. If the provider's response says the model was `x`, the record says the provider said so. If the harness says it sent an instruction, the record says whether bytes matching that instruction crossed the wire in a complete outbound request, and nothing more.
+
+That is a narrower product than it sounds, and the narrowness is deliberate. The boundaries spec assigns responsibilities across the family in a table: wire-witness owns capture, normalisation, redaction, custody, and the production of attestations; it does not own supervision, admission, policy, decisions, or governance. Those belong to the supervisor, which in this family is [statecraft-cli](/writing/statecraft-cli-independent-acceptance). Decisions and evaluation belong to [rustev](/writing/rustev-proposals-never-grants). Hash-linked records belong to [attest-ledger](/writing/three-primitives-action-gate-attest-ledger-canonical-json). A witness that also decided would be a witness nobody else could check.
+
+## Three crates, one direction
+
+The workspace is three crates with a one-way dependency rule.
+
+`wire-witness-core` is pure. Exchange records, provider normalisation, canonical bytes and digests, redaction, retention, instruction observations, measurement summaries, and policy-bounded corpus exports. It performs no I/O, reads no clock, forbids unsafe code, and has no async runtime, HTTP stack, TLS stack, process host, or provider SDK anywhere in its dependency tree, direct or transitive. A boundary check script enforces that on every run of the gate.
+
+`wire-witness-proxy` is the capture engine: exact allowlist routing, bounded protocol parsers, a loopback listener, CONNECT tunnels, per-attempt TLS interception, and a live HTTP/1.1 relay. It may depend on the core and on transport stacks.
+
+`wire-witness-cli` is the host. It runs a child in standalone mode, or runs as a supervised sidecar speaking `wire-witness.sidecar/1` over stdio. It does exact attempt binding, producer identity, private filesystem custody, cleanup, and result rendering. It depends on the core and the proxy; neither depends on it.
+
+The sidecar is out of process on purpose. A potentially hostile child, which is what an agent harness is under the threat model the family uses, must not be able to drive HTTP, TLS, or WebSocket parsing inside the trusted supervisor. Parsing untrusted bytes is the riskiest thing in the system, so it happens in a process that holds no authority.
+
+## Binding, not correlation
+
+The second invariant is the one I find most instructive, because it is the opposite of how observability tooling usually works.
+
+In supervised mode the supervisor supplies an `AttemptBinding` before spawning the child: a run id, an attempt number, and an effect id, the last of which the supervisor mints and writes into a durable intent record before the sidecar exists. The sidecar validates the shape and then repeats all three values byte for byte on every exchange record, every finding, every readiness message, and the terminal message. It never infers a run from time, process ancestry, content, or harness identifiers. Standalone mode mints an identity whose kind is `unsupervised`, and never presents that identity as a supervised run or attempt.
+
+Correlation is what logging systems do: collect everything, then join on timestamps and PIDs and hope. Binding is what evidence systems do: the authority that owns the run says which attempt this is, and the witness repeats it without interpretation. The terminal sidecar message carries capture completeness and a digest, so the supervisor can close the exact bracketed effect it opened. An unknown message type or a malformed line is a protocol finding, never success.
+
+## What the witness can say about instructions
+
+One observation type deserves its own section because it answers a question people keep asking harnesses and never getting a checkable answer to: did my instruction actually reach the model?
+
+The instruction delivery observation is a content-gated, offline comparison. Given exact operator-supplied instruction bytes and a complete captured outbound request, it reports whether those bytes were observed in that request. That is all. One observation never becomes an adapter-wide delivery guarantee, a qualification, a policy, or an authority. It is testimony about one request. If you want a guarantee, you run the observation on every attempt and let the supervisor decide what a missing observation means.
+
+## Limits stated as limits
+
+The README states its limits in the same breath as its capabilities, and I will repeat them in that order.
+
+The live transport is HTTP/1.1. Framing support for HTTP/2 and WebSocket exists in the codebase, and the README is explicit that it does not establish live capture support for those transports; a parser existing is not a relay existing.
+
+Metadata-only retention is the default. Keeping more than metadata is a retention decision the operator makes, not something the tool does on its own.
+
+The child-only proxy and the additional CA that per-attempt TLS interception requires never change ambient trust or routing. The child sees the proxy because the supervisor pointed it there; nothing on the host is modified; no other process trusts the interception CA.
+
+Missing observations and capture limitations remain explicit in the record. A gap is recorded as a gap, never smoothed over by inference.
+
+## Why a witness must be unable to decide
+
+The structural argument is short. Suppose the witness could admit evidence. Then compromising the witness compromises admission, and the witness runs an HTTP parser on bytes chosen by a potentially hostile process. Suppose the witness could change policy. Then a crafted provider response could change policy. Suppose it could decide acceptance. Then acceptance has one witness again, and we are back where we started. Every authority you give the observer becomes an attack surface exactly as wide as the observer's parser. The only observer that can be trusted to watch hostile traffic is one for whom being wrong changes nothing but a record.
+
+This is also why wire-witness fits the supervisor's rule that refusals outlive the process. A supervised child can crash, hang, swallow an error, or print a cheerful summary over a failure. The wire is harder to edit. A provider refusal seen on the wire, a request that never left, an instruction whose bytes are absent from the outbound body: each is recorded by a sidecar the child does not control, bound to an attempt the child did not name, and handed to a supervisor that decides what it means. The witness cannot make the child honest. It can make the child's dishonesty visible to the party that holds authority, which is the most a witness should ever be asked to do.
+
+[Yolo mode is earned](/writing/yolo-mode-is-earned) argued that running an agent without permission prompts is safe only when layered machinery makes the dangerous paths unreachable. A wire witness is not one of those layers; it does not make any path unreachable. It is the layer that lets you find out, afterwards and from a source the agent did not author, whether the other layers held.
+
+## Where it stands
+
+v0.1.0 was tagged on 2026-10-15. It is not published to crates.io. The README is explicit that release, publication, live-provider observation, and consumer qualification each require separate evidence, and that local tests and merged source alone do not establish any of them. The tag says the source exists at a named point. It does not say a live provider has been observed through it in anger, and I am not going to say so either.
+
+What exists is a small, bounded tool with an unusually clear idea of what it is not. In a family whose thesis is that intent, authority, and evidence are three separate things, wire-witness is the component that produces evidence and is constitutionally forbidden from touching the other two.

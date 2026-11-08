@@ -2,7 +2,7 @@
 title: "Production in the dev loop: Hetzner, Flux, and a read-only MCP"
 description: "My Kubernetes cluster behaves like an extension of local development: the agent can see everything and touch nothing, and the only write path is git."
 date: "2026-06-06"
-updated: "2026-07-23"
+updated: "2026-11-07"
 tags: ["Kubernetes", "Local-First"]
 draft: false
 readingTime: 9
@@ -11,7 +11,9 @@ cover: "/images/global-network.jpg"
 
 # Production in the dev loop: Hetzner, Flux, and a read-only MCP
 
-*Update, July 2026: the platform whose services ran on this cluster, open-agentic-platform, has since been rebuilt ground-up as [Statecraft](https://github.com/statecrafting/statecraft), and the estate was rebuilt with it. The discipline described here carried over unchanged; [From Open Agentic Platform to Statecraft](/writing/from-open-agentic-platform-to-statecraft) tells the rename story.*
+*Update, November 2026: the rebuilt platform named in the July note below, and the fleet plane with it, were retired in October 2026. The posture described here (the agent sees everything and changes nothing except through git) is the one statecraft-cli now takes on a single machine: a candidate cannot enlarge its own authority, and acceptance is judged independently. [From the factory to small tools](/writing/from-factory-to-small-tools) explains the retirement.*
+
+*Update, July 2026: the platform whose services ran on this cluster, open-agentic-platform, has since been rebuilt ground-up as [Statecraft](https://statecraft.ing), and the estate was rebuilt with it. The discipline described here carried over unchanged; [From Open Agentic Platform to Statecraft](/writing/from-open-agentic-platform-to-statecraft) tells the rename story.*
 
 There is a window on my laptop through which an AI agent watches a production Kubernetes cluster. It reads pod status, deployment manifests, events, logs, resource pressure. It cannot delete a pod, scale a deployment, or apply a manifest; not because it promises to behave, but because every path that could mutate the cluster is closed at a layer the agent does not control.
 

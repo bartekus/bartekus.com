@@ -1,0 +1,87 @@
+---
+title: "spec-spine at 0.32: check, delta, verify"
+description: "Since June, spec-spine gained check, delta, verify, registry plan, a family exit-code contract, a JSON envelope, per-unit shards and a renumbered corpus, and lost init. Each exists because a PR branch is a stranger's bytes."
+date: "2026-11-07"
+tags: ["Governance", "Tooling", "Rust"]
+draft: false
+readingTime: 10
+cover: "/images/spec-spine-check-delta-verify.jpg"
+---
+
+# spec-spine at 0.32: check, delta, verify
+
+[Inside spec-spine](/writing/inside-spec-spine), written in June, described the model: typed ownership edges over a markdown corpus, two deterministic registries, a coupling gate that refuses drift at PR time, and a refusal rule at prompt time. The model has not changed. The tool has: [spec-spine](https://github.com/statecrafting/spec-spine) reached v0.32.0 on 2026-10-27, published on crates.io as `spec-spine-cli`, on npm and on PyPI as `spec-spine`, and CI proves the registry and index shard trees byte-identical across four release triples.
+
+Between June and now the verb table grew by `check`, `delta`, `verify` and `registry plan`, the exit codes became a family contract, the adjudicating verbs learned `--json`, the committed artifacts split into per-unit shards, the corpus was renumbered, and `init` was removed. Every one of those changes answers the same question, and the question is about trust, not features. This essay goes through them in that light. [Agentic code collapse](/writing/agentic-code-collapse) is the failure mode they exist to prevent.
+
+## A PR branch is a stranger's bytes
+
+Start with the sentence the README uses to explain why `verify` is not in the gate chain, because it is the organizing principle for everything else: `compile`, `index`, `lint` and `couple` run against pull-request branches whose contents are, in the general case, a stranger's.
+
+In a repository where many agents work in parallel, every branch is produced by a process you did not watch, from a prompt you may not have read, by a model whose refusals you did not count. The branch may be honest. The tool cannot know that, so the gate chain is built from verbs that only read. They compile frontmatter, hash files, walk the graph and compare bytes. None of them executes anything the branch declares. That is what lets them run on an untrusted candidate and still produce a verdict worth something.
+
+Everything below either sharpens that reading, makes its result consumable by another program, or keeps the one verb that does execute on the right side of the line.
+
+## `check`: one question, one verb
+
+Freshness used to be asked two ways. `compile --check` was a flag that asked whether the committed registry shards were current; `index check` was a subcommand that asked the same of the index. One question about two trees, two spellings, and every consumer (the agent instructions, the session hook, the Makefile, CI) had to know both.
+
+Spec 062 added `check` above them. It runs both freshness reads, never writes, and exits with the higher of the two halves under the exit contract. The spec is explicit that it fixes the asymmetry by adding a verb rather than renaming a primitive, so neither existing spelling broke. It is a small change, and it exists because a protocol that has to know two things to ask one question is a protocol an agent will get half right.
+
+## `delta`: a report, not a gate
+
+`couple` answers one question: did owned code move without its owning spec in the same diff. Spec 071 opens with a measurement of two changes that answer no to that question and should never be approved on the candidate's own say-so. In a scratch repository on 2026-09-11, a candidate deleted one acceptance command from its own spec's `## Verification` block and renamed the function that command had checked: `couple` exited 0, no violation, and the remaining acceptance passed. A second candidate filed a draft spec extending another spec's authority over a file, then rewrote the file: `couple` exited 0 again, and the index now named the draft as an owner.
+
+The first is a candidate weakening the acceptance that judges it. The second is an authority transfer nobody outside the diff approved. Both are also the sanctioned shapes for legitimate work, which is why a gate cannot refuse them without refusing refactors.
+
+`delta --base B --head H` does what can be done without that design: it says what kind of change this is, structurally, under rules the candidate did not write. Every path the change touches is classified under the **merge base's** configuration and index, into one of eleven classes: implementation, requirement, verification, authority, lifecycle, constitutional, policy, derived, bypassed, unowned, unknown. It then names which classes a consumer should judge under the base's policy. The README's warning is part of the contract: `delta` is a report, not a gate, and a `priorPolicy.required: false` does not mean the change is safe, correct or approved. The consumer this was built for is [statecraft-cli](/writing/statecraft-cli-independent-acceptance), whose rule that a candidate cannot enlarge its own authority needs exactly this classification, computed by the tool that knows what a spec is.
+
+## `verify`: the one verb that executes
+
+A spec ends with `## Verification`, the conditions under which its claims hold. Spec 043 observed that in spec-spine's own corpus that section was prose in 44 of 49 specs and executable in two, and that in neither case did the tool read it. Four adopter repositories had each closed the gap with the same 78-line `awk` and `sh` script, copied verbatim, with no tests in any of them. Four copies of one parser of authored markdown is the specific failure the project was built to name.
+
+`verify <id>` runs the `verify:cli` commands under a spec's `## Verification` heading, in order, through `sh -c` from the repository root, stopping at the first failure. `verify <id> --plan` prints what would run without running it, which is how you read a verification block someone else wrote before you decide to execute it. A spec whose block runs `verify` on itself is refused with `R-001` rather than recursed. And `not-declared` stops being ambiguous: the old script printed a sentence and exited 0, so a caller reading only the exit code could not tell "every command passed" from "there was nothing to run."
+
+The important design decision is the one already quoted. `verify` executes what the corpus declares. That is safe where the corpus and the operator share a trust domain, and it is why `verify` is deliberately outside the gate chain. Running acceptance against a reviewed, merged sha is an orchestrator's decision; the verb serves that decision rather than making it. spec-spine will tell you what a branch declares it should run. It will not run it on a branch for you and call the result a verdict.
+
+## `registry plan`: what can be worked on now
+
+Three pieces of the answer already existed in the compiled registry and were never joined: `depends_on` edges, the acyclicity that spec 030 enforces at compile, and each spec's `implementation` state. Spec 035 joins them. `registry plan` partitions the corpus into the ready set, in dependency order, and the blocked set, naming each blocker's state.
+
+The reason this lives in the library rather than in each consumer is the reason `registry relationships` exists: the graph's meaning belongs to the tool that defines it. A driver taking one spec per session that does its own traversal ends up with a second, divergent understanding of the corpus. statecraft-cli reads readiness from this report and refuses to compute it. `plan` also reports pairs on the ready set that claim the same units, which the concept document is careful to call a lower bound on collision rather than a proof of independence: a shared lockfile or a regenerated shard is a collision no frontmatter declares.
+
+## Exit codes as a family contract
+
+As of 0.25.0, spec-spine's exit codes were 0 ok, 1 for validation failures and drift, 2 for stale, and 3 for everything else: a malformed config, a version pin not met, a containment refusal, a request document that did not parse, a missing file, a disk error, a clap usage error. The Statecraft CLI had its own five-tier set. A consumer running both read the same number with two meanings, and within spec-spine one number meant both "the tool declined" and "the disk failed."
+
+Spec 132 adopted the CLI's vocabulary as the family contract: `0` ok, `1` finding, `2` refused (nothing was done), `3` usage, `4` failed. The test was written first and run against the unchanged tree: nine of its ten cases failed on the old code, and the tenth was the control that proved the finding tier had not moved by accident. Writing the case for a failed read found a defect the old contract had hidden: a shard directory that could not be listed was read as empty, so `index check` reported every shard missing and prescribed regeneration, as a 2. It is now a 4. When two tools share an exit contract, one tool's refusal is never mistaken for the other's I/O failure, and an orchestrator can script against the number.
+
+## `--json`: what is written, never what is decided
+
+Spec 034 noticed an asymmetry: the read verbs, whose output a person is most likely to read, had `--json`, while the adjudicating verbs, whose output a program is most likely to consume, answered in prose. A consumer that wanted the coupling gate's reasons had to parse formatted violation lines, and a consumer that wanted staleness had to distinguish the literal string `index is fresh` from its negation. That consumer was doing exactly what the agent rules forbid, with no supported alternative.
+
+Now every verb that renders a verdict (`check`, `compile --check`, `compile --spec`, `index check`, `lint`, `couple`, `delta`, `attest`, `verify-attestation`, `verify`) takes `--json` and writes one canonical envelope: `schemaVersion`, `tool`, `verb`, `outcome`, `exitCode`, `summary`, and either `report` or `error`. The flag changes what is written and never what is decided; every exit code is identical with and without it. The typed structures already existed in the library facade. The CLI had been throwing them away and formatting sentences.
+
+## Per-unit shards, so parallel PRs do not conflict
+
+The June essay said two branches that both regenerate the index will conflict on it, and one of them pays a regeneration cycle. Spec 022 names the cost precisely: a committed artifact carrying one global content-hash line is a merge serialization point. A local merge driver can resolve it, but GitHub's server-side merge does not run custom drivers, so the merge queue cannot form a speculative stack of two PRs that both rewrote the line, and it ejects the second. Adopters saw PRs that never merged concurrently.
+
+The root cause was storage, not information. The registry and index already held per-spec and per-package data; they serialized it into one file behind one hash. Both are now committed as per-unit shard trees, `by-spec/<id>.json` and `by-package/<slug>.json`, so two PRs touching different specs or packages write disjoint files and cannot conflict. The aggregate view is recomputed from the shards on read. For a corpus worked by many agents at once, this is the difference between parallel work in theory and in a merge queue.
+
+## The renumbering
+
+Spec 092 removed a vendored adoption kit from the corpus, and did so correctly under the rules: an amendment is declared once, in the amending spec, and the amended file is not edited. Spec 095 measured what obeying those rules cost. 102 unit claims withdrawn across 29 specs. 41 documents naming a removed path in prose. One spec left owning nothing. Seven deletions the coupling gate still refused. None of that was a defect in the code. It was the corpus describing a product that no longer existed, in documents that read as instruction.
+
+The owner authorized a one-time exception: delete the specs whose whole subject was gone, collapse the scattered families into one document each, and renumber the survivors so the ordinals were contiguous. The exception is bounded four ways and each bound is asserted in the spec's acceptance: it is one change, after which the amendment rule governs again; nothing is weakened, every requirement carried or named as not carried with the file whose deletion removed its subject; nothing is hidden, every removed spec named in a successor's `supersedes`; and history is not rewritten, because the documents stay in git. `docs/corpus-map.md` maps every old id to its new one and every removed id to the spec that answers for it. Its justification is one sentence I keep coming back to: a citation outlives the document it cites.
+
+## There is no `spec-spine init`
+
+The June essay's adoption snippet began with `spec-spine init`. It does not exist anymore, and the removal is a decision rather than a loss. A new corpus still needs `spec-spine.toml`, `standards/spec/` and a bootstrap spec before any verb has something to read. spec-spine produces that starter content as data, through the library's `scaffold_init_json`. Writing it into a repository is the Statecraft CLI's job.
+
+The reasoning is the project's one-line description of itself: every artifact-producing function is a pure function of configuration and file contents. A verb that writes files into your repository at adoption time is making a claim about your environment that the engine cannot verify, and spec 092's title says where the line is: the engine ships governance, not an environment. The scaffold is still there. It is an answer, not an act, and the tool that performs acts on a repository is the one built to record them.
+
+## The same four guardrails
+
+None of this changes the model from June. The compiler is still deterministic, the gate still refuses drift, reads are still typed, and the refusal rule still sandwiches the agent that would edit the contract to escape a red gate. What changed is that the tool now says, on every verdict, what it read, at which revision, under whose rules, and with what exit code, in a shape another program can consume without parsing a sentence. It classifies a change it will not refuse. It prints the acceptance it will not run on a stranger's branch.
+
+That is what a trust boundary looks like in a command-line tool. Not a wall, but a very precise account of which side of it each verb stands on.

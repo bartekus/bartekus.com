@@ -2,12 +2,16 @@
 title: "The factory is a service now"
 description: "factory-encore promised a technology-agnostic software factory. Statecraft kept the factory and shot the framework: what changed when the contract moved from a technology-free document to a versioned template.toml with a gate behind it."
 date: "2026-07-23"
+updated: "2026-11-07"
 tags: ["Governance", "Architecture"]
 draft: false
 readingTime: 8
+cover: "/images/the-factory-is-a-service-now.jpg"
 ---
 
 # The factory is a service now
+
+*Update, November 2026: the factory described here was retired in October 2026, together with template stamping and the control plane it lived inside. The family is now small tools, each released on its own terms and carrying its own grade. [From the factory to small tools](/writing/from-factory-to-small-tools) explains why; [Retiring six repositories under governance](/writing/retiring-six-repositories-under-governance) records how.*
 
 Of the four repositories I [archived this week](/writing/from-open-agentic-platform-to-statecraft), the one I was fondest of was factory-encore. It had the cleanest idea: separate the *process* of building software (requirements, design, specification) from the *implementation* (frameworks, languages, patterns) by placing a formal contract between them. Business documents went in; a frozen, technology-free Build Specification came out; an adapter turned the specification into a running application. The process layer never named a framework. Add a stack by adding an adapter.
 
@@ -23,7 +27,7 @@ The lockstep protocol was the architecture confessing this. Two repositories tha
 
 ## Where the factory went
 
-In [Statecraft](https://github.com/statecrafting/statecraft), the factory is a service. It lives inside the control plane alongside the other services (tenants, fleet, governance), and its job is narrow: given a tenant and a request, stamp an application from the [enrahitu](/writing/enrahitu-the-whole-app-in-one-container) template into that tenant's own GitHub org, under that tenant's own GitHub App installation, and record every step of the run in the control plane's ledger.
+In [Statecraft](https://statecraft.ing), the factory is a service. It lives inside the control plane alongside the other services (tenants, fleet, governance), and its job is narrow: given a tenant and a request, stamp an application from the [enrahitu](/writing/enrahitu-the-whole-app-in-one-container) template into that tenant's own GitHub org, under that tenant's own GitHub App installation, and record every step of the run in the control plane's ledger.
 
 The contract survived the move but changed species. The Build Specification was a technology-free document standing between process and implementation. Its successor, `template.toml`, is a versioned machine contract published by the template itself, and it comes with the enforcement the old contract never had: the factory is forbidden, by owning spec, from reaching past the contract into template internals. Not discouraged by convention; refused at the coupling gate. The old cross-repo lockstep dissolved into something stronger and simpler: one template, one contract, one consumer that is physically incapable of depending on anything else.
 

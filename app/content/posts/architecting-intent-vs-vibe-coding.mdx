@@ -2,7 +2,7 @@
 title: "Architecting intent vs vibe coding"
 description: "AI can write the code; the unsolved problem is trusting what it wrote. Why review doesn't scale, and how specs-as-law makes agentic output governable."
 date: "2026-01-15"
-updated: "2026-06-10"
+updated: "2026-11-07"
 tags: ["Agentic AI", "Governance"]
 draft: false
 readingTime: 11
@@ -10,6 +10,8 @@ cover: "/images/edge-of-future.jpg"
 ---
 
 # Architecting intent vs vibe coding
+
+*Update, November 2026: spec-spine is at 0.32.0 on crates.io, npm and PyPI; the June update at the end of this essay describes the first release. [spec-spine at 0.32: check, delta, verify](/writing/spec-spine-check-delta-verify) brings the receipts up to date, and [From the factory to small tools](/writing/from-factory-to-small-tools) explains what became of the platform.*
 
 There are two ways to build software with AI agents. The first is vibe coding: describe what you want, accept what comes back, iterate until it feels right. The second barely has a name yet. I call it architecting intent, and three days ago I committed to running it at full scale: one human, a fleet of agents, and a codebase that will be governed by specifications from its first commit.
 
@@ -100,4 +102,4 @@ The human authors the law. The agents comply with it. The spine makes non-compli
 
 That is architecting intent. It is not slower than vibe coding; it is the version of fast you can defend.
 
-An update from June 2026: the receipts came in. Five months later the corpus stands at two hundred specifications governing 311,000 lines of code, and every commitment above runs mechanically: the deterministic registry, the manifest-declared ownership, the coupling gate on every pull request, the self-authenticating certificates. I also lifted the governance spine out of the platform and released it standalone as [spec-spine](https://github.com/bartekus/spec-spine), Apache-2.0, byte-identical output across five platforms, governed by its own gate in CI. The technical deep-dive is [Inside spec-spine](/writing/inside-spec-spine); the failure mode all of this prevents has a name now, in [Agentic code collapse](/writing/agentic-code-collapse).
+An update from June 2026: the receipts came in. Five months later the corpus stands at two hundred specifications governing 311,000 lines of code, and every commitment above runs mechanically: the deterministic registry, the manifest-declared ownership, the coupling gate on every pull request, the self-authenticating certificates. I also lifted the governance spine out of the platform and released it standalone as [spec-spine](https://github.com/statecrafting/spec-spine), Apache-2.0, byte-identical output across five platforms, governed by its own gate in CI. The technical deep-dive is [Inside spec-spine](/writing/inside-spec-spine); the failure mode all of this prevents has a name now, in [Agentic code collapse](/writing/agentic-code-collapse).

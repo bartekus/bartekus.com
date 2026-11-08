@@ -36,7 +36,7 @@ export default function BlogPost() {
   const formattedDate = formatDate(post.meta.date);
   const formattedUpdated = post.meta.updated ? formatDate(post.meta.updated) : null;
 
-  const ogImage = post.meta.cover ? `${siteConfig.url}${post.meta.cover}` : `${siteConfig.url}/og/${slug}.png`;
+  const ogImage = post.meta.cover ? `${siteConfig.url}${post.meta.cover}` : `${siteConfig.url}/og-default.png`;
 
   return (
     <>

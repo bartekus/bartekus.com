@@ -5,6 +5,7 @@
   "scripts": {
     "prebuild": "tsx app/scripts/sync-resume.ts && tsx app/scripts/generate-resume-docs.ts && tsx app/scripts/generate-rss.ts && tsx app/scripts/generate-sitemap.ts",
     "resume:docs": "tsx app/scripts/generate-resume-docs.ts",
+    "covers": "tsx app/scripts/generate-covers.ts",
     "build": "react-router build",
     "dev": "react-router dev",
     "preview": "vite preview",
